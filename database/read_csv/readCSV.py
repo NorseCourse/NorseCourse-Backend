@@ -70,3 +70,29 @@ meetings['section_status'] = meetings['Sec Status']
 del meetings['Sec Status']
 meetings['days'] = meetings['Csm Days']
 del meetings['Csm Days']
+
+
+science = ['BIO','CHEM','CS','HLTH','MATH','NURS','PHYS','SCI','ACCTG','BIO','PE','ENVS']
+social_science = ['AFRS','COMS', 'ECON', 'IS','EDUC','HIST','POLS','PSYC','SOC','ANTH','SW','GS','ATHTR','WGST','MGT','PHIL','INTS','MUST','JOUR']
+humanities = ['CLAS','ENG','REL','RUS','SCST','SPAN','ART','MUS','LING','FREN','GER','LAT','CHIN','GRK','HEB','THE','DAN','PAID','ITAL']
+
+divison = []
+depts_abb = []
+
+for idx,row in courses.iterrows():
+    dept = row['section_name'].split('-')[0]
+    if dept in science:
+        divison.append("science")
+        depts_abb.append(dept)
+    if dept in social_science:
+        divison.append("social_science")
+        depts_abb.append(dept)
+    if dept in humanities:
+        divison.append("humanities")
+        depts_abb.append(dept)
+
+courses['divison'] = divison
+courses['department_abbreviation'] = depts_abb
+print(courses.head(20))
+
+

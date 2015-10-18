@@ -2,18 +2,19 @@ import mysql.connector
 import config
 
 
-def createDB(cursor):
+def createDB(cnx, cursor, db_name):
 	try:
-		cursor.execute("CREATE DATABASE TestNC2")
+		cursor.execute("CREATE DATABASE {}".format(db_name))
+		cnx.commit()
 
 	except mysql.connector.Error as error:
 		print("Failed to create the database: {}".format(error))
 		exit(1)
 
 
-def createTables(cursor):
+def createTables(cnx, cursor, db_name):
 	try:
-		cursor.execute("USE TestNC2")
+		cursor.execute("USE {}".format(db_name))
 		cursor.execute("CREATE TABLE Divisions (division_id INT AUTO_INCREMENT, name VARCHAR(20) NOT NULL, PRIMARY KEY (division_id)) ENGINE = INNODB;")
 		cursor.execute("CREATE TABLE Departments (department_id INT AUTO_INCREMENT, abbreviation VARCHAR(10) NOT NULL, name VARCHAR(20) NOT NULL, division_id INT, PRIMARY KEY (department_id), FOREIGN KEY (division_id) REFERENCES Divisions (division_id)) ENGINE = INNODB;")
 		cursor.execute("CREATE TABLE Courses (course_id INT AUTO_INCREMENT, description VARCHAR(1000), same_as VARCHAR(20), number VARCHAR(10) NOT NULL, department_id INT, PRIMARY KEY (course_id), FOREIGN KEY (department_id) REFERENCES Departments (department_id)) ENGINE = INNODB;")
@@ -27,18 +28,28 @@ def createTables(cursor):
 		cursor.execute("CREATE TABLE Rooms (room_id INT AUTO_INCREMENT, building_id INT, number VARCHAR(10) NOT NULL, PRIMARY KEY (room_id), FOREIGN KEY (building_id) REFERENCES Buildings (building_id)) ENGINE = INNODB;")
 		cursor.execute("CREATE TABLE SectionMeetings (room_id INT, section_id INT, start_time TIME NOT NULL, end_time TIME NOT NULL, days VARCHAR(5) NOT NULL, PRIMARY KEY (room_id, section_id), FOREIGN KEY (room_id) REFERENCES Rooms (room_id), FOREIGN KEY (section_id) REFERENCES Sections (section_id)) ENGINE = INNODB;")
 		cursor.execute("CREATE TABLE FacultyAssignments (faculty_id INT AUTO_INCREMENT, section_id INT, PRIMARY KEY (faculty_id, section_id), FOREIGN KEY (faculty_id) REFERENCES Faculty (faculty_id), FOREIGN KEY (section_id) REFERENCES Sections (section_id)) ENGINE = INNODB;")
+		cnx.commit()
 
 	except mysql.connector.Error as error:
 		print("Failed to create the tables: {}".format(error))
 		exit(1)
 
 
-cnx_properties = config.db_cnx_config
-cnx = mysql.connector.connect(autocommit = False, **cnx_properties)
+init_db_properties = config.init_db_config
+cnx = mysql.connector.connect(autocommit = False, **init_db_properties)
 cursor = cnx.cursor()
 
-createDB(cursor)
-createTables(cursor)
+db_name = str(raw_input("Enter a name for the new database (case sensitive), or return for default (NorseCourse): "))
+
+if db_name == "":
+	db_name = "NorseCourse"
+else:
+	print("Since you did not use the defalt database name, be sure to change the database proberty under db_pool_config in the config.py file in order for your installation to run correctly")
+
+config.db_pool_config["database"] = db_name
+
+createDB(cnx, cursor, db_name)
+createTables(cnx, cursor, db_name)
 
 cursor.close()
 cnx.close()

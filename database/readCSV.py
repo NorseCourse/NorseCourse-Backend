@@ -1,7 +1,9 @@
 import pandas as pd
 
+# read in first csv we are given
 courses = pd.DataFrame.from_csv('course.csv', sep=None,index_col=None)
 
+# change all column names to more appropriate ones
 courses['course_id'] = courses['Course Sections Id']
 del courses['Course Sections Id']
 courses['section_name'] = courses['Sec Name']
@@ -29,9 +31,10 @@ del courses['Crs Desc']
 courses['gen_eds'] = courses['Course Types CSV']
 del courses['Course Types CSV']
 
-
+#read in second csv file we are given
 meetings = pd.DataFrame.from_csv('meeting.csv', sep=None,index_col=None)
 
+# change all column names to more appropriate ones
 meetings['course_id'] = meetings['Course Sections Id']
 del meetings['Course Sections Id']
 meetings['section_name'] = meetings['Sec Name']
@@ -71,15 +74,23 @@ del meetings['Sec Status']
 meetings['days'] = meetings['Csm Days']
 del meetings['Csm Days']
 
+# merge together the two csv files
 data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
 
+# define the different divisions and their included departments
 science = ['BIO','CHEM','CS','HLTH','MATH','NURS','PHYS','SCI','ACCTG','BIO','PE','ENVS','ATHTR']
 social_science = ['AFRS','COMS', 'ECON', 'IS','EDUC','HIST','POLS','PSYC','SOC','ANTH','SW','GS','WGST','MGT','PHIL','INTS','MUST','JOUR']
 humanities = ['CLAS','ENG','REL','RUS','SCST','SPAN','ART','MUS','LING','FREN','GER','LAT','CHIN','GRK','HEB','THE','DAN','PAID','ITAL']
 
+# dictionary of department abbreviation to department name
 department_dict = {'BIO':'Biology','CHEM':'Chemistry','CS':'Computer Science','HLTH':'Health','MATH':'Mathematics','NURS':'Nursing','PHYS':'Physics','SCI':'Science','ACCTG':'Accounting','PE':'Physical Education','ENVS':'Enviromental Studies','AFRS':'African Studies','COMS':'Communications', 'ECON':'Economics', 'IS':'Information Systems','EDUC':'Education','HIST':'History','POLS':'Political Science','PSYC':'Psychology','SOC':'Sociology','ANTH':'Anthropology','SW':'Social Work','GS':'Gender Studies','ATHTR':'Atheltic Training','WGST':"Women's Gender Studies",'MGT':'Management','PHIL':'Philosophy','INTS':'International Studies','MUST':'Museam Studies','JOUR':'Journalism','CLAS':'Classics','ENG':'English','REL':'Religion','RUS':'Russian','SCST':'Scandinavian Studies','SPAN':'Spanish','ART':'Art','MUS':'Music','LING':'Linguistics','FREN':'French','GER':'German','LAT':'Latin','CHIN':'Chinese','GRK':'Greek','HEB':'Hebrew','THE':'Theatre','DAN':'Dance','PAID':'Paideia','ITAL':'Italian'}
 
+# dictionary of gen eds abbreviation and gen eds name
+gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human Behavior Social Science Methods', 'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 'HIST': 'Historical', 'INTCL': 'Intercultural','NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab','QUANT': 'Quantitative','REL': 'Religion','SKL': 'Skills Course','WEL': 'Wellness Course'}
 
+# initialize list to be new columns
+# these are the columns that are missing
+# or will need to be edited
 divison = []
 depts_abb = []
 depts_name = []
@@ -90,23 +101,31 @@ start_dates = []
 end_dates = []
 start_times = []
 end_times = []
+gen_eds = []
+gen_eds_name = []
 
+
+# iterate through all rows in the csv
 for idx,row in data.iterrows():
     
+    # isolate the start and end time of a section with no date
     start_dates.append(row['start_date'].split()[0])
     end_dates.append(row['end_date'].split()[0])
     
+    # if there is no start/end time, add a blank string for that value
+    # otherwise add the isolated start/end time
     if pd.isnull(row['start_time']):
         start_times.append("")
         end_times.append("")
-        
     else:
         start_times.append((row['start_time'].split()[1])[:-3])
         end_times.append((row['end_time'].split()[1])[:-3])    
     
+    # isolate the start/end date with no time
     start = row['meeting_info'].split('-')[0]
     end = row['meeting_info'].split('-')[1].split()[0]
     
+    # using the start/end times, define the term
     current_term = 0
     if (start[:2] == '09') or (end[:2] == '12'):
         current_term = "Fall"
@@ -118,6 +137,8 @@ for idx,row in data.iterrows():
         current_term = "Spring"
         term.append("Spring "+start[6:10])     
     
+    # define if it is a seven week course or not
+    # 0 = no, 1 = first seven weeks, 2 = second seven weeks
     if current_term == "Fall":
         if (start[:2] == '09') and (end[:2] == '12'):
             seven_week.append(0)
@@ -135,10 +156,12 @@ for idx,row in data.iterrows():
         else:
             seven_week.append(2)   
             
-    
+    # isolate the course number and add to new column
     num = row['section_name'].split('-')[1]
     nums.append(num)
     
+    # isolate the department for the course
+    # define which divison it is a part of
     dept = row['section_name'].split('-')[0]
     depts_abb.append(dept)
     depts_name.append(department_dict[dept])    
@@ -150,6 +173,26 @@ for idx,row in data.iterrows():
         divison.append("Humanities")
 
 
+    # we need to edit the gen ed column
+    new_geneds_ab = []
+    new_geneds_name = []
+
+    # create a gen ed name column and an abbreviation one
+    if type(row['gen_eds']) == str:
+        geneds = row['gen_eds'].split(',')
+        for gened in geneds:
+            if gened in gen_eds_dict:
+                new_geneds_ab.append(gened+',')
+                new_geneds_name.append(gen_eds_dict[gened]+',')                  
+            
+    # add list of abb/name of gen eds
+    gen_eds.append("".join(new_geneds_ab)[:-1])
+    gen_eds_name.append("".join(new_geneds_name)[:-1])
+
+
+
+# create new columns in csv with correct values
+# deleting any ones we are replacing
 data['divison'] = divison
 data['department_abbreviation'] = depts_abb
 data['department_name'] = depts_name
@@ -168,5 +211,11 @@ del data['end_time']
 data['end_time'] = end_times
 
 
+data['gen_ed_abb'] = gen_eds
+data['gen_ed_names'] = gen_eds_name
+del data['gen_eds']
+
+
+# writing all this data into one good csv
 data.to_csv("data.csv")
 

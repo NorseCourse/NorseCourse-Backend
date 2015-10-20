@@ -103,11 +103,29 @@ start_times = []
 end_times = []
 gen_eds = []
 gen_eds_name = []
+same_as = []
+max_credits = []
 
 
 # iterate through all rows in the csv
 for idx,row in data.iterrows():
     
+    if pd.isnull(row['max_credits']):
+        max_credits.append(0)
+    else:
+        max_credits.append(row['max_credits'])
+    
+    same = ""
+    if type(row['course_description']) == str:
+        find_same = row['course_description'].split("Same as ")
+        if len(find_same) > 1:
+            same = (find_same[1].replace(")","").replace(' and',',').replace('.',''))
+    
+    same_as.append(same)
+            
+    
+
+
     # isolate the start and end time of a section with no date
     start_dates.append(row['start_date'].split()[0])
     end_dates.append(row['end_date'].split()[0])
@@ -193,7 +211,7 @@ for idx,row in data.iterrows():
 
 # create new columns in csv with correct values
 # deleting any ones we are replacing
-data['divison'] = divison
+data['division'] = divison
 data['department_abbreviation'] = depts_abb
 data['department_name'] = depts_name
 data['course_num'] = nums
@@ -215,6 +233,10 @@ data['gen_ed_abb'] = gen_eds
 data['gen_ed_names'] = gen_eds_name
 del data['gen_eds']
 
+data['same_as'] = same_as
+
+del data['max_credits']
+data['max_credits']= max_credits
 
 # writing all this data into one good csv
 data.to_csv("data.csv")

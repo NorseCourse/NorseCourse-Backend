@@ -87,6 +87,8 @@ department_dict = {'BIO':'Biology','CHEM':'Chemistry','CS':'Computer Science','H
 
 # dictionary of gen eds abbreviation and gen eds name
 gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human Behavior Social Science Methods', 'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 'HIST': 'Historical', 'INTCL': 'Intercultural','NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab','QUANT': 'Quantitative','REL': 'Religion','SKL': 'Skills Course','WEL': 'Wellness Course'}
+also_geneds = {'HBSSM':'HB','HEPT':'HE','NWL':'NWNL'}
+
 
 # initialize list to be new columns
 # these are the columns that are missing
@@ -105,11 +107,14 @@ gen_eds = []
 gen_eds_name = []
 same_as = []
 max_credits = []
+also_fulfills = []
 
 
 # iterate through all rows in the csv
 for idx,row in data.iterrows():
     
+
+
     if pd.isnull(row['max_credits']):
         max_credits.append(0)
     else:
@@ -194,18 +199,22 @@ for idx,row in data.iterrows():
     # we need to edit the gen ed column
     new_geneds_ab = []
     new_geneds_name = []
+    also = []
 
     # create a gen ed name column and an abbreviation one
     if type(row['gen_eds']) == str:
         geneds = row['gen_eds'].split(',')
         for gened in geneds:
             if gened in gen_eds_dict:
+                if gened in also_geneds:
+                    also.append(also_geneds[gened]+',')
                 new_geneds_ab.append(gened+',')
                 new_geneds_name.append(gen_eds_dict[gened]+',')                  
             
     # add list of abb/name of gen eds
     gen_eds.append("".join(new_geneds_ab)[:-1])
     gen_eds_name.append("".join(new_geneds_name)[:-1])
+    also_fulfills.append("".join(also)[:-1])
 
 
 
@@ -237,6 +246,8 @@ data['same_as'] = same_as
 
 del data['max_credits']
 data['max_credits']= max_credits
+
+data['also_fulfills'] = also_fulfills
 
 # writing all this data into one good csv
 data.to_csv("data.csv")

@@ -73,7 +73,7 @@ def populateDB(cursor, data):
 											'short_title':str(row['section_title']),
 											'min_credits':str(row['min_credits']),
 											'max_credits':str(row['max_credits']),
-											'comments':str(row['course_description']),
+											'comments':str(row['section_comments']),
 											'seven_weeks':str(row['seven_week']),
 											'course_id':str(course_id)
 											})

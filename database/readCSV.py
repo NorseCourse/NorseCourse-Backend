@@ -90,6 +90,8 @@ gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human
 also_geneds = {'HBSSM':'HB','HEPT':'HE','NWL':'NWNL'}
 
 
+chars = set([' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','^','&','*','(',')','_','-','+','=','[',']','{','}','\\','/',';',':',',','.','<','>'])
+
 # initialize list to be new columns
 # these are the columns that are missing
 # or will need to be edited
@@ -108,12 +110,23 @@ gen_eds_name = []
 same_as = []
 max_credits = []
 also_fulfills = []
+comments = []
 
 
 # iterate through all rows in the csv
 for idx,row in data.iterrows():
-    
 
+
+    if pd.notnull(row['section_comments']):
+        new_comment = ""
+        comment = list(row['section_comments'])
+        for char in comment:
+            if char in chars:
+                new_comment += char
+        comments.append(new_comment)
+    else:
+        comments.append("")
+    
 
     if pd.isnull(row['max_credits']):
         max_credits.append(0)
@@ -248,6 +261,9 @@ del data['max_credits']
 data['max_credits']= max_credits
 
 data['also_fulfills'] = also_fulfills
+
+del data['section_comments']
+data['section_comments'] = comments
 
 # writing all this data into one good csv
 data.to_csv("data.csv")

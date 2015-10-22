@@ -67,6 +67,7 @@ def populateDB(cursor, data):
 			for (course_id) in cursor:
 				course_id = int(course_id[0])
 
+
 			insert_course = "INSERT INTO Sections (term,name,short_title,min_credits,max_credits,comments,seven_weeks,course_id) VALUES (%(term)s,%(name)s,%(short_title)s,%(min_credits)s,%(max_credits)s,%(comments)s,%(seven_weeks)s,%(course_id)s)"
 			cursor.execute(insert_course,{'term':str(row['term']),
 											'name':str(row['section_name']),

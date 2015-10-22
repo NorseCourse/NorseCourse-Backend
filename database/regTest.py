@@ -1,57 +1,60 @@
 s = []
 
-a = "A corequesite A"
+# a = "A corequisite A"
+# s.append(a)
+
+a = "2nd 7 weeks. Pre/Co-requisite:PE 261 or consent of instructor."
 s.append(a)
 
-b = "B corequesite: B"
+b = "B corequisite: B"
 s.append(b)
 
-c = "C Corequesite C"
+c = "C Corequisite C"
 s.append(c)
 
-d = "D Corequesite: D"
+d = "D Corequisite: D"
 s.append(d)
 
-e = "E co-requesite E"
+e = "E co-requisite E"
 s.append(e)
 
-f = "F co-requesite: F"
+f = "F co-requisite: F"
 s.append(f)
 
-g = "G Co-requesite G"
+g = "G Co-requisite G"
 s.append(g)
 
-h = "H Co-requesite: H"
+h = "H Co-requisite: H"
 s.append(h)
 
-i = "I coRequesite I"
+i = "I coRequisite I"
 s.append(i)
 
-j = "J coRequesite: J"
+j = "J coRequisite: J"
 s.append(j)
 
-k = "K CoRequesite K"
+k = "K CoRequisite K"
 s.append(k)
 
-l = "L CoRequesite: L"
+l = "L CoRequisite: L"
 s.append(l)
 
-m = "M co-Requesite M"
+m = "M co-Requisite M"
 s.append(m)
 
-n = "N co-Requesite: N"
+n = "N co-Requisite: N"
 s.append(n)
 
-o = "O Co-Requesite O"
+o = "O Co-Requisite O"
 s.append(o)
 
-p = "P Co-Requesite: P"
+p = "P Co-Requisite: P"
 s.append(p)
 
 import re
 
 for string in s:
-	letters = re.split(r'[C/c]o-?[R/r]equesite:?', string)
+	letters = re.split(r'[C/c]o-?[R/r]equisite:?', string)
 	print(letters)
 
 

@@ -120,6 +120,10 @@ def populateDB(cursor, data):
 													'sid':str(section_id)
 													})
 
+
+		    
+
+
 		print("done")
 
 

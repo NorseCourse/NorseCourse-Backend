@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 # read in first csv we are given
 courses = pd.DataFrame.from_csv('course.csv', sep=None,index_col=None)
@@ -111,10 +112,52 @@ same_as = []
 max_credits = []
 also_fulfills = []
 comments = []
+pre_reqs = []
+co_reqs = []
 
 
 # iterate through all rows in the csv
 for idx,row in data.iterrows():
+
+    if pd.notnull(row['course_description']):
+
+        req = re.split(r'[P/p]re-?[R/r]equisites?:?',row['course_description'])
+        if len(req) == 1:
+            req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['course_description'])
+            if len(req) == 1:
+                if pd.notnull(row['section_comments']):
+                    req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['section_comments'])
+                    if len(req) == 1:
+                        req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['section_comments'])
+
+        if len(req)>1:
+            req = req[1].split('.')
+            pre_reqs.append(req[0])
+        else:
+            pre_reqs.append("")
+    else:
+        pre_reqs.append("")
+
+
+
+    if pd.notnull(row['section_comments']):
+
+        req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['section_comments'])
+        if len(req) == 1:
+            req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['section_comments'])
+            if len(req) == 1:
+                if pd.notnull(row['course_description']):
+                    req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['course_description'])
+                    if len(req) == 1:
+                        req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['course_description'])
+
+        if len(req)>1:
+            req = req[1].split('.')
+            co_reqs.append(req[0])
+        else:
+            co_reqs.append("")
+    else:
+        co_reqs.append("")
 
 
     if pd.notnull(row['section_comments']):
@@ -264,6 +307,9 @@ data['also_fulfills'] = also_fulfills
 
 del data['section_comments']
 data['section_comments'] = comments
+
+data['pre_reqs'] = pre_reqs
+data['co_reqs'] = co_reqs
 
 # writing all this data into one good csv
 data.to_csv("data.csv")

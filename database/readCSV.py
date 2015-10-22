@@ -46,7 +46,7 @@ meetings['start_date'] = meetings['Csm Start Date']
 del meetings['Csm Start Date']
 meetings['end_date'] = meetings['Csm End Date']
 del meetings['Csm End Date']
-meetings['building'] = meetings['Csm Bldg']
+meetings['building_abb'] = meetings['Csm Bldg']
 del meetings['Csm Bldg']
 meetings['room'] = meetings['Csm Room']
 del meetings['Csm Room']
@@ -90,6 +90,7 @@ department_dict = {'BIO':'Biology','CHEM':'Chemistry','CS':'Computer Science','H
 gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human Behavior Social Science Methods', 'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 'HIST': 'Historical', 'INTCL': 'Intercultural','NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab','QUANT': 'Quantitative','REL': 'Religion','SKL': 'Skills Course','WEL': 'Wellness Course'}
 also_geneds = {'HBSSM':'HB','HEPT':'HE','NWL':'NWNL'}
 
+buildings_dict = {'GJER':"What GJER stands for", 'CMPH':"What CMPH stands for", 'CART':"Center for the Arts", 'LARS':"Larson Hall",'ROCH':"Rochester",'REGE':"Regents Center", 'STOR':"Storre Theatre", 'LOYA':"Loyalty Hall", 'SAMP':"Sampson Hoffland Laboratories", 'KORE':"Koren", 'ARR':"To be Announced", 'VALD':"Valders Hall of Science", 'JENS':"Jenson-Noble Hall of Music", 'OCKH':"Ockham House", 'PREU':"Preus Library", 'OLIN':"Olin", 'MAIN':"Main Building"}
 
 chars = set([' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','^','&','*','(',')','_','-','+','=','[',']','{','}','\\','/',';',':',',','.','<','>'])
 
@@ -115,10 +116,31 @@ comments = []
 pre_reqs = []
 co_reqs = []
 lab = []
+faculty_first = []
+faculty_last = []
+building_names = []
 
 
 # iterate through all rows in the csv
 for idx,row in data.iterrows():
+
+    building_names.append(buildings_dict[row['building_abb']])
+
+
+    if len(row['faculty_name'].split(','))>1:
+        profs = row['faculty_name'].split(',')
+        lasts = []
+        firsts = []
+        for prof in profs:
+            firsts.append(prof.split('.')[0]+", ")
+            lasts.append(prof.split('.')[1]+", ")
+        faculty_first.append("".join(firsts)[:-2])
+        faculty_last.append("".join(lasts)[:-2])
+    else:
+        faculty_first.append(row['faculty_name'].split('.')[0])
+        faculty_last.append(row['faculty_name'].split('.')[1])
+
+
 
     if pd.notnull(row['course_description']):
 
@@ -133,7 +155,8 @@ for idx,row in data.iterrows():
 
         if len(req)>1:
             req = req[1].split('.')
-            pre_reqs.append(req[0])
+            req = req[0].replace('uisite:',"").replace(':',"")
+            pre_reqs.append(req)
         else:
             pre_reqs.append("")
     else:
@@ -154,7 +177,8 @@ for idx,row in data.iterrows():
 
         if len(req)>1:
             req = req[1].split('.')
-            co_reqs.append(req[0])
+            req = req[0].replace('uisite:',"").replace(':',"")
+            co_reqs.append(req)
         else:
             co_reqs.append("")
     else:
@@ -201,8 +225,8 @@ for idx,row in data.iterrows():
     # if there is no start/end time, add a blank string for that value
     # otherwise add the isolated start/end time
     if pd.isnull(row['start_time']):
-        start_times.append("")
-        end_times.append("")
+        start_times.append("NA")
+        end_times.append("NA")
     else:
         start_times.append((row['start_time'].split()[1])[:-3])
         end_times.append((row['end_time'].split()[1])[:-3])    
@@ -283,6 +307,11 @@ for idx,row in data.iterrows():
 
 # create new columns in csv with correct values
 # deleting any ones we are replacing
+
+data['building_names'] = building_names
+
+data['faculty_first'] = faculty_first
+data['faculty_last'] = faculty_last
 data['division'] = divison
 data['department_abbreviation'] = depts_abb
 data['department_name'] = depts_name
@@ -318,6 +347,7 @@ data['section_comments'] = comments
 data['pre_reqs'] = pre_reqs
 data['co_reqs'] = co_reqs
 data['lab'] = lab
+
 
 # writing all this data into one good csv
 data.to_csv("data.csv")

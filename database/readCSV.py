@@ -114,6 +114,7 @@ also_fulfills = []
 comments = []
 pre_reqs = []
 co_reqs = []
+lab = []
 
 
 # iterate through all rows in the csv
@@ -158,6 +159,12 @@ for idx,row in data.iterrows():
             co_reqs.append("")
     else:
         co_reqs.append("")
+
+
+    if row['section_name'].split('-')[1][-1] == "L":
+        lab.append(row['section_name'].replace("L",""))
+    else:
+        lab.append("")
 
 
     if pd.notnull(row['section_comments']):
@@ -310,6 +317,7 @@ data['section_comments'] = comments
 
 data['pre_reqs'] = pre_reqs
 data['co_reqs'] = co_reqs
+data['lab'] = lab
 
 # writing all this data into one good csv
 data.to_csv("data.csv")

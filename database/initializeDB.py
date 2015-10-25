@@ -1,7 +1,11 @@
+# Import needed packakes.
 import mysql.connector
+import re
+
 import config
 
 
+# Function to creater a databaes based on the name that is passed in.
 def createDB(cnx, cursor, db_name):
 	try:
 		cursor.execute("CREATE DATABASE {}".format(db_name))
@@ -12,6 +16,7 @@ def createDB(cnx, cursor, db_name):
 		exit(1)
 
 
+# Function to create the tables needed to run NorseCourse.
 def createTables(cnx, cursor, db_name):
 	try:
 		cursor.execute("USE {}".format(db_name))
@@ -35,22 +40,35 @@ def createTables(cnx, cursor, db_name):
 		exit(1)
 
 
+# Grab the appropriate conection configuration from the congig file.
+# Set autocommit to false so we can ensure that either all or none of the SQL statements execute.
+# In this case we do not need a connection pool, thus we simply create one connection and a cursor to pass into our functions.
 init_db_properties = config.init_db_config
 cnx = mysql.connector.connect(autocommit = False, **init_db_properties)
 cursor = cnx.cursor()
 
+# Ask the user what the database name should be on their system, this is case sensitive.
+# By default, we this file is written to give the database the name of NorseCourse if nothind is entered.
 db_name = str(raw_input("Enter a name for the new database (case sensitive), or return for default (NorseCourse): "))
+create_db = True
 
+# Setting the defaule if a database name is not provided.
+# Adding validation to generate a error if the name provided does not comply with the rules for how a database can be named.
 if db_name == "":
 	db_name = "NorseCourse"
 else:
-	print("Since you did not use the defalt database name, be sure to change the database proberty under db_pool_config in the config.py file in order for your installation to run correctly")
+	if re.match(r"[A-Za-z0-9$_]", db_name):
+		print("Since you did not use the defalt database name, be sure to change the database proberty under db_pool_config in the config.py file in order for your installation to run correctly")
+	else:
+		create_db = False
+		print("You have entered and invalid database name")
 
-config.db_pool_config["database"] = db_name
+# If requirements are met then create the datase and the tables.
+if create_db:
+	createDB(cnx, cursor, db_name)
+	createTables(cnx, cursor, db_name)
 
-createDB(cnx, cursor, db_name)
-createTables(cnx, cursor, db_name)
-
+#Close the cursor and connection.
 cursor.close()
 cnx.close()
 

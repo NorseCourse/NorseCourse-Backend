@@ -1,3 +1,13 @@
+
+##############################################################################
+# The purpose of this file is to take the two csv files given to us, and 
+# create one more useable csv from them.  It creates a csv that has all the 
+# information we want in one easier to use file so it will make populating
+# the database easier.
+
+# We can then run populateDB.py to use this created csv to populate our database
+##############################################################################
+
 import pandas as pd
 import re
 
@@ -557,4 +567,4 @@ if __name__ == '__main__':
 
 
 
-    
+

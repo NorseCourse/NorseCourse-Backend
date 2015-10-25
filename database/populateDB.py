@@ -49,8 +49,6 @@ def populateDB(cursor, data):
 
 
 
-
-
 			########################################################################
 			# Departments table
 			########################################################################
@@ -72,9 +70,6 @@ def populateDB(cursor, data):
 				insert_department = "INSERT INTO Departments (name,abbreviation,division_id) VALUES (%(name)s,%(abb)s,%(d_id)s)"
 				cursor.execute(insert_department, {"name": str(row['department_name']),"abb": str(row['department_abbreviation']),"d_id": str(div_id)})
 	
-
-
-
 
 
 			########################################################################
@@ -106,9 +101,6 @@ def populateDB(cursor, data):
 
 
 
-
-
-
 			########################################################################
 			# Sections table
 			########################################################################
@@ -133,7 +125,6 @@ def populateDB(cursor, data):
 											'seven_weeks':str(row['seven_week']),
 											'course_id':str(course_id)
 											})
-
 
 
 
@@ -164,7 +155,6 @@ def populateDB(cursor, data):
 														'abb':str(ge),
 														'also':str(also_geneds[ge])
 														})
-
 
 
 
@@ -199,7 +189,6 @@ def populateDB(cursor, data):
 					cursor.execute(insert_course,{'gid':str(gened_id),
 													'sid':str(section_id)
 													})
-
 
 
 
@@ -253,7 +242,6 @@ def populateDB(cursor, data):
 				cursor.execute(insert_req,{'first':str(row['faculty_first']),
 											'last':str(row["faculty_last"])
 											})
-
 
 
 			########################################################################

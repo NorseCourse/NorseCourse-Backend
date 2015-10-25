@@ -380,6 +380,7 @@ def main():
         start_dates.append(row['start_date'].split()[0])
         end_dates.append(row['end_date'].split()[0])
         
+        
 
         ########################################################################
         # isolate the start and end times of a section with no dates

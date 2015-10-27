@@ -43,3 +43,72 @@ class RequirementJSON(object):
 app = Flask(__name__)
 courseApp = Api(app)
 courseAPI = courseApp.namespace('api', 'Root namespace for NorseCourse APIs')
+
+@courseAPI.route("/courses")
+class Course(Resource):
+	def getRequirements(self, course_id):
+		requirementQuery = "SELECT type, details FROM Requirements WHERE course_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+		print(requirementQuery % str(course_id))
+
+		requirements = []
+
+		cursor.close()
+		cnx.close()
+
+
+
+
+	@courseApp.doc(
+		params = {
+			"departments": "Provide a comma separated list of department ids",
+			"keywords": "Provide a comma separated list of keywords",
+			"genEds": "Provide a comma separated list of gen ed ids",
+			"fields": "Provide a comma separated list of fields"
+		}
+	)
+	def get(self):
+		courseQuery = "SELECT course_id, description, same_as, number, department_id FROM Courses"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		###
+		# SOME MORE CODE
+		###
+
+		cursor.execute(courseQuery)
+
+		courses = []
+		for (course_id, description, same_as, number, department_id) in cursor:
+			if same_as == "nan":
+				course = CourseJSON(course_id, description, None, number, department_id)
+			else:
+				course = CourseJSON(course_id, description, same_as, number, department_id)
+			self.getRequirements(course_id)
+			courses.append(course.__dict__)
+
+		cursor.close()
+		cnx.close()
+
+		return courses
+
+
+if __name__ == "__main__":
+	app.debug = True
+	app.run()
+
+
+
+
+
+
+
+
+
+
+
+
+

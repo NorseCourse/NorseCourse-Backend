@@ -53,7 +53,7 @@ class GenEd(Resource):
 		genEds = []
 		for (gen_ed_id, name, abbreviation, also_fulfills) in cursor:
 			if also_fulfills == "":
-				genEd = GenEdJSON(gen_ed_id, str(name), str(abbreviation))
+				genEd = GenEdJSON(gen_ed_id, str(name), str(abbreviation), None)
 			else:
 				genEd = GenEdJSON(gen_ed_id, str(name), str(abbreviation), str(also_fulfills))
 			genEds.append(genEd.__dict__)

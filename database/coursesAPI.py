@@ -14,11 +14,11 @@ cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 # What a course object should contain
 class CourseJSON(object):
-	def __init__(self, course_id = None, description = None, same_as = None, number = None, department_id = None, relevance = None, requirements = None, recommendations = None):
+	def __init__(self, course_id = None, description = None, same_as = None, name = None, department_id = None, relevance = None, requirements = None, recommendations = None):
 		self.course_id = course_id
 		self.description = description
 		self.same_as = same_as
-		self.number = number
+		self.name = name
 		self.department_id = department_id
 		self.relevance = relevance	#Some number based on a keyword search
 		self.requirements = requirements	#This will be a requirements object
@@ -47,18 +47,25 @@ courseAPI = courseApp.namespace('api', 'Root namespace for NorseCourse APIs')
 @courseAPI.route("/courses")
 class Course(Resource):
 	def getRequirements(self, course_id):
-		requirementQuery = "SELECT type, details FROM Requirements WHERE course_id = %s"
+		requirementQuery = "SELECT req_type, details FROM Requirements WHERE course_id = %s"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
-		print(requirementQuery % str(course_id))
+
+		cursor.execute(requirementQuery % str(course_id))
 
 		requirements = []
+		for (req_type, details) in cursor:
+			requirement = RequirementJSON(req_type, course_id, details)
+			requirements.append(requirement.__dict__)
 
 		cursor.close()
 		cnx.close()
 
-
+		if requirements:
+			return requirements
+		else:
+			return None
 
 
 	@courseApp.doc(
@@ -70,7 +77,7 @@ class Course(Resource):
 		}
 	)
 	def get(self):
-		courseQuery = "SELECT course_id, description, same_as, number, department_id FROM Courses"
+		courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses GROUP BY (name);"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
@@ -82,12 +89,12 @@ class Course(Resource):
 		cursor.execute(courseQuery)
 
 		courses = []
-		for (course_id, description, same_as, number, department_id) in cursor:
+		for (course_id, description, same_as, name, department_id) in cursor:
+			requirements = self.getRequirements(course_id)
 			if same_as == "nan":
-				course = CourseJSON(course_id, description, None, number, department_id)
+				course = CourseJSON(course_id, description, None, name, department_id, None, requirements, None)
 			else:
-				course = CourseJSON(course_id, description, same_as, number, department_id)
-			self.getRequirements(course_id)
+				course = CourseJSON(course_id, description, same_as, name, department_id, None, requirements, None)
 			courses.append(course.__dict__)
 
 		cursor.close()

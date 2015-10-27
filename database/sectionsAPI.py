@@ -13,7 +13,7 @@ cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 # What a section object should contain
 class SectionJSON(object):
-	def __init__(self, term = None, name = None, short_title= None, min_credits=None, max_credits=None, comments=None, seven_weeks=None, section_id = None, course_id = None):
+	def __init__(self, term = None, name = None, short_title= None, min_credits=None, max_credits=None, comments=None, seven_weeks=None, section_id = None, course_id = None,faculty=None):
 		self.term = term
 		self.name = name
 		self.shortTitle = short_title
@@ -23,6 +23,15 @@ class SectionJSON(object):
 		self.sevenWeeks = seven_weeks
 		self.id = section_id
 		self.courseId = course_id
+		self.faculty = faculty
+
+
+# What a requirement object should contain
+class FacultyJSON(object):
+	def __init__(self, first_initial = None, last_name = None):
+		self.first_initial = first_initial
+		self.last_name = last_name
+
 
 app = Flask(__name__)
 sectionApp = Api(app)
@@ -31,6 +40,26 @@ sectionAPI = sectionApp.namespace('api', 'Root namespace for NorseCourse APIs')
 
 @sectionAPI.route("/sections")
 class Section(Resource):
+
+	def getFaculty(self, section_id):
+		requirementQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(requirementQuery % str(section_id))
+
+		profs = []
+		for (first_initial, last_name) in cursor:
+			faculty = FacultyJSON(first_initial, last_name)
+			profs.append(faculty.__dict__)
+
+		cursor.close()
+		cnx.close()
+
+		return profs
+
+
 	@sectionApp.doc(
 		params = {
 			"course": "Provide a comma separated list of course IDs"
@@ -58,7 +87,8 @@ class Section(Resource):
 
 		sections = []
 		for (term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id) in cursor:
-			sect = SectionJSON(str(term), str(name),str(short_title),str(min_credits),str(max_credits),str(comments),str(seven_weeks),section_id,course_id)
+			prof = self.getFaculty(section_id)
+			sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof)
 			sections.append(sect.__dict__)
 
 		cursor.close()
@@ -70,3 +100,17 @@ class Section(Resource):
 if __name__ == "__main__":
 	app.debug = True
 	app.run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+

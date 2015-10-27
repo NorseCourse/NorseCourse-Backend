@@ -91,11 +91,12 @@ def populateDB(cursor, data):
 
 
 				# SQL insert statement of Courses
-				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(dept_id)s)"
+				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(dept_id)s)"
 				cursor.execute(insert_course,{'cid':str(row['course_id']),
 												'desc':str(row['course_description']),
 												'same_as':str(row['same_as']),
 												'number':str(row['section_name']),
+												'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
 												'dept_id':str(dept_id)
 												})	
 

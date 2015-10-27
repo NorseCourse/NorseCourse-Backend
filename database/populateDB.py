@@ -91,11 +91,12 @@ def populateDB(cursor, data):
 
 
 				# SQL insert statement of Courses
-				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(dept_id)s)"
+				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(dept_id)s)"
 				cursor.execute(insert_course,{'cid':str(row['course_id']),
 												'desc':str(row['course_description']),
 												'same_as':str(row['same_as']),
 												'number':str(row['section_name']),
+												'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
 												'dept_id':str(dept_id)
 												})	
 
@@ -204,7 +205,7 @@ def populateDB(cursor, data):
 				# check if there is a co req
 				if type(row['co_reqs']) == str:
 					# SQL statement to insert into Requirments the co req
-					insert_req = "INSERT INTO Requirements (details,type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
+					insert_req = "INSERT INTO Requirements (details,req_type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
 					cursor.execute(insert_req,{'detail':str(row['co_reqs']),
 												'type':"CO",
 												'course':str(row['course_id'])
@@ -213,7 +214,7 @@ def populateDB(cursor, data):
 				# check if there is a pre req
 				if type(row['pre_reqs']) == str:
 					# SQL statement to insert into Requirments the pre req
-					insert_req = "INSERT INTO Requirements (details,type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
+					insert_req = "INSERT INTO Requirements (details,req_type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
 					cursor.execute(insert_req,{'detail':str(row['pre_reqs']),
 												'type':"PRE",
 												'course':str(row['course_id'])
@@ -222,7 +223,7 @@ def populateDB(cursor, data):
 				# check if there is a lab
 				if type(row['lab']) == str:
 					# SQL statement to insert into Requirments the lab
-					insert_req = "INSERT INTO Requirements (details,type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
+					insert_req = "INSERT INTO Requirements (details,req_type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
 					cursor.execute(insert_req,{'detail':str(row['lab']),
 												'type':"LAB",
 												'course':str(row['course_id'])

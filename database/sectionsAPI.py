@@ -13,7 +13,7 @@ cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 # What a section object should contain
 class SectionJSON(object):
-	def __init__(self, term = None, name = None, short_title= None, min_credits=None, max_credits=None, comments=None, seven_weeks=None, section_id = None, course_id = None,faculty=None,section_meetings=None):
+	def __init__(self, term = None, name = None, short_title= None, min_credits=None, max_credits=None, comments=None, seven_weeks=None, section_id = None, course_id = None,faculty=None,section_meetings=None,gen_ed_fulfillments=None):
 		self.term = term
 		self.name = name
 		self.shortTitle = short_title
@@ -25,6 +25,7 @@ class SectionJSON(object):
 		self.courseId = course_id
 		self.faculty = faculty
 		self.sectionMeetings = section_meetings
+		self.genEdFulfillments = gen_ed_fulfillments
 
 
 # What a faculty object should contain
@@ -49,6 +50,15 @@ class RoomJSON(object):
 		self.number = number
 		self.buildingName = building_name
 		self.buildingAbbrevation = building_abb
+
+# What a gened fulfillment object should contain
+class GenEdFulfillmentsJSON(object):
+	def __init__(self, id = None, condition = None, name = None, abbreviation = None, also_fulfills=None):
+		self.id = id
+		self.condition = condition
+		self.name = name
+		self.abbreviation = abbreviation
+		self.alsoFulfills = also_fulfills
 
 
 app = Flask(__name__)
@@ -120,6 +130,27 @@ class Section(Resource):
 
 		return room
 
+	def getGenEdFulfillment(self,section_id):
+
+		genedQuery = "SELECT GenEds.gen_ed_id, comments, name, abbreviation, also_fulfills FROM GenEdFulfillments, GenEds WHERE GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND section_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(genedQuery % str(section_id))
+
+
+		ge = []
+		for (gen_ed_id, comments, name, abbreviation, also_fulfills) in cursor:
+			gef = GenEdFulfillmentsJSON(gen_ed_id, comments, name, abbreviation,also_fulfills)
+			ge.append(gef.__dict__)
+
+		cursor.close()
+		cnx.close()
+
+		return ge
+
+
 
 	@sectionApp.doc(
 		params = {
@@ -153,11 +184,12 @@ class Section(Resource):
 			printcount+=1
 			prof = self.getFaculty(section_id)
 			sect_meeting = self.getSectionMeeting(section_id)
+			gef = self.getGenEdFulfillment(section_id)
 
 			if comments == "nan":
-				sect = SectionJSON(term, name,short_title,min_credits,max_credits,None,seven_weeks,section_id,course_id,prof,sect_meeting)
+				sect = SectionJSON(term, name,short_title,min_credits,max_credits,None,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
 			else:
-				sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting)
+				sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
 
 			sections.append(sect.__dict__)
 

@@ -13,7 +13,7 @@ cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 # What a section object should contain
 class SectionJSON(object):
-	def __init__(self, term = None, name = None, short_title= None, min_credits=None, max_credits=None, comments=None, seven_weeks=None, section_id = None, course_id = None,faculty=None):
+	def __init__(self, term = None, name = None, short_title= None, min_credits=None, max_credits=None, comments=None, seven_weeks=None, section_id = None, course_id = None,faculty=None,section_meetings=None):
 		self.term = term
 		self.name = name
 		self.shortTitle = short_title
@@ -24,13 +24,31 @@ class SectionJSON(object):
 		self.id = section_id
 		self.courseId = course_id
 		self.faculty = faculty
+		self.sectionMeetings = section_meetings
 
 
-# What a requirement object should contain
+# What a faculty object should contain
 class FacultyJSON(object):
 	def __init__(self, first_initial = None, last_name = None):
 		self.first_initial = first_initial
 		self.last_name = last_name
+
+# What a sectionMeeting object should contain
+class SectionMeetingJSON(object):
+	def __init__(self, room_id = None, start_time = None, end_time = None,days=None,room=None):
+		self.roomId = room_id
+		self.startTime = start_time
+		self.endTime = end_time
+		self.days = days
+		self.room = room
+
+# What a room object should contain
+class RoomJSON(object):
+	def __init__(self, id = None, number = None, building_name = None, building_abb = None):
+		self.id = id
+		self.number = number
+		self.buildingName = building_name
+		self.buildingAbbrevation = building_abb
 
 
 app = Flask(__name__)
@@ -42,22 +60,65 @@ sectionAPI = sectionApp.namespace('api', 'Root namespace for NorseCourse APIs')
 class Section(Resource):
 
 	def getFaculty(self, section_id):
-		requirementQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
+		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
 
-		cursor.execute(requirementQuery % str(section_id))
+		cursor.execute(facultyQuery % str(section_id))
 
 		profs = []
 		for (first_initial, last_name) in cursor:
-			faculty = FacultyJSON(first_initial, last_name)
-			profs.append(faculty.__dict__)
+			fi = first_initial.split(',')
+			ln = last_name.split(',')
+			for p in range(len(ln)):
+				faculty = FacultyJSON(fi[p], ln[p])
+				profs.append(faculty.__dict__)
 
 		cursor.close()
 		cnx.close()
 
 		return profs
+
+
+	def getSectionMeeting(self,section_id):
+
+		sectionMeetingQuery = "SELECT room_id, start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(sectionMeetingQuery % str(section_id))
+
+		meetings = []
+		for (room_id, start_time, end_time, days) in cursor:
+			room = self.getRoom(room_id)
+
+			meet = SectionMeetingJSON(room_id, start_time, end_time, days,room)
+			meetings.append(meet.__dict__)
+
+		cursor.close()
+		cnx.close()
+
+		return meetings
+
+	def getRoom(self,room_id):
+		roomQuery = "SELECT number, name, abbreviation FROM Rooms, Buildings WHERE Buildings.building_id = Rooms.building_id AND room_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(roomQuery % str(room_id))
+
+		room = []
+		for (number, name, abbreviation) in cursor:
+			r = RoomJSON(room_id, number, name, abbreviation)
+			room.append(r.__dict__)
+
+		cursor.close()
+		cnx.close()
+
+		return room
 
 
 	@sectionApp.doc(
@@ -86,9 +147,18 @@ class Section(Resource):
 			cursor.execute(sectionQuery)
 
 		sections = []
+		printcount = 0
 		for (term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id) in cursor:
+			print(printcount)
+			printcount+=1
 			prof = self.getFaculty(section_id)
-			sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof)
+			sect_meeting = self.getSectionMeeting(section_id)
+
+			if comments == "nan":
+				sect = SectionJSON(term, name,short_title,min_credits,max_credits,None,seven_weeks,section_id,course_id,prof,sect_meeting)
+			else:
+				sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting)
+
 			sections.append(sect.__dict__)
 
 		cursor.close()

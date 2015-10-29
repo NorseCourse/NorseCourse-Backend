@@ -53,9 +53,9 @@ class RoomJSON(object):
 
 # What a gened fulfillment object should contain
 class GenEdFulfillmentsJSON(object):
-	def __init__(self, id = None, condition = None, name = None, abbreviation = None, also_fulfills=None):
+	def __init__(self, id = None, comments = None, name = None, abbreviation = None, also_fulfills=None):
 		self.id = id
-		self.condition = condition
+		self.comments = comments
 		self.name = name
 		self.abbreviation = abbreviation
 		self.alsoFulfills = also_fulfills
@@ -69,6 +69,7 @@ sectionAPI = sectionApp.namespace('api', 'Root namespace for NorseCourse APIs')
 @sectionAPI.route("/sections")
 class Section(Resource):
 
+	# Returns JSON dictionary of faculty for a given section
 	def getFaculty(self, section_id):
 		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
 
@@ -91,6 +92,7 @@ class Section(Resource):
 		return profs
 
 
+	# Returns JSON dictionary of section Meeting info for a given section
 	def getSectionMeeting(self,section_id):
 
 		sectionMeetingQuery = "SELECT room_id, start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
@@ -104,6 +106,11 @@ class Section(Resource):
 		for (room_id, start_time, end_time, days) in cursor:
 			room = self.getRoom(room_id)
 
+			if start_time == "":
+				start_time = None
+			if end_time == "":
+				end_time = None
+
 			meet = SectionMeetingJSON(room_id, start_time, end_time, days,room)
 			meetings.append(meet.__dict__)
 
@@ -112,6 +119,8 @@ class Section(Resource):
 
 		return meetings
 
+
+	# Returns JSON dictionary of room info for a given room
 	def getRoom(self,room_id):
 		roomQuery = "SELECT number, name, abbreviation FROM Rooms, Buildings WHERE Buildings.building_id = Rooms.building_id AND room_id = %s"
 
@@ -130,6 +139,8 @@ class Section(Resource):
 
 		return room
 
+
+	# Returns JSON dictionary of gen ed fulfillments for a given section
 	def getGenEdFulfillment(self,section_id):
 
 		genedQuery = "SELECT GenEds.gen_ed_id, comments, name, abbreviation, also_fulfills FROM GenEdFulfillments, GenEds WHERE GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND section_id = %s"
@@ -142,6 +153,10 @@ class Section(Resource):
 
 		ge = []
 		for (gen_ed_id, comments, name, abbreviation, also_fulfills) in cursor:
+
+			if also_fulfills == "":
+				also_fulfills = None
+
 			gef = GenEdFulfillmentsJSON(gen_ed_id, comments, name, abbreviation,also_fulfills)
 			ge.append(gef.__dict__)
 
@@ -157,6 +172,7 @@ class Section(Resource):
 			"course": "Provide a comma separated list of course IDs"
 		}
 	)
+
 	def get(self):
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		
@@ -187,9 +203,20 @@ class Section(Resource):
 			gef = self.getGenEdFulfillment(section_id)
 
 			if comments == "nan":
-				sect = SectionJSON(term, name,short_title,min_credits,max_credits,None,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
-			else:
-				sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
+				comments = None
+			if name == "nan":
+				name = None
+			if short_title == "nan":
+				short_title = None
+			if min_credits == "nan":
+				min_credits = None
+			if max_credits == "nan":
+				max_credits = None
+			
+			if gef == []:
+				gef = None
+				
+			sect = SectionJSON(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
 
 			sections.append(sect.__dict__)
 

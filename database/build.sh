@@ -21,11 +21,11 @@ gulp build
 
 cd ~/NorseCourse/NorseCourse-UI/dist/
 
-cp -r js /usr/share/javascript/
-cp -r css /var/www/html/
-cp -r views /var/www/html/
-sed -i 's/<script src="\/js\/main.js"><\/script>/<script src="javascript\/js\/main.js"><\/script>/' index.html
-cp index.html /var/www/html/
+cp -r js /usr/share/javascript/norsecoursejs/
+cp -r css /var/www/norsecourse.com/public_html/
+cp -r views /var/www/norsecourse.com/public_html/
+sed -i 's/<script src="\/js\/main.js"><\/script>/<script src="javascript\/norsecoursejs\/main.js"><\/script>/' index.html
+cp index.html /var/www/norsecourse.com/public_html/
 
 ENDTIME=$(date +"%Y-%m-%d %H:%M:%S")
 ENDTIMESEC=$(date -d"$ENDTIME" +%s)
@@ -39,4 +39,4 @@ echo "-------------------------------------------------"
 echo
 echo "Happy Hosting!"
 
-sendmail schabl01@luther.edu < ~/NorseCourse/Build/email.txt
+sendmail "schabl01@luther.edu,norsecourse16@gmail.com" < ~/NorseCourse/Build/email.txt

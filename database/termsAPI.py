@@ -17,7 +17,7 @@ termApp = Api(app)
 termAPI = termApp.namespace('api', 'Root namespace for NorseCourse APIs')
 
 @termAPI.route("/terms")
-class Division(Resource):
+class Terms(Resource):
 	@termApp.doc()
 	def get(self):
 		termQuery = "SELECT DISTINCT term FROM Sections"

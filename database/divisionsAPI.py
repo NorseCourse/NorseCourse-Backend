@@ -22,7 +22,7 @@ divisionApp = Api(app)
 divisionAPI = divisionApp.namespace('api', 'Root namespace for NorseCourse APIs')
 
 @divisionAPI.route("/divisions")
-class Division(Resource):
+class Divisions(Resource):
 	@divisionApp.doc()
 	def get(self):
 		divisionQuery = "SELECT name, division_id FROM Divisions"

@@ -45,7 +45,7 @@ courseApp = Api(app)
 courseAPI = courseApp.namespace('api', 'Root namespace for NorseCourse APIs')
 
 @courseAPI.route("/courses")
-class Course(Resource):
+class Courses(Resource):
 	def getRequirements(self, course_id):
 		requirementQuery = "SELECT req_type, details FROM Requirements WHERE course_id = %s"
 

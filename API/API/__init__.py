@@ -13,4 +13,4 @@ app = Flask(__name__)
 NorseCourse = Api(app)
 API = NorseCourse.namespace("api", "Root namespace for NorseCourse APIs")
 
-from NorseCourse import courses, departments, divisions, genEds, schedules, sections, terms
+from API import courses, departments, divisions, genEds, schedules, sections, terms

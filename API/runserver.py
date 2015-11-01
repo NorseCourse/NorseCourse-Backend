@@ -1,3 +1,3 @@
-from NorseCourse import app
+from API import app
 app.debug = True
 app.run()

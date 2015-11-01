@@ -1,4 +1,4 @@
-from NorseCourse import API, cnx_pool
+from API import API, cnx_pool
 from flask.ext.restplus import Resource
 
 @API.route("/terms")

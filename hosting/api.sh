@@ -1,3 +1,4 @@
+#!/bin/bash 
 export PATH="/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/"
 
 echo "Subject: NorseCourse API production build complete"
@@ -34,8 +35,8 @@ echo
 # Copy the init file over and add the last two lines needed to run in production
 cp /root/NorseCourse/NorseCourse-Backend/API/API/__init__.py /var/www/norsecourse.com.api/API
 echo "\n" >> /var/www/norsecourse.com.api/API/__init__.py
-echo "__name__ == \"__main__\":" >> /var/www/norsecourse.com.api/API/__init__.py
-echo "    app.run()" >> /var/www/norsecourse.com.api/API/__init__.py
+echo "if __name__ == \"__main__\":" >> /var/www/norsecourse.com.api/API/__init__.py
+echo "\tapp.run()" >> /var/www/norsecourse.com.api/API/__init__.py
 
 # Copy over all of the api files
 cd /root/NorseCourse/NorseCourse-Backend/API/API

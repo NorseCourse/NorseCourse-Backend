@@ -1,3 +1,4 @@
+#!/bin/bash 
 export PATH="/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/"
 
 echo "Subject: NorseCousre production build complete" 

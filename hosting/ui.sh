@@ -39,4 +39,4 @@ echo "-------------------------------------------------"
 echo
 echo "Happy Hosting!"
 
-sendmail "schabl01@luther.edu,norsecourse16@gmail.com" < ~/NorseCourse/Build/email.txt
+sendmail "schabl01@luther.edu,norsecourse16@gmail.com" < ~/NorseCourse/Build/emailUI.txt

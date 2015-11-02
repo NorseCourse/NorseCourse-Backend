@@ -157,9 +157,6 @@ def createSchedule(required,preferred,geneds,division,num_courses):
 
 
 
-
-
-
 def main():
 	print "*******************************"
 	print(checkScheduleConflict([409,211]))
@@ -168,7 +165,6 @@ def main():
 	print "*******************************"
 	print(checkScheduleConflict([200,300,400,500]))
 	print "*******************************"
-
 
 
 if __name__ == '__main__':

@@ -93,66 +93,66 @@ def checkScheduleConflict(section_ids):
 
 
 def createSchedule(required,preferred,geneds,num_courses,division = None):
+	pass
+	# if checkScheduleConflict(required) or len(required) > num_courses:
+	# 	print "Required courses conflict, or too many required courses, can not make a schedule"
+	# 	return None
 
-	if checkScheduleConflict(required) or len(required) > num_courses:
-		print "Required courses conflict, or too many required courses, can not make a schedule"
-		return None
+	# best = required+preferred
 
-	best = required+preferred
+	# if (len(best) == num_courses) and (not checkScheduleConflict(best)):
+	# 	return best
 
-	if (len(best) == num_courses) and (not checkScheduleConflict(best)):
-		return best
+	# if (len(best) < num_courses) and (not checkScheduleConflict(best)):
+	# 	num_needed = num_courses - len(best)
+	# 	# best works, but more courses wanted, add something from gen eds or divisions
+	# 	if len(geneds) > 0:
+	# 		# look for geneds that fit into schedule
+	# 		for gened in range(num_needed):
+	# 			# add a gen ed that fits
 
-	if (len(best) < num_courses) and (not checkScheduleConflict(best)):
-		num_needed = num_courses - len(best)
-		# best works, but more courses wanted, add something from gen eds or divisions
-		if len(geneds) > 0:
-			# look for geneds that fit into schedule
-			for gened in range(num_needed):
-				# add a gen ed that fits
+	# 		return best+genedsFound
 
-			return best+genedsFound
+	# 	# look for recommendations for division to fill schedule
+	# 	for classes in range(num_needed):
+	# 		# find a class that is recommended
 
-		# look for recommendations for division to fill schedule
-		for classes in range(num_needed):
-			# find a class that is recommended
+	# 	return best+recommened 
 
-		return best+recommened 
-
-	if (not checkScheduleConflict(best)):
-		# too many total courses, need to remove some preferred courses
-		num_removed = len(best) - num_courses
-		return best+preferred[:-(num_removed)]
-
-
-
-	# best conflicts time, find non conflicting time
-
-	# remove random preferred and check for something that works
-	# once found a schedule with most courses that work call it best
-	# worst case is down to required, because that should not conflict
+	# if (not checkScheduleConflict(best)):
+	# 	# too many total courses, need to remove some preferred courses
+	# 	num_removed = len(best) - num_courses
+	# 	return best+preferred[:-(num_removed)]
 
 
-	num_needed = num_courses - len(best)
 
-	if num_needed > 0:
+	# # best conflicts time, find non conflicting time
 
-		# more courses wanted, add something from gen eds or divisions
-		if len(geneds) > 0:
-			# look for geneds that fit into schedule
-			for gened in range(num_needed):
-				# add a gen ed that fits
+	# # remove random preferred and check for something that works
+	# # once found a schedule with most courses that work call it best
+	# # worst case is down to required, because that should not conflict
 
-			return best+genedsFound
 
-		# look for recommendations for division to fill schedule
-		for classes in range(num_needed):
-			# find a class that is recommended
+	# num_needed = num_courses - len(best)
 
-		return best+recommened 
+	# if num_needed > 0:
 
-	elif num_needed == 0 and (not checkScheduleConflict(best)):
-		return best
+	# 	# more courses wanted, add something from gen eds or divisions
+	# 	if len(geneds) > 0:
+	# 		# look for geneds that fit into schedule
+	# 		for gened in range(num_needed):
+	# 			# add a gen ed that fits
+
+	# 		return best+genedsFound
+
+	# 	# look for recommendations for division to fill schedule
+	# 	for classes in range(num_needed):
+	# 		# find a class that is recommended
+
+	# 	return best+recommened 
+
+	# elif num_needed == 0 and (not checkScheduleConflict(best)):
+	# 	return best
 
 
 
@@ -164,6 +164,8 @@ def main():
 	print(checkScheduleConflict([400,500,700]))
 	print "*******************************"
 	print(checkScheduleConflict([200,300,400,500]))
+	print "*******************************"
+	print(checkScheduleConflict([211,213,223,227]))
 	print "*******************************"
 
 

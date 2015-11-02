@@ -26,7 +26,6 @@ def betweenTimes(original,check):
 	original_end = original[1]
 
 	if original_start.tm_wday == check.tm_wday:
-		print 'here'
 		if original_start <= check <= original_end:
 			return True
 	return False

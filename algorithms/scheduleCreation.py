@@ -92,9 +92,71 @@ def checkScheduleConflict(section_ids):
 
 
 
-def createSchedule(required,preferred,division):
+def createSchedule(required,preferred,geneds,division,num_courses):
 
-	pass
+	if checkScheduleConflict(required) or len(required) > num_courses:
+		print "Required courses conflict, or too many required courses, can not make a schedule"
+		return None
+
+	best = required+preferred
+
+	if (len(best) == num_courses) and (not checkScheduleConflict(best)):
+		return best
+
+	if (len(best) < num_courses) and (not checkScheduleConflict(best)):
+		num_needed = num_courses - len(best)
+		# best works, but more courses wanted, add something from gen eds or divisions
+		if len(geneds) > 0:
+			# look for geneds that fit into schedule
+			for gened in range(num_needed):
+				# add a gen ed that fits
+
+			return best+genedsFound
+
+		# look for recommendations for division to fill schedule
+		for classes in range(num_needed):
+			# find a class that is recommended
+
+		return best+recommened 
+
+	if (not checkScheduleConflict(best)):
+		# too many total courses, need to remove some preferred courses
+		num_removed = len(best) - num_courses
+		return best+preferred[:-(num_removed)]
+
+
+
+	# best conflicts time, find non conflicting time
+
+	# remove random preferred and check for something that works
+	# once found a schedule with most courses that work call it best
+	# worst case is down to required, because that should not conflict
+
+
+	num_needed = num_courses - len(best)
+
+	if num_needed > 0:
+
+		# more courses wanted, add something from gen eds or divisions
+		if len(geneds) > 0:
+			# look for geneds that fit into schedule
+			for gened in range(num_needed):
+				# add a gen ed that fits
+
+			return best+genedsFound
+
+		# look for recommendations for division to fill schedule
+		for classes in range(num_needed):
+			# find a class that is recommended
+
+		return best+recommened 
+
+	elif num_needed == 0 and (not checkScheduleConflict(best)):
+		return best
+
+
+
+
 
 
 

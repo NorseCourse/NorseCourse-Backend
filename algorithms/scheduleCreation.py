@@ -92,7 +92,7 @@ def checkScheduleConflict(section_ids):
 
 
 
-def createSchedule(required,preferred,geneds,division,num_courses):
+def createSchedule(required,preferred,geneds,num_courses,division = None):
 
 	if checkScheduleConflict(required) or len(required) > num_courses:
 		print "Required courses conflict, or too many required courses, can not make a schedule"

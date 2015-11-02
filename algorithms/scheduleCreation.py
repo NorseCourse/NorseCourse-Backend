@@ -20,7 +20,6 @@ db_properties = config.db_pool_config
 cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 
-
 def betweenTimes(original,check):
 	original_start = original[0]
 	original_end = original[1]
@@ -80,17 +79,13 @@ def checkScheduleConflict(section_ids):
 
 		sections.append((times,len(days)))
 
-
-	for section1 in range(len(sections)-1):
-		for section2 in range(section1,len(sections)-1):
+	for section1 in range(len(sections)):
+		for section2 in range(section1,len(sections)):
 			if section1 != section2:
-
 				for time1 in range(sections[section1][-1]):
 					for time2 in range(sections[section2][-1]):
-
 						if checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
 							return True
-
 
 	return False
 
@@ -104,9 +99,13 @@ def createSchedule(required,preferred,division):
 
 
 def main():
+	print "*******************************"
+	print(checkScheduleConflict([409,211]))
+	print "*******************************"
 	print(checkScheduleConflict([400,500,700]))
-
-
+	print "*******************************"
+	print(checkScheduleConflict([200,300,400,500]))
+	print "*******************************"
 
 
 

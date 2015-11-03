@@ -10,6 +10,7 @@ import mysql.connector.pooling
 import config
 import string
 import time
+import itertools
 
 from flask import Flask, request
 from flask.ext.restplus import Api, Resource
@@ -65,6 +66,9 @@ def checkScheduleConflict(section_ids):
 			end_time = end_time
 			days = days
 
+		cursor.close()
+		cnx.close()
+
 		if start_time == "nan" or end_time == "nan" or days == "nan":
 			return False
 
@@ -77,8 +81,6 @@ def checkScheduleConflict(section_ids):
 			et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
 			times.append((st,et))
 
-		cursor.close()
-		cnx.close()
 
 		sections.append((times,len(days)))
 
@@ -93,7 +95,31 @@ def checkScheduleConflict(section_ids):
 	return False
 
 
+def checkSameCourse(schedule):
+	course_ids = []
+	for section_id in schedule:
 
+		sectionQuery = "SELECT course_id FROM Sections WHERE section_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(sectionQuery % str(section_id))
+
+		for (course_id) in cursor:
+			if course_id not in course_ids:
+				course_ids.append(course_id)
+
+		cursor.close()
+		cnx.close()
+
+	if len(course_ids) != len(schedule):
+		return True
+	return False
+
+
+def checkLab(schedule):
+	pass
 
 def createSchedule(required,preferred,geneds,num_courses,division = None):
 
@@ -574,69 +600,292 @@ def createAllSchedules(required,preferred,geneds,num_courses,division = None):
 
 
 
+def verify(schedule):
+	if checkScheduleConflict(schedule):
+		return False
+
+	if checkSameCourse(schedule):
+		return False
+
+	return True
+
+	# check if a lab is needed, if so add it
+
+
+
+
+
+def allCombos(required,preferred,geneds,num_courses,division = None):
+
+	master = []
+
+
+	if checkScheduleConflict(required) or len(required) > num_courses:
+		print "Required courses conflict, or too many required courses, can not make a schedule"
+		return None
+
+
+	best = required+preferred
+
+	if not checkScheduleConflict(best):
+
+		if (len(best) == num_courses):
+			return best
+
+		if (len(best) < num_courses):
+			num_needed = num_courses - len(best)
+			
+			if len(geneds) > 0:
+
+				possible_gened_classes = {}
+				for gened in range(len(geneds)):
+
+					classQuery = "SELECT section_id from GenEdFulfillments, GenEds where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s"
+
+					cnx = cnx_pool.get_connection()
+					cursor = cnx.cursor()
+
+					cursor.execute(classQuery % str("'"+geneds[gened]+"'"))
+
+					classes = []
+					for (section_id) in cursor:
+						classes.append(section_id[0])
+
+					possible_gened_classes[geneds[gened]] = classes
+
+					cursor.close()
+					cnx.close()
+
+
+				combo = [best]
+				for x in possible_gened_classes:
+					if num_needed > 0:
+						combo.append(possible_gened_classes[x])
+						num_needed -= 1
+
+				all_combos = list(itertools.product(*combo))
+
+			else:
+				all_combos = [best]
+
+
+			if num_needed > 0:
+
+				if division != None:
+					# look for recommendations for division to fill schedule
+					classes = []
+					for i in range(num_needed):
+
+						classQuery = "SELECT Sections.section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
+						
+						cnx = cnx_pool.get_connection()
+						cursor = cnx.cursor()
+
+						cursor.execute(classQuery % str(division))
+
+						classes = []
+						for (section_id) in cursor:
+							classes.append(section_id[0])
+
+						cursor.close()
+						cnx.close()
+
+
+					if len(all_combos) > 1:
+						temp = []
+						for x in classes:
+							if num_needed > 0:
+								temp.append(x)
+								num_needed -= 1
+
+						new_all = []
+						for x in all_combos:
+
+							new_all.append(list(x) + temp)
+
+						all_combos = new_all
+
+
+		if (len(best) > num_courses):
+			# too many total courses, need to remove some preferred courses
+			num_removed = len(best) - num_courses
+			best = (best+preferred[:-(num_removed)])
+
+
+	# is a time conflict
+	else:
+		while checkScheduleConflict(best):
+			best = best[:-1]
+
+
+		###########################
+		# same as above in if
+		##########################
+		if (len(best) == num_courses):
+			return best
+
+		if (len(best) < num_courses):
+			num_needed = num_courses - len(best)
+			
+			if len(geneds) > 0:
+
+				possible_gened_classes = {}
+				for gened in range(len(geneds)):
+
+					classQuery = "SELECT section_id from GenEdFulfillments, GenEds where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s"
+
+					cnx = cnx_pool.get_connection()
+					cursor = cnx.cursor()
+
+					cursor.execute(classQuery % str("'"+geneds[gened]+"'"))
+
+					classes = []
+					for (section_id) in cursor:
+						classes.append(section_id[0])
+
+					possible_gened_classes[geneds[gened]] = classes
+
+					cursor.close()
+					cnx.close()
+
+
+				combo = [best]
+				for x in possible_gened_classes:
+					if num_needed > 0:
+						combo.append(possible_gened_classes[x])
+						num_needed -= 1
+
+				all_combos = list(itertools.product(*combo))
+
+			else:
+				all_combos = [best]
+
+
+			if num_needed > 0:
+
+				if division != None:
+					# look for recommendations for division to fill schedule
+					classes = []
+					for i in range(num_needed):
+
+						classQuery = "SELECT Sections.section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
+						
+						cnx = cnx_pool.get_connection()
+						cursor = cnx.cursor()
+
+						cursor.execute(classQuery % str(division))
+
+						classes = []
+						for (section_id) in cursor:
+							classes.append(section_id[0])
+
+						cursor.close()
+						cnx.close()
+
+
+					if len(all_combos) > 1:
+						temp = []
+						for x in classes:
+							if num_needed > 0:
+								temp.append(x)
+								num_needed -= 1
+
+						new_all = []
+						for x in all_combos:
+
+							new_all.append(list(x) + temp)
+
+						all_combos = new_all
+
+
+		if (len(best) > num_courses):
+			# too many total courses, need to remove some preferred courses
+			num_removed = len(best) - num_courses
+			best = (best+preferred[:-(num_removed)])
+
+
+
+	final = []
+	for schedule in all_combos:
+		if verify(schedule):
+			final.append(schedule)
+
+	return final
+
+
+
 def main():
-	print "*******************************"
-	print(checkScheduleConflict([409,211]))
-	print "*******************************"
-	print(checkScheduleConflict([400,500,700]))
-	print "*******************************"
-	print(checkScheduleConflict([200,300,400,500]))
-	print "*******************************"
-	print(checkScheduleConflict([211,213,223,227]))
-	print "*******************************"
-	print "*******************************"
-	print "*******************************"
-	print
-	print
-	print createSchedule([211,227],[],['HEPT',"NWL"],4,4)
-	print
-	print
-
-
-	
-	print "*******************************"
-
-	print
-	print
-	print
-	m = createAllSchedules([211,227,213],[],['REL'],4,4)
-	print
-	print
-
-	for x in m:
-		print x
-	print
-	print
-
-	print "*******************************"
-
-	print
-	print
-	print
-	m = createAllSchedules([211],[227],['REL',"HEPT"],4,4)
-	print
-	print
-
-	for x in m:
-		print x
-	print
-	print
+	# print "*******************************"
+	# print(checkScheduleConflict([409,211]))
+	# print "*******************************"
+	# print(checkScheduleConflict([400,500,700]))
+	# print "*******************************"
+	# print(checkScheduleConflict([200,300,400,500]))
+	# print "*******************************"
+	# print(checkScheduleConflict([211,213,223,227]))
+	# print "*******************************"
+	# print "*******************************"
+	# print "*******************************"
+	# print
+	# print
+	# print createSchedule([211,227],[],['HEPT',"NWL"],4,4)
+	# print
+	# print
 
 
 
-	print "*******************************"
+	# print "*******************************"
+
+	# print
+	# print
+	# print
+	# m = createAllSchedules([211,227,213],[],['REL'],4,4)
+	# print
+	# print
+
+	# for x in m:
+	# 	print x
+	# print
+	# print
+
+	# print "*******************************"
+
+	# print
+	# print
+	# print
+	# m = createAllSchedules([211],[227],['REL',"HEPT"],4,4)
+	# print
+	# print
+
+	# for x in m:
+	# 	print x
+	# print
+	# print
+
+
+
+	# print "*******************************"
+
+	# print
+	# print
+	# print
+	# m = createAllSchedules([],[],['QUANT',"HB","REL","NWL"],4,4)
+	# print
+	# print
+
+	# for x in m:
+	# 	print x
+	# print
+	# print
 
 	print
 	print
-	print
-	m = createAllSchedules([],[],['QUANT',"HB","REL","NWL"],4,4)
+	x = allCombos([211],[],['HE',"NWL"],3,4)
+	for i in x:
+		print i
 	print
 	print
 
-	for x in m:
-		print x
-	print
-	print
 
 
 

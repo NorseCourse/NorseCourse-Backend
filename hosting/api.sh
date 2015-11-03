@@ -34,13 +34,17 @@ echo
 
 # Copy the init file over and add the last two lines needed to run in production
 cp /root/NorseCourse/NorseCourse-Backend/API/API/__init__.py /var/www/norsecourse.com.api/API
-echo "\n" >> /var/www/norsecourse.com.api/API/__init__.py
+echo -e "\n" >> /var/www/norsecourse.com.api/API/__init__.py
 echo "if __name__ == \"__main__\":" >> /var/www/norsecourse.com.api/API/__init__.py
-echo "\tapp.run()" >> /var/www/norsecourse.com.api/API/__init__.py
+echo -e "\tapp.run()" >> /var/www/norsecourse.com.api/API/__init__.py
 
 # Copy over all of the api files
 cd /root/NorseCourse/NorseCourse-Backend/API/API
 cp courses.py departments.py divisions.py genEds.py NorseCourseObjects.py schedules.py sections.py terms.py /var/www/norsecourse.com.api/API/
+
+echo "Restarting Apache2"
+service apache2 restart
+echo
 
 ENDTIME=$(date +"%Y-%m-%d %H:%M:%S")
 ENDTIMESEC=$(date -d"$ENDTIME" +%s)

@@ -65,6 +65,9 @@ def checkScheduleConflict(section_ids):
 			end_time = end_time
 			days = days
 
+		if start_time == "nan" or end_time == "nan" or days == "nan":
+			return False
+
 		times = []
 		for day in range(len(days)):
 
@@ -281,13 +284,293 @@ def createSchedule(required,preferred,geneds,num_courses,division = None):
 		return best
 
 
-	print("how did it get here??")
-	return None
-
 
 def createAllSchedules(required,preferred,geneds,num_courses,division = None):
-	pass
 
+	master = []
+
+
+	if checkScheduleConflict(required) or len(required) > num_courses:
+		print "Required courses conflict, or too many required courses, can not make a schedule"
+		master.append(None)
+		return master
+
+	best = required+preferred
+
+	if (len(best) == num_courses) and (not checkScheduleConflict(best)):
+		master.append(best)
+		return master
+
+	if (len(best) < num_courses) and (not checkScheduleConflict(best)):
+		num_needed = num_courses - len(best)
+		# best works, but more courses wanted, add something from gen eds or divisions
+		if len(geneds) > 0:
+			# look for geneds that fit into schedule
+
+			possible_gened_classes = []
+			for gened in range(len(geneds)):
+
+				classQuery = "SELECT section_id from GenEdFulfillments, GenEds where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s"
+
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+
+				cursor.execute(classQuery % str("'"+geneds[gened]+"'"))
+
+				classes = []
+				for (section_id) in cursor:
+					classes.append(section_id)
+
+				possible_gened_classes.append(classes)
+
+				cursor.close()
+				cnx.close()
+				
+
+			prev = best
+			possible = []
+			for ge in possible_gened_classes:
+				# for HE, NW, etc
+
+				if len(possible) > 0:
+					for x in possible:
+						
+						best = x
+						added = False
+						for sect in ge:
+							# section that is gened
+
+							sect = sect[0]
+							if not added:
+								if num_needed > 0:
+									best.append(sect)
+
+									if (not checkScheduleConflict(best)):
+										added = True
+										num_needed -= 1
+									else:
+										best = best[:-1]
+							else:
+								if best not in master:
+									if num_needed == 0:
+										master.append(best)
+									else:
+										possible.append(best)
+									best = best[:-1]
+									added = False
+									num_needed += 1
+
+				else:
+
+					added = False
+					for sect in ge:
+						# section that is gened
+
+						sect = sect[0]
+						if not added:
+							if num_needed > 0:
+								best.append(sect)
+
+								if (not checkScheduleConflict(best)):
+									added = True
+									num_needed -= 1
+								else:
+									best = best[:-1]
+						else:
+							if best not in master:
+								if num_needed == 0:
+									master.append(best)
+								else:
+									possible.append(best)
+								best = best[:-1]
+								added = False
+								num_needed += 1
+
+
+
+
+		if division != None:
+			# look for recommendations for division to fill schedule
+			classes = []
+			for i in range(num_needed):
+
+				classQuery = "SELECT section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
+				
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+
+				cursor.execute(classQuery % str(division))
+
+				classes = []
+				for (section_id) in cursor:
+					classes.append(section_id)
+
+				cursor.close()
+				cnx.close()
+
+
+			full = False
+			prev = best
+			prev_needed = num_needed
+
+			for sect in classes:
+				if num_needed > 0:
+					sect = sect[0]
+					best.append(sect)
+					if (not checkScheduleConflict(best)):
+						num_needed -= 1
+					else:
+						best = best[:-1]
+				else:
+					master.append(best)
+					best = prev
+					num_needed = prev_needed
+					full = True
+			if not full:
+				master.append(best)
+
+
+	# len(best) > num_courses
+	if len(best) > num_courses and (not checkScheduleConflict(best)):
+		# too many total courses, need to remove some preferred courses
+		num_removed = len(best) - num_courses
+		master.append(best+preferred[:-(num_removed)])
+
+
+	# best conflicts time, find non conflicting time
+
+	# remove random preferred and check for something that works
+	# once found a schedule with most courses that work call it best
+	# worst case is down to required, because that should not conflict
+
+	while (checkScheduleConflict(best)):
+		best = required+preferred[:-1]
+
+	num_needed = num_courses - len(best)
+
+	if num_needed > 0:
+
+		if len(geneds) > 0:
+			# look for geneds that fit into schedule
+
+			possible_gened_classes = []
+			for gened in range(len(geneds)):
+
+				classQuery = "SELECT section_id from GenEdFulfillments, GenEds where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s"
+
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+
+				cursor.execute(classQuery % str("'"+geneds[gened]+"'"))
+
+				classes = []
+				for (section_id) in cursor:
+					classes.append(section_id)
+
+				possible_gened_classes.append(classes)
+
+				cursor.close()
+				cnx.close()
+				
+			prev = best
+			possible = []
+			for ge in possible_gened_classes:
+				# for HE, NW, etc
+
+				if len(possible) > 0:
+					for x in possible:
+						
+						best = x
+						added = False
+						for sect in ge:
+							# section that is gened
+
+							sect = sect[0]
+							if not added:
+								if num_needed > 0:
+									best.append(sect)
+
+									if (not checkScheduleConflict(best)):
+										added = True
+										num_needed -= 1
+									else:
+										best = best[:-1]
+							else:
+								if best not in master:
+									if num_needed == 0:
+										master.append(best)
+									else:
+										possible.append(best)
+									best = best[:-1]
+									added = False
+									num_needed += 1
+
+				else:
+
+					added = False
+					for sect in ge:
+						# section that is gened
+
+						sect = sect[0]
+						if not added:
+							if num_needed > 0:
+								best.append(sect)
+
+								if (not checkScheduleConflict(best)):
+									added = True
+									num_needed -= 1
+								else:
+									best = best[:-1]
+						else:
+							if best not in master:
+								if num_needed == 0:
+									master.append(best)
+								else:
+									possible.append(best)
+								best = best[:-1]
+								added = False
+								num_needed += 1
+
+		if division != None:
+			# look for recommendations for division to fill schedule
+			classes = []
+			for i in range(num_needed):
+
+				classQuery = "SELECT section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
+				
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+
+				cursor.execute(classQuery % str(division))
+
+				classes = []
+				for (section_id) in cursor:
+					classes.append(section_id)
+
+				cursor.close()
+				cnx.close()
+
+			full = False
+			prev = best
+			prev_needed = num_needed
+
+			for sect in classes:
+				if num_needed > 0:
+					sect = sect[0]
+					best.append(sect)
+					if (not checkScheduleConflict(best)):
+						num_needed -= 1
+					else:
+						best = best[:-1]
+				else:
+					master.append(best)
+					best = prev
+					num_needed = prev_needed
+					full = True
+			if not full:
+				master.append(best)
+
+	return master
 
 
 
@@ -308,7 +591,53 @@ def main():
 	print createSchedule([211,227],[],['HEPT',"NWL"],4,4)
 	print
 	print
+
+
+	
+	print "*******************************"
+
 	print
+	print
+	print
+	m = createAllSchedules([211,227,213],[],['REL'],4,4)
+	print
+	print
+
+	for x in m:
+		print x
+	print
+	print
+
+	print "*******************************"
+
+	print
+	print
+	print
+	m = createAllSchedules([211],[227],['REL',"HEPT"],4,4)
+	print
+	print
+
+	for x in m:
+		print x
+	print
+	print
+
+
+
+	print "*******************************"
+
+	print
+	print
+	print
+	m = createAllSchedules([],[],['QUANT',"HB","REL","NWL"],4,4)
+	print
+	print
+
+	for x in m:
+		print x
+	print
+	print
+
 
 
 

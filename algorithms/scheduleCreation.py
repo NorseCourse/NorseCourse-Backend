@@ -285,6 +285,11 @@ def createSchedule(required,preferred,geneds,num_courses,division = None):
 	return None
 
 
+def createAllSchedules(required,preferred,geneds,num_courses,division = None):
+	pass
+
+
+
 
 def main():
 	print "*******************************"

@@ -26,6 +26,26 @@ class Courses(Resource):
 		else:
 			return None
 
+	def getRecommendations(self, course_id):
+		recommendationQuery = "SELECT division_id, COUNT(division_id) AS count FROM Recommendations WHERE course_id = %s GROUP BY(division_id)"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(recommendationQuery % str(course_id))
+
+		recommendations = {}
+		for (division_id, count) in cursor:
+			recommendations[str(division_id)] = count
+
+		cursor.close()
+		cnx.close()
+
+		if recommendations:
+			return recommendations
+		else:
+			return None
+
 
 	@NorseCourse.doc(
 		params = {
@@ -51,10 +71,13 @@ class Courses(Resource):
 		courses = []
 		for (course_id, description, same_as, name, department_id) in cursor:
 			requirements = self.getRequirements(course_id)
+			recommendations = self.getRecommendations(course_id)
+
 			if same_as == "nan":
-				course = CourseObject(course_id, description, None, name, department_id, None, requirements, None)
+				course = CourseObject(course_id, description, None, name, department_id, None, requirements, recommendations)
 			else:
-				course = CourseObject(course_id, description, same_as, name, department_id, None, requirements, None)
+				course = CourseObject(course_id, description, same_as, name, department_id, None, requirements, recommendations)
+
 			courses.append(course.__dict__)
 
 		cursor.close()

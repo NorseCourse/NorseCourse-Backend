@@ -452,14 +452,18 @@ def main():
 	print
 	print
 	x = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4)
+	print "Potential Schedules (section ids)"
 	for i in x:
 		print i
 	print
 	print
 
+	print "***********************************************"
+
 	print
 	print
 	x = createSchedules([211,213],[],["HE","HB"],4,4)
+	print "Potential Schedules (section ids)"
 	for i in x:
 		print i
 	print

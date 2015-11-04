@@ -411,6 +411,11 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 
 	sample = random.sample(all_combos,15)
 
+
+	# possibly random list for api
+	#random.shuffle(all_combos)
+
+
 	final = []
 	end = len(sample)
 	count = 0.0
@@ -460,14 +465,14 @@ def main():
 
 	print "***********************************************"
 
-	print
-	print
-	x = createSchedules([211,213],[],["HE","HB"],4,4)
-	print "Potential Schedules (section ids)"
-	for i in x:
-		print i
-	print
-	print
+	# print
+	# print
+	# x = createSchedules([211,213],[],["HE","HB"],4,4)
+	# print "Potential Schedules (section ids)"
+	# for i in x:
+	# 	print i
+	# print
+	# print
 
 
 if __name__ == '__main__':

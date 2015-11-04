@@ -13,6 +13,7 @@ import time
 import itertools
 import ast
 import datetime
+import random
 
 from flask import Flask, request
 from flask.ext.restplus import Api, Resource
@@ -406,14 +407,18 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 			best = (best+preferred[:-(num_removed)])
 
 
+
+
+	sample = random.sample(all_combos,15)
+
 	final = []
-	end = len(all_combos)
+	end = len(sample)
 	count = 0.0
 	print end
 	now = datetime.datetime.now()
 	ave = 1
 
-	for schedule in all_combos:
+	for schedule in sample:
 		print schedule
 
 		count += 1.0
@@ -446,7 +451,15 @@ def main():
 
 	print
 	print
-	x = createSchedules([211],[213],['INTCL',"NWNL"],4,4)
+	x = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4)
+	for i in x:
+		print i
+	print
+	print
+
+	print
+	print
+	x = createSchedules([211,213],[],["HE","HB"],4,4)
 	for i in x:
 		print i
 	print

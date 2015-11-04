@@ -321,10 +321,20 @@ def main():
         ########################################################################
         # check for lab
         ########################################################################
-        # if L in section name
-        if row['section_name'].split('-')[1][-1] == "L":
+
+        if row['section_name'].split('-')[1][-1] != "L":
+            lab_name = row['section_name'].split('-')[0]+"-"+row['section_name'].split('-')[1]+"L"
+            labs = []
+            for c in data['section_name']:
+                temp = c.split('-')[0]+"-"+c.split('-')[1]
+                if temp == lab_name:
+                    labs.append(c)
+                    
             # add course to lab column
-            lab.append(row['section_name'].replace("L",""))
+            if len(labs)>0:
+                lab.append(labs)
+            else:
+                lab.append("")
         # not a lab
         else:
             # add empty string to lab column

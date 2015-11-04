@@ -11,6 +11,7 @@ import config
 import string
 import time
 import itertools
+import ast
 
 from flask import Flask, request
 from flask.ext.restplus import Api, Resource
@@ -119,12 +120,86 @@ def checkSameCourse(schedule):
 
 
 def checkLab(schedule):
-	pass
+	labs = []
+	for section_id in schedule:
+		sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(sectionQuery % str(section_id))
+
+		labs = None
+		for (req_type,details) in cursor:
+			if req_type == "LAB":
+				labs = ast.literal_eval(details)
+
+		cursor.close()
+		cnx.close()
+
+		if labs != None:
+			return True
+	return False
 
 
+
+
+def addLab(schedule):
+
+	labs = []
+	for section_id in schedule:
+
+		sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		cursor.execute(sectionQuery % str(section_id))
+
+		labs = None
+		for (req_type,details) in cursor:
+			if req_type == "LAB":
+				labs = ast.literal_eval(details)
+
+		cursor.close()
+		cnx.close()
+
+		if labs != None:
+			added = False
+			for lab in labs:
+				if not added:
+
+
+					sectionQuery = "SELECT section_id FROM Sections WHERE name = %s"
+
+					cnx = cnx_pool.get_connection()
+					cursor = cnx.cursor()
+
+					cursor.execute(sectionQuery % str("'"+lab+"'"))
+
+
+					for (section_id) in cursor:
+						lab_id = section_id[0]
+
+					cursor.close()
+					cnx.close()
+
+					schedule.append(lab_id)
+
+					if (not checkScheduleConflict(schedule)):
+						added = True
+					else:
+						schedule = schedule[:-1]
+
+
+	return schedule
 
 
 def verify(schedule):
+
+	if checkLab(schedule):
+		schedule = addLab(schedule)
+
 	if checkScheduleConflict(schedule):
 		return False
 
@@ -132,8 +207,6 @@ def verify(schedule):
 		return False
 
 	return True
-
-	# check if a lab is needed, if so add it
 
 
 
@@ -326,7 +399,6 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 			best = (best+preferred[:-(num_removed)])
 
 
-
 	final = []
 	for schedule in all_combos:
 		if verify(schedule):
@@ -337,6 +409,7 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 
 
 def main():
+	pass
 	# print "*******************************"
 	# print(checkScheduleConflict([409,211]))
 	# print "*******************************"
@@ -350,14 +423,13 @@ def main():
 	# print "*******************************"
 	# print
 
-	print
-	print
-	x = createSchedules([211],[],['HE',"NWL"],3,4)
-	for i in x:
-		print i
-	print
-	print
-
+	# print
+	# print
+	# x = createSchedules([211],[],['HE',"NWL"],3,4)
+	# for i in x:
+	# 	print i
+	# print
+	# print
 
 
 

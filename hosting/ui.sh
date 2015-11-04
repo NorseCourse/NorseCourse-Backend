@@ -1,28 +1,31 @@
 #!/bin/bash 
 export PATH="/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/"
 
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+
 echo "Subject: NorseCousre production build complete" 
 echo
 echo "BUILD LOG"
 echo "-------------------------------------------------"
 
 STARTTIME=$(date +"%Y-%m-%d %H:%M:%S")
-echo "Start Time:" $STARTTIME
+echo "${BOLD}Start Time:${NORMAL}" $STARTTIME
 echo
 
 cd ~/NorseCourse/NorseCourse-UI/
 
-echo "git pull"
+echo "{$BOLD}git pull{$NORMAL}"
 git pull
 
 
 echo
-echo "gulp build"
+echo "${BOLD}gulp build${NORMAL}"
 gulp build
 
 cd ~/NorseCourse/NorseCourse-UI/dist/
 
-cp -r js /usr/share/javascript/norsecoursejs/
+cp js/* /usr/share/javascript/norsecoursejs/
 cp -r css /var/www/norsecourse.com/public_html/
 cp -r views /var/www/norsecourse.com/public_html/
 sed -i 's/<script src="\/js\/main.js"><\/script>/<script src="javascript\/norsecoursejs\/main.js"><\/script>/' index.html
@@ -34,8 +37,8 @@ STARTTIMESEC=$(date -d"$STARTTIME" +%s)
 ELAPSEDTIME=`expr $ENDTIMESEC - $STARTTIMESEC `
 
 echo
-echo "End Time:" $ENDTIME
-echo "Elapsed Time (sec):" $ELAPSEDTIME
+echo "${BOLD}End Time:${NORMAL}" $ENDTIME
+echo "${BOLD}Elapsed Time (sec):${NORMAL}" $ELAPSEDTIME
 echo "-------------------------------------------------"
 echo
 echo "Happy Hosting!"

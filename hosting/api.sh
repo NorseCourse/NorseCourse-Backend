@@ -1,18 +1,21 @@
 #!/bin/bash 
 export PATH="/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/"
 
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+
 echo "Subject: NorseCourse API production build complete"
 echo
 echo "BUILD LOG"
 echo "-------------------------------------------------"
 
 STARTTIME=$(date +"%Y-%m-%d %H:%M:%S")
-echo "Start Time:" $STARTTIME
+echo "${BOLD}Start Time:${NORMAL}" $STARTTIME
 echo
 
 # cd into the clone of the backend directory that the root owns amd grab the most uptodated code
 cd /root/NorseCourse/NorseCourse-Backend
-echo "git pull"
+echo "${BOLD}git pull${NORMAL}"
 git pull
 echo 
 
@@ -20,7 +23,7 @@ echo
 cp /root/NorseCourse/NorseCourse-Backend/hosting/requirements.txt /var/www/norsecourse.com.api/
 
 # Install the packages in the apps virtual environment
-echo "Installing packages for the virtual environment"
+echo "${BOLD}Installing packages for the virtual environment${NORMAL}"
 cd /var/www/norsecourse.com.api/
 source API/venv/bin/activate
 pip install -r requirements.txt
@@ -28,7 +31,7 @@ deactivate
 echo
 
 # Install the packages on the entire server, not sure why, but I found that it was necessary
-echo "Installing packages system wide"
+echo "${BOLD}Installing packages system wide${NORMAL}"
 pip install -r requirements.txt 
 echo
 
@@ -42,7 +45,7 @@ echo -e "\tapp.run()" >> /var/www/norsecourse.com.api/API/__init__.py
 cd /root/NorseCourse/NorseCourse-Backend/API/API
 cp courses.py departments.py divisions.py genEds.py NorseCourseObjects.py schedules.py sections.py terms.py /var/www/norsecourse.com.api/API/
 
-echo "Restarting Apache2"
+echo "${BOLD}Restarting Apache2${NORMAL}"
 service apache2 restart
 echo
 
@@ -51,8 +54,8 @@ ENDTIMESEC=$(date -d"$ENDTIME" +%s)
 STARTTIMESEC=$(date -d"$STARTTIME" +%s)
 ELAPSEDTIME=`expr $ENDTIMESEC - $STARTTIMESEC `
 
-echo "End Time:" $ENDTIME
-echo "Elapsed Time (sec):" $ELAPSEDTIME
+echo "${BOLD}End Time:${NORMAL}" $ENDTIME
+echo "${BOLD}Elapsed Time (sec):${NORMAL}" $ELAPSEDTIME
 echo "-------------------------------------------------"
 echo
 echo "Happy Hosting!"

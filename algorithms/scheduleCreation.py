@@ -12,6 +12,7 @@ import string
 import time
 import itertools
 import ast
+import datetime
 
 from flask import Flask, request
 from flask.ext.restplus import Api, Resource
@@ -145,10 +146,11 @@ def checkLab(schedule):
 
 
 def addLab(schedule):
-
+	schedule = list(schedule)
 	labs = []
-	for section_id in schedule:
-
+	temp = schedule
+	for section_id in temp:
+		
 		sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"
 
 		cnx = cnx_pool.get_connection()
@@ -169,14 +171,12 @@ def addLab(schedule):
 			for lab in labs:
 				if not added:
 
-
 					sectionQuery = "SELECT section_id FROM Sections WHERE name = %s"
 
 					cnx = cnx_pool.get_connection()
 					cursor = cnx.cursor()
 
 					cursor.execute(sectionQuery % str("'"+lab+"'"))
-
 
 					for (section_id) in cursor:
 						lab_id = section_id[0]
@@ -190,7 +190,6 @@ def addLab(schedule):
 						added = True
 					else:
 						schedule = schedule[:-1]
-
 
 	return schedule
 
@@ -251,12 +250,16 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 					cursor.close()
 					cnx.close()
 
+				combo = []
 
-				combo = [best]
+				for b in best:
+					combo.append([b])
+
 				for x in possible_gened_classes:
 					if num_needed > 0:
 						combo.append(possible_gened_classes[x])
 						num_needed -= 1
+
 
 				all_combos = list(itertools.product(*combo))
 
@@ -344,7 +347,11 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 					cnx.close()
 
 
-				combo = [best]
+				combo = []
+
+				for b in best:
+					combo.append([b])
+
 				for x in possible_gened_classes:
 					if num_needed > 0:
 						combo.append(possible_gened_classes[x])
@@ -400,7 +407,34 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 
 
 	final = []
+	end = len(all_combos)
+	count = 0.0
+	print end
+	now = datetime.datetime.now()
+	ave = 1
+
 	for schedule in all_combos:
+		print schedule
+
+		count += 1.0
+		prev = now
+		now = datetime.datetime.now()
+
+		delta = now - prev
+
+		ave = ((ave*(count-1))+delta.seconds)/count
+
+		remaining = end - count
+
+		print count, "out of", end
+		print "estimated time remaining"
+		if (ave * remaining) > 3600:
+			print (ave * remaining)//3600, 'hours  ', ((ave * remaining)%3600)//60, 'minutes  ', ((ave * remaining)%3600)%60, 'seconds'
+		elif (ave * remaining) > 60:
+			print (ave * remaining)//60, 'minutes  ', (ave * remaining)%60, 'seconds'
+		else:
+			print (ave * remaining), 'seconds'
+		print
 		if verify(schedule):
 			final.append(schedule)
 
@@ -423,13 +457,13 @@ def main():
 	# print "*******************************"
 	# print
 
-	# print
-	# print
-	# x = createSchedules([211],[],['HE',"NWL"],3,4)
-	# for i in x:
-	# 	print i
-	# print
-	# print
+	print
+	print
+	x = createSchedules([211],[213],['INTCL',"NWNL"],4,4)
+	for i in x:
+		print i
+	print
+	print
 
 
 

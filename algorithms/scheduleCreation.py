@@ -443,19 +443,6 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 
 
 def main():
-	pass
-	# print "*******************************"
-	# print(checkScheduleConflict([409,211]))
-	# print "*******************************"
-	# print(checkScheduleConflict([400,500,700]))
-	# print "*******************************"
-	# print(checkScheduleConflict([200,300,400,500]))
-	# print "*******************************"
-	# print(checkScheduleConflict([211,213,223,227]))
-	# print "*******************************"
-	# print "*******************************"
-	# print "*******************************"
-	# print
 
 	print
 	print
@@ -464,8 +451,6 @@ def main():
 		print i
 	print
 	print
-
-
 
 
 if __name__ == '__main__':

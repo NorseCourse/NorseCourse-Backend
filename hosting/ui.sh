@@ -15,7 +15,7 @@ echo
 
 cd ~/NorseCourse/NorseCourse-UI/
 
-echo "{$BOLD}git pull{$NORMAL}"
+echo "${BOLD}git pull${NORMAL}"
 git pull
 
 

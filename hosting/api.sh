@@ -41,11 +41,7 @@ echo -e "\n" >> /var/www/norsecourse.com.api/API/__init__.py
 echo "if __name__ == \"__main__\":" >> /var/www/norsecourse.com.api/API/__init__.py
 echo -e "\tapp.run()" >> /var/www/norsecourse.com.api/API/__init__.py
 
-# Copy over all of the api files and other related files that are not __init__.py
-# cd /root/NorseCourse/NorseCourse-Backend/API/API
-# cp /root/NorseCourse/NorseCourse-Backend/API/API/[A-Za-z]*.py /var/www/norsecourse.com.api/API/
-# cp courses.py departments.py divisions.py genEds.py NorseCourseObjects.py schedules.py sections.py terms.py /var/www/norsecourse.com.api/API/
-
+# Restart Apache2
 echo "${BOLD}Restarting Apache2${NORMAL}"
 service apache2 restart
 echo

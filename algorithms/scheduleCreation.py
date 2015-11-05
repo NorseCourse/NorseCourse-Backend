@@ -416,7 +416,8 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 	#random.shuffle(all_combos)
 
 
-	# final = []
+	final = []
+	
 	# end = len(sample)
 	# count = 0.0
 	# print end

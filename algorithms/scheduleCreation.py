@@ -24,6 +24,8 @@ db_properties = config.db_pool_config
 cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 
+global_dict = {}
+
 def betweenTimes(original,check):
 	original_start = original[0]
 	original_end = original[1]
@@ -57,35 +59,42 @@ def checkScheduleConflict(section_ids):
 
 	for section_id in section_ids:
 
-		sectionQuery = "SELECT start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
+		if section_id in global_dict:
+			sections.append(global_dict[section_id])
+		else:
 
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
+			sectionQuery = "SELECT start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
 
-		cursor.execute(sectionQuery % str(section_id))
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
 
-		for (start_time, end_time, days) in cursor:
-			start_time = start_time
-			end_time = end_time
-			days = days
+			cursor.execute(sectionQuery % str(section_id))
 
-		cursor.close()
-		cnx.close()
+			for (start_time, end_time, days) in cursor:
+				start_time = start_time
+				end_time = end_time
+				days = days
 
-		if start_time == "nan" or end_time == "nan" or days == "nan":
-			return False
+			cursor.close()
+			cnx.close()
 
-		times = []
-		for day in range(len(days)):
+			if start_time == "nan" or end_time == "nan" or days == "nan":
+				return False
 
-			d = str(days_dict[str(days[day])])
+			times = []
+			for day in range(len(days)):
 
-			st = time.strptime(str(start_time)+' '+d, '%H:%M %w')
-			et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
-			times.append((st,et))
+				d = str(days_dict[str(days[day])])
+
+				st = time.strptime(str(start_time)+' '+d, '%H:%M %w')
+				et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
+				times.append((st,et))
 
 
-		sections.append((times,len(days)))
+			sections.append((times,len(days)))
+
+			global_dict[section_id] = (times,len(days))
+
 
 	for section1 in range(len(sections)):
 		for section2 in range(section1,len(sections)):
@@ -149,8 +158,7 @@ def checkLab(schedule):
 def addLab(schedule):
 	schedule = list(schedule)
 	labs = []
-	temp = schedule
-	for section_id in temp:
+	for section_id in schedule:
 		
 		sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"
 
@@ -191,22 +199,48 @@ def addLab(schedule):
 						added = True
 					else:
 						schedule = schedule[:-1]
+			if added == False:
+				return False
 
 	return schedule
 
 
 def verify(schedule):
 
+	before_lab = datetime.datetime.now()
+
 	if checkLab(schedule):
-		schedule = addLab(schedule)
+		s = addLab(schedule)
+		if s != False:
+			schedule = s
+
+	after_lab = datetime.datetime.now()
+	before_time = datetime.datetime.now()
 
 	if checkScheduleConflict(schedule):
 		return False
 
+	after_time = datetime.datetime.now()
+	before_c = datetime.datetime.now()
+
 	if checkSameCourse(schedule):
 		return False
 
-	return True
+	after_c = datetime.datetime.now()
+
+	# print
+	# print "*********************"
+	# print
+	# print "Times:"
+	# print
+	# print "lab check time = ", (after_lab-before_lab)
+	# print "time check time = ", (after_time-before_time)
+	# print "course check time = ", (after_c-before_c)
+	# print
+	# print "*********************"
+	# print
+
+	return schedule
 
 
 
@@ -408,29 +442,27 @@ def createSchedules(required,preferred,geneds,num_courses,division = None,index=
 
 
 
-
 	#sample = random.sample(all_combos,15)
 
-	# possibly random list for api
 	random.seed(0)
 	random.shuffle(all_combos)
 
-	if index == None or index == 0:
+	if index == None:
 		pos = 0
 		current = all_combos[pos]
-		while not verify(current):
+		while verify(current) ==  False:
 			pos += 1
 			current = all_combos[pos]
 
-		return (current,pos)
+		return (verify(current),pos)
 	else:
 		pos = index+1
 		current = all_combos[pos]
-		while not verify(current):
+		while verify(current) ==  False:
 			pos += 1
 			current = all_combos[pos]
 
-		return (current,pos)
+		return (verify(current),pos)
 
 
 
@@ -474,40 +506,45 @@ def createSchedules(required,preferred,geneds,num_courses,division = None,index=
 
 
 def main():
-
+	begin = datetime.datetime.now()
 	print
 	print
-	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4)
+	x,pos = createSchedules([211,213],[],["HE","HB"],4,4)
 	print "Potential Schedules (section ids)"
 	print x
 	print pos
 	print
-	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
 	print x
 	print pos
 	print
 	print
-	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
 	print x
 	print pos
 	print
 	print
-	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
 	print x
 	print pos
 	print
 	print
-	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
 	print x
 	print pos
 	print
 	print
-	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
 	print x
 	print pos
 	print
 
 	print "***********************************************"
+	end = datetime.datetime.now()
+
+	print end-begin
+	print
+	print
 
 	# print
 	# print

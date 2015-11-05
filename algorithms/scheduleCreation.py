@@ -210,7 +210,7 @@ def verify(schedule):
 
 
 
-def createSchedules(required,preferred,geneds,num_courses,division = None):
+def createSchedules(required,preferred,geneds,num_courses,division = None,index= None):
 
 	master = []
 
@@ -409,22 +409,42 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 
 
 
-	sample = random.sample(all_combos,15)
-
+	#sample = random.sample(all_combos,15)
 
 	# possibly random list for api
-	#random.shuffle(all_combos)
+	random.seed(0)
+	random.shuffle(all_combos)
+
+	if index == None or index == 0:
+		pos = 0
+		current = all_combos[pos]
+		while not verify(current):
+			pos += 1
+			current = all_combos[pos]
+
+		return (current,pos)
+	else:
+		pos = index+1
+		current = all_combos[pos]
+		while not verify(current):
+			pos += 1
+			current = all_combos[pos]
+
+		return (current,pos)
 
 
-	final = []
-	
+
+
+
+	# final = []
+
 	# end = len(sample)
 	# count = 0.0
 	# print end
 	# now = datetime.datetime.now()
 	# ave = 1
 
-	for schedule in sample:
+	# for schedule in sample:
 		# print schedule
 
 		# count += 1.0
@@ -446,10 +466,10 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 		# else:
 		# 	print (ave * remaining), 'seconds'
 		# print
-		if verify(schedule):
-			final.append(schedule)
+	# 	if verify(schedule):
+	# 		final.append(schedule)
 
-	return final
+	# return final
 
 
 
@@ -457,11 +477,34 @@ def main():
 
 	print
 	print
-	x = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4)
+	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4)
 	print "Potential Schedules (section ids)"
-	for i in x:
-		print i
+	print x
+	print pos
 	print
+	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	print x
+	print pos
+	print
+	print
+	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	print x
+	print pos
+	print
+	print
+	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	print x
+	print pos
+	print
+	print
+	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	print x
+	print pos
+	print
+	print
+	x,pos = createSchedules([],[],['QUANT',"NWNL","HE","HB"],4,4,pos)
+	print x
+	print pos
 	print
 
 	print "***********************************************"

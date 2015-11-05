@@ -416,35 +416,35 @@ def createSchedules(required,preferred,geneds,num_courses,division = None):
 	#random.shuffle(all_combos)
 
 
-	final = []
-	end = len(sample)
-	count = 0.0
-	print end
-	now = datetime.datetime.now()
-	ave = 1
+	# final = []
+	# end = len(sample)
+	# count = 0.0
+	# print end
+	# now = datetime.datetime.now()
+	# ave = 1
 
 	for schedule in sample:
-		print schedule
+		# print schedule
 
-		count += 1.0
-		prev = now
-		now = datetime.datetime.now()
+		# count += 1.0
+		# prev = now
+		# now = datetime.datetime.now()
 
-		delta = now - prev
+		# delta = now - prev
 
-		ave = ((ave*(count-1))+delta.seconds)/count
+		# ave = ((ave*(count-1))+delta.seconds)/count
 
-		remaining = end - count
+		# remaining = end - count
 
-		print count, "out of", end
-		print "estimated time remaining"
-		if (ave * remaining) > 3600:
-			print (ave * remaining)//3600, 'hours  ', ((ave * remaining)%3600)//60, 'minutes  ', ((ave * remaining)%3600)%60, 'seconds'
-		elif (ave * remaining) > 60:
-			print (ave * remaining)//60, 'minutes  ', (ave * remaining)%60, 'seconds'
-		else:
-			print (ave * remaining), 'seconds'
-		print
+		# print count, "out of", end
+		# print "estimated time remaining"
+		# if (ave * remaining) > 3600:
+		# 	print (ave * remaining)//3600, 'hours  ', ((ave * remaining)%3600)//60, 'minutes  ', ((ave * remaining)%3600)%60, 'seconds'
+		# elif (ave * remaining) > 60:
+		# 	print (ave * remaining)//60, 'minutes  ', (ave * remaining)%60, 'seconds'
+		# else:
+		# 	print (ave * remaining), 'seconds'
+		# print
 		if verify(schedule):
 			final.append(schedule)
 

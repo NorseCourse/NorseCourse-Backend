@@ -48,48 +48,6 @@ def getRecommendations(course_id):
 
 @API.route("/courses", endpoint = "courses")
 class Courses(Resource):
-	# def getRequirements(self, course_id):
-	# 	requirementQuery = "SELECT req_type, details FROM Requirements WHERE course_id = %s"
-
-	# 	cnx = cnx_pool.get_connection()
-	# 	cursor = cnx.cursor()
-
-	# 	cursor.execute(requirementQuery % str(course_id))
-
-	# 	requirements = []
-	# 	for (req_type, details) in cursor:
-	# 		requirement = RequirementObject(req_type, course_id, details)
-	# 		requirements.append(requirement.__dict__)
-
-	# 	cursor.close()
-	# 	cnx.close()
-
-	# 	if requirements:
-	# 		return requirements
-	# 	else:
-	# 		return None
-
-	# def getRecommendations(self, course_id):
-	# 	recommendationQuery = "SELECT division_id, COUNT(division_id) AS count FROM Recommendations WHERE course_id = %s GROUP BY(division_id)"
-
-	# 	cnx = cnx_pool.get_connection()
-	# 	cursor = cnx.cursor()
-
-	# 	cursor.execute(recommendationQuery % str(course_id))
-
-	# 	recommendations = {}
-	# 	for (division_id, count) in cursor:
-	# 		recommendations[str(division_id)] = count
-
-	# 	cursor.close()
-	# 	cnx.close()
-
-	# 	if recommendations:
-	# 		return recommendations
-	# 	else:
-	# 		return None
-
-
 	@NorseCourse.doc(
 		params = {
 			"departments": "Provide a comma separated list of department IDs",

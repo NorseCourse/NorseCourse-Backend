@@ -36,14 +36,15 @@ pip install -r requirements.txt
 echo
 
 # Copy the init file over and add the last two lines needed to run in production
-cp /root/NorseCourse/NorseCourse-Backend/API/API/__init__.py /var/www/norsecourse.com.api/API
+cp /root/NorseCourse/NorseCourse-Backend/API/API/*.py /var/www/norsecourse.com.api/API/
 echo -e "\n" >> /var/www/norsecourse.com.api/API/__init__.py
 echo "if __name__ == \"__main__\":" >> /var/www/norsecourse.com.api/API/__init__.py
 echo -e "\tapp.run()" >> /var/www/norsecourse.com.api/API/__init__.py
 
-# Copy over all of the api files
-cd /root/NorseCourse/NorseCourse-Backend/API/API
-cp courses.py departments.py divisions.py genEds.py NorseCourseObjects.py schedules.py sections.py terms.py /var/www/norsecourse.com.api/API/
+# Copy over all of the api files and other related files that are not __init__.py
+# cd /root/NorseCourse/NorseCourse-Backend/API/API
+# cp /root/NorseCourse/NorseCourse-Backend/API/API/[A-Za-z]*.py /var/www/norsecourse.com.api/API/
+# cp courses.py departments.py divisions.py genEds.py NorseCourseObjects.py schedules.py sections.py terms.py /var/www/norsecourse.com.api/API/
 
 echo "${BOLD}Restarting Apache2${NORMAL}"
 service apache2 restart

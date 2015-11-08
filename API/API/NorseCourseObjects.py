@@ -89,6 +89,6 @@ class GenEdFulfillmentObject(object):
 
 # Get potential schedules
 class ScheduleCreationObject(object):
-	def __init__(self, sections = None, index=None):
-		self.sections = sections
+	def __init__(self, schedule = None, index=None):
+		self.schedule = schedule
 		self.index = index

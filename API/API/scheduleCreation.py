@@ -227,12 +227,61 @@ class ScheduleCreation(Resource):
 
 	def get(self):
 
-		required = request.args.get("required")
-		preferred = request.args.get("preferred")
-		geneds = request.args.get("geneds")
-		num_courses = request.args.get("numcourses")
-		division = request.args.get("division")
-		index = request.args.get("index")
+		r = request.args.get("required")
+		if r != None:
+			required = (r).split(',')
+		else:
+			required = []
+
+		p = request.args.get("preferred")
+		if p != None:
+			preferred = (p).split(',')
+		else:
+			preferred = []
+
+		g = request.args.get("geneds")
+		if g != None:
+			geneds = (g).split(',')
+		else:
+			geneds = []
+
+		n = request.args.get("numcourses")
+		if n != None:
+			num_courses = int(n)
+		else:
+			num_courses = 4
+
+		d = request.args.get("division")
+		if d != None:
+			division = int(d)
+		else:
+			division = None
+
+		i = request.args.get("index")
+		if i != None:
+			index = int(i)
+		else:
+			index = 0
+
+		new_r = []
+		for x in required:
+			new_r.append(int(x))
+
+		required = new_r
+
+		new_p = []
+		for x in preferred:
+			new_p.append(int(x))
+
+		preferred = new_p
+
+		new_ge = []
+		for x in geneds:
+			new_ge.append(str(x))
+
+		geneds = new_ge
+
+		print "\n\n\n\n\n\n\n\n\n\n"
 
 		if self.checkScheduleConflict(required) or len(required) > num_courses:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
@@ -425,6 +474,8 @@ class ScheduleCreation(Resource):
 				best = (best+preferred[:-(num_removed)])
 
 
+		print "***********************\n\n\n\n\n\n\n\n here"
+
 		random.seed(0)
 		random.shuffle(all_combos)
 
@@ -447,7 +498,12 @@ class ScheduleCreation(Resource):
 				pos += 1
 				current = all_combos[pos]
 
-			schedule = ScheduleCreationObject(self.verify(current),pos)
+			print "***********************\n here2"
+			c = self.verify(current)
+			print "\n\n\n\n\n scheudle \n\n", c
+
+			schedule = ScheduleCreationObject(c,pos)
+			print "\n\n\nhere \n\n\n"
 			schedules.append(schedule.__dict__)
 			return schedule
 

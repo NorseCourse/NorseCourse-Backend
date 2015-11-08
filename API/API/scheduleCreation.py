@@ -1,11 +1,9 @@
 
 
-# Given a list of required sections and preferred sections, create a list of sections for schedules
-
-
-# Import the needed packages
-# import mysql.connector
-# import mysql.connector.pooling
+from API import NorseCourse, API, cnx_pool
+from flask import Flask, request
+from flask.ext.restplus import Api, Resource
+from  NorseCourseObjects import ScheduleCreationObject
 
 import config
 import string
@@ -15,27 +13,9 @@ import ast
 import datetime
 import random
 
-from API import NorseCourse, API, cnx_pool
-from flask import Flask, request
-from flask.ext.restplus import Api, Resource
-from  NorseCourseObjects import ScheduleCreationObject
-
 
 @API.route("/scheduleCreation")
 class ScheduleCreation(Resource):
-
-	@NorseCourse.doc(
-		params = {
-			"required": "Provide a comma separated list of section IDs that are required in schedule",
-			"preferred": "Provide a comma separated list of section IDs that are preferred in schedule",
-			"geneds": "Provide a comma separated list of Gen Ed abbreviation strings wanted",
-			"numcourses": "Provide an integer for desired number of courses wanted",
-			"division": "Provide a department ID that the student is a part of",
-			"index": "Provide an integer of last location in schedule list, if known"
-		}
-	)
-
-
 
 	# Grab the correct set of properties to use and create a connection pool
 	# db_properties = config.db_pool_config
@@ -231,6 +211,20 @@ class ScheduleCreation(Resource):
 		return schedule
 
 
+
+
+	@NorseCourse.doc(
+		params = {
+			"required": "Provide a comma separated list of section IDs that are required in schedule",
+			"preferred": "Provide a comma separated list of section IDs that are preferred in schedule",
+			"geneds": "Provide a comma separated list of Gen Ed abbreviation strings wanted",
+			"numcourses": "Provide an integer for desired number of courses wanted",
+			"division": "Provide a department ID that the student is a part of",
+			"index": "Provide an integer of last location in schedule list, if known"
+		}
+	)
+
+	
 	def get(self):
 
 		required = request.args.get("required")

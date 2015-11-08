@@ -600,15 +600,16 @@ class ScheduleCreation(Resource):
 		schedules = []
 
 		pos = 0
-		for x in range(10):
-			pos += 1 # x for index
-			current = all_combos[pos]
-			while self.verify(current) == False and pos < len(all_combos):
-				pos += 1
+		for x in range(100):
+			if pos < len(all_combos)-1:
+				pos += 1 # x for index
 				current = all_combos[pos]
+				while self.verify(current) == False and pos < len(all_combos)-1:
+					pos += 1
+					current = all_combos[pos]
 
-			schedule = ScheduleCreationObject(self.verify(current),pos)
-			schedules.append(schedule.__dict__)
+				schedule = ScheduleCreationObject(self.verify(current),pos)
+				schedules.append(schedule.__dict__)
 
 		return (schedules)
 

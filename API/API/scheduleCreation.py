@@ -234,13 +234,13 @@ class ScheduleCreation(Resource):
 		division = request.args.get("division")
 		index = request.args.get("index")
 
-		if checkScheduleConflict(required) or len(required) > num_courses:
+		if self.checkScheduleConflict(required) or len(required) > num_courses:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
 			return None
 
 		best = required+preferred
 
-		if not checkScheduleConflict(best):
+		if not self.checkScheduleConflict(best):
 
 			if (len(best) == num_courses):
 				return best
@@ -331,7 +331,7 @@ class ScheduleCreation(Resource):
 
 		# is a time conflict
 		else:
-			while checkScheduleConflict(best):
+			while self.checkScheduleConflict(best):
 				best = best[:-1]
 
 

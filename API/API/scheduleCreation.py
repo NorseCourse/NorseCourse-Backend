@@ -224,7 +224,7 @@ class ScheduleCreation(Resource):
 		}
 	)
 
-	
+
 	def get(self):
 
 		required = request.args.get("required")
@@ -428,6 +428,8 @@ class ScheduleCreation(Resource):
 		random.seed(0)
 		random.shuffle(all_combos)
 
+		schedules = []
+
 		if index == None:
 			pos = 0
 			current = all_combos[pos]
@@ -436,6 +438,7 @@ class ScheduleCreation(Resource):
 				current = all_combos[pos]
 
 			schedule = ScheduleCreationObject(verify(current),pos)
+			schedules.append(schedule.__dict__)
 			return schedule
 		else:
 			pos = index+1
@@ -445,6 +448,7 @@ class ScheduleCreation(Resource):
 				current = all_combos[pos]
 
 			schedule = ScheduleCreationObject(verify(current),pos)
+			schedules.append(schedule.__dict__)
 			return schedule
 
 

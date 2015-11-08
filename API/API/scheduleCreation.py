@@ -41,9 +41,6 @@ class ScheduleCreation(Resource):
 	db_properties = config.db_pool_config
 	cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
-
-	global_dict = {}
-
 	def betweenTimes(original,check):
 		original_start = original[0]
 		original_end = original[1]
@@ -77,41 +74,36 @@ class ScheduleCreation(Resource):
 
 		for section_id in section_ids:
 
-			if section_id in global_dict:
-				sections.append(global_dict[section_id])
-			else:
+			sectionQuery = "SELECT start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
 
-				sectionQuery = "SELECT start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
 
-				cnx = cnx_pool.get_connection()
-				cursor = cnx.cursor()
+			cursor.execute(sectionQuery % str(section_id))
 
-				cursor.execute(sectionQuery % str(section_id))
+			for (start_time, end_time, days) in cursor:
+				start_time = start_time
+				end_time = end_time
+				days = days
 
-				for (start_time, end_time, days) in cursor:
-					start_time = start_time
-					end_time = end_time
-					days = days
+			cursor.close()
+			cnx.close()
 
-				cursor.close()
-				cnx.close()
+			if start_time == "nan" or end_time == "nan" or days == "nan":
+				return False
 
-				if start_time == "nan" or end_time == "nan" or days == "nan":
-					return False
+			times = []
+			for day in range(len(days)):
 
-				times = []
-				for day in range(len(days)):
+				d = str(days_dict[str(days[day])])
 
-					d = str(days_dict[str(days[day])])
-
-					st = time.strptime(str(start_time)+' '+d, '%H:%M %w')
-					et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
-					times.append((st,et))
+				st = time.strptime(str(start_time)+' '+d, '%H:%M %w')
+				et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
+				times.append((st,et))
 
 
-				sections.append((times,len(days)))
+			sections.append((times,len(days)))
 
-				global_dict[section_id] = (times,len(days))
 
 
 		for section1 in range(len(sections)):

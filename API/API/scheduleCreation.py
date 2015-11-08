@@ -169,11 +169,11 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
-			# if there is a lab, return True
+			# if there is a lab for any section, return True
 			if labs != None:
 				return True
 
-		# if no lab, return False
+		# if no lab for any section, return False
 		return False
 
 
@@ -201,8 +201,12 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
+			# find labs for this section and add them below
+
 			if labs != None:
 				added = False
+
+				# goes through each potential lab for section
 				for lab in labs:
 					if not added:
 
@@ -221,33 +225,55 @@ class ScheduleCreation(Resource):
 
 						schedule.append(lab_id)
 
+						# if the lab fits into schedule, it will be added
 						if (not self.checkScheduleConflict(schedule)):
 							added = True
 						else:
 							schedule = schedule[:-1]
+
+				# if a lab was added, then added = True
+				# if no lab fit into schedule, return False
 				if added == False:
 					return False
 
+		# after all sections have labs added and they fit into schedule, return the new schedule
 		return schedule
 
 
+	# Function checks if a schedule is a valid schedule or not
+	# returns True schedule if it is valid, and False if not
 	def verify(self,schedule):
 
+		# checks if there is a lab in schedule
 		if self.checkLab(schedule):
+			# trys to add lab to schedule
 			s = self.addLab(schedule)
+			# if lab fit into schedule
 			if s != False:
+				# update schdule with lab
 				schedule = s
 
+			# lab did not fit into schedule
+			else:
+				# schedule does not work
+				return False
+
+		# check if there is a time conflict in schedule
 		if self.checkScheduleConflict(schedule):
+			# if there is a time conflict, invalid schedule
 			return False
 
+		# check if there are duplicate courses in schdule
 		if self.checkSameCourse(schedule):
+			# there were duplicates
 			return False
 
+		# it was a valid schedule, so return the schedule
 		return schedule
 
 
 
+	# define parameters for api
 
 	@NorseCourse.doc(
 		params = {
@@ -261,65 +287,98 @@ class ScheduleCreation(Resource):
 	)
 
 
+	# function that takes parameters and returns JSON schedule
 	def get(self):
 
+		# checks if requirements are empty
 		r = request.args.get("required")
+		# if not empty, create list
 		if r != None:
 			required = (r).split(',')
+
+		# if empty, make empty list
 		else:
 			required = []
 
+		# check if preferred are empty
 		p = request.args.get("preferred")
+		# if not empty, create list
 		if p != None:
 			preferred = (p).split(',')
+
+		# if empty, make empty list
 		else:
 			preferred = []
 
+		# check if geneds are empty
 		g = request.args.get("geneds")
+		# if not empty create list
 		if g != None:
 			geneds = (g).split(',')
+
+		# if empty, make empty list
 		else:
 			geneds = []
 
+		# check if num of courses are empty
 		n = request.args.get("numcourses")
+		# if not empty, make it an int
 		if n != None:
 			num_courses = int(n)
+
+		# if empty, default to 4 courses
 		else:
 			num_courses = 4
 
+
+		# check if division is empty
 		d = request.args.get("division")
+		# if not empty, make int
 		if d != None:
 			division = int(d)
+
+		# if empty, make None
 		else:
 			division = None
 
+
+		# check if index is empty
 		i = request.args.get("index")
+		# if not empty, make int
 		if i != None:
 			index = int(i)
+
+		# if empty, default to zero
 		else:
 			index = 0
 
+		# go through requirements and make int instead of unicode
 		new_r = []
 		for x in required:
 			new_r.append(int(x))
 
 		required = new_r
 
+		# go through preferred and make int instead of unicode
 		new_p = []
 		for x in preferred:
 			new_p.append(int(x))
 
 		preferred = new_p
 
+		# go through geneds and make string instead of unicode
 		new_ge = []
 		for x in geneds:
 			new_ge.append(str(x))
 
 		geneds = new_ge
 
+		if (len(geneds) + len(required) + len(preferred)) == 0:
+			return {}
+
 		if self.checkScheduleConflict(required) or len(required) > num_courses:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
-			return None
+			return {}
 
 		best = required+preferred
 

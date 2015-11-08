@@ -17,11 +17,11 @@ import random
 @API.route("/scheduleCreation")
 class ScheduleCreation(Resource):
 
-	# Grab the correct set of properties to use and create a connection pool
-	# db_properties = config.db_pool_config
-	# cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
-
+	# Function that takes a class time and a check time
+	# it checks if the check time is in between start and end time of class
+	# returns True if it is, meaning there is a time conflic
 	def betweenTimes(self,original,check):
+		# Spilt original to start and end times
 		original_start = original[0]
 		original_end = original[1]
 
@@ -31,6 +31,9 @@ class ScheduleCreation(Resource):
 		return False
 
 
+	# Function that takes two classes and checks if they conflict in time
+	# it calls the betweenTimes function above
+	# Return True if time conflic, False otherwise
 	def checkTimeConflict(self,one,two):
 
 		start_one = one[0]
@@ -47,13 +50,19 @@ class ScheduleCreation(Resource):
 		return False
 
 
+	# Function takes a schedule (list of section ids), and checks for time conflict
+	# it calls checkTimeConflict function above, between all combos of two classes in schedule
+	# returns True if there is a time conflict, and false otherwise
 	def checkScheduleConflict(self,section_ids):
 
 		sections = []
+		# create dictionary for datetime days of week
 		days_dict = {'M':'2','T':'3','W':'4','R':'5','F':'6'}
 
+		# go through all sections in schedule
 		for section_id in section_ids:
 
+			# get start and end times of section
 			sectionQuery = "SELECT start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
 
 			cnx = cnx_pool.get_connection()
@@ -69,38 +78,50 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
+			# if times of course are not listed, then these values with be nan
+			# if thats the case there is no time to add
 			if start_time == "nan" or end_time == "nan" or days == "nan":
-				return False
+				sections.append((None,None))
 
-			times = []
-			for day in range(len(days)):
+			# there is a time and day listed for the section
+			else:
 
-				d = str(days_dict[str(days[day])])
+				# create a list of datetime objects for each section meeting time
+				times = []
+				for day in range(len(days)):
 
-				st = time.strptime(str(start_time)+' '+d, '%H:%M %w')
-				et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
-				times.append((st,et))
+					d = str(days_dict[str(days[day])])
+
+					st = time.strptime(str(start_time)+' '+d, '%H:%M %w')
+					et = time.strptime(str(end_time)+' '+d, '%H:%M %w')
+					times.append((st,et))
+
+				# append list of times to list of sections
+				sections.append((times,len(days)))
 
 
-			sections.append((times,len(days)))
-
-
-
+		# go through every section, comparing it to every other section
+		# within each section, compare if there is a time conflict between each meeting time
 		for section1 in range(len(sections)):
 			for section2 in range(section1,len(sections)):
-				if section1 != section2:
+				if sections[section2] != (None,None) and sections[section1] != (None,None) and section1 != section2:
 					for time1 in range(sections[section1][-1]):
 						for time2 in range(sections[section2][-1]):
 							if self.checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
 								return True
 
+		# no time conflict was found in schedule, return False meaning its a valid schedule time wise
 		return False
 
 
+	# function takes a schedule (list of section ids)
+	# checks if two sections are the same course within the schedule
 	def checkSameCourse(self,schedule):
 		course_ids = []
+		# go through each section in schedule
 		for section_id in schedule:
 
+			# get course id of section
 			sectionQuery = "SELECT course_id FROM Sections WHERE section_id = %s"
 
 			cnx = cnx_pool.get_connection()
@@ -110,18 +131,26 @@ class ScheduleCreation(Resource):
 
 			for (course_id) in cursor:
 				if course_id not in course_ids:
+
+					# add course id to list of course ids in schedule
 					course_ids.append(course_id)
 
 			cursor.close()
 			cnx.close()
 
+
+		# if the amount of courses in schedule is different than the amount of sections,
+		# then there are duplicate courses, so return True, meaning a bad schedule
+		# if no two sections are the same course, then its valid schedule and return False
 		if len(course_ids) != len(schedule):
 			return True
 		return False
 
 
+	# Function checks if any sections in schedule have a required lab course
 	def checkLab(self,schedule):
 		labs = []
+		# go through each section in schedule
 		for section_id in schedule:
 			sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"
 
@@ -131,6 +160,8 @@ class ScheduleCreation(Resource):
 			cursor.execute(sectionQuery % str(section_id))
 
 			labs = None
+
+			# check if there is a lab
 			for (req_type,details) in cursor:
 				if req_type == "LAB":
 					labs = ast.literal_eval(details)
@@ -138,16 +169,21 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
+			# if there is a lab, return True
 			if labs != None:
 				return True
+
+		# if no lab, return False
 		return False
 
 
 
-
+	# Function takes a schedule and adds labs to any courses needing one
 	def addLab(self,schedule):
 		schedule = list(schedule)
 		labs = []
+
+		# goes through each section in schedule
 		for section_id in schedule:
 			
 			sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"

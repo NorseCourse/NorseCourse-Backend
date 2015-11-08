@@ -4,8 +4,8 @@
 
 
 # Import the needed packages
-import mysql.connector
-import mysql.connector.pooling
+# import mysql.connector
+# import mysql.connector.pooling
 
 import config
 import string
@@ -239,15 +239,18 @@ class ScheduleCreation(Resource):
 		return schedule
 
 
+	def get(self):
 
-	def createSchedules(required,preferred,geneds,num_courses,division = None,index= None):
-
-		master = []
+		required = request.args.get("required")
+		preferred = request.args.get("preferred")
+		geneds = request.args.get("geneds")
+		num_courses = request.args.get("numcourses")
+		division = request.args.get("division")
+		index = request.args.get("index")
 
 		if checkScheduleConflict(required) or len(required) > num_courses:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
 			return None
-
 
 		best = required+preferred
 

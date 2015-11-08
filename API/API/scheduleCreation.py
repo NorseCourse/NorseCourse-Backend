@@ -1,6 +1,8 @@
 
 
 from API import NorseCourse, API, cnx_pool
+from flask import request
+from flask.ext.restplus import Resource
 from  NorseCourseObjects import ScheduleCreationObject
 
 import config
@@ -19,7 +21,7 @@ class ScheduleCreation(Resource):
 	# db_properties = config.db_pool_config
 	# cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
-	def betweenTimes(original,check):
+	def betweenTimes(self,original,check):
 		original_start = original[0]
 		original_end = original[1]
 
@@ -29,7 +31,7 @@ class ScheduleCreation(Resource):
 		return False
 
 
-	def checkTimeConflict(one,two):
+	def checkTimeConflict(self,one,two):
 
 		start_one = one[0]
 		end_one = one[1]
@@ -45,7 +47,7 @@ class ScheduleCreation(Resource):
 		return False
 
 
-	def checkScheduleConflict(section_ids):
+	def checkScheduleConflict(self,section_ids):
 
 		sections = []
 		days_dict = {'M':'2','T':'3','W':'4','R':'5','F':'6'}
@@ -95,7 +97,7 @@ class ScheduleCreation(Resource):
 		return False
 
 
-	def checkSameCourse(schedule):
+	def checkSameCourse(self,schedule):
 		course_ids = []
 		for section_id in schedule:
 
@@ -118,7 +120,7 @@ class ScheduleCreation(Resource):
 		return False
 
 
-	def checkLab(schedule):
+	def checkLab(self,schedule):
 		labs = []
 		for section_id in schedule:
 			sectionQuery = "SELECT req_type,details FROM Sections,Courses,Requirements WHERE Sections.course_id = Courses.course_id and Courses.course_id = Requirements.course_id and Sections.section_id = %s"
@@ -143,7 +145,7 @@ class ScheduleCreation(Resource):
 
 
 
-	def addLab(schedule):
+	def addLab(self,schedule):
 		schedule = list(schedule)
 		labs = []
 		for section_id in schedule:
@@ -193,7 +195,7 @@ class ScheduleCreation(Resource):
 		return schedule
 
 
-	def verify(schedule):
+	def verify(self,schedule):
 
 		if checkLab(schedule):
 			s = addLab(schedule)

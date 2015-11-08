@@ -207,38 +207,16 @@ def addLab(schedule):
 
 def verify(schedule):
 
-	before_lab = datetime.datetime.now()
-
 	if checkLab(schedule):
 		s = addLab(schedule)
 		if s != False:
 			schedule = s
 
-	after_lab = datetime.datetime.now()
-	before_time = datetime.datetime.now()
-
 	if checkScheduleConflict(schedule):
 		return False
 
-	after_time = datetime.datetime.now()
-	before_c = datetime.datetime.now()
-
 	if checkSameCourse(schedule):
 		return False
-
-	after_c = datetime.datetime.now()
-
-	# print
-	# print "*********************"
-	# print
-	# print "Times:"
-	# print
-	# print "lab check time = ", (after_lab-before_lab)
-	# print "time check time = ", (after_time-before_time)
-	# print "course check time = ", (after_c-before_c)
-	# print
-	# print "*********************"
-	# print
 
 	return schedule
 
@@ -247,7 +225,6 @@ def verify(schedule):
 def createSchedules(required,preferred,geneds,num_courses,division = None,index= None):
 
 	master = []
-
 
 	if checkScheduleConflict(required) or len(required) > num_courses:
 		print "Required courses conflict, or too many required courses, can not make a schedule"
@@ -450,7 +427,7 @@ def createSchedules(required,preferred,geneds,num_courses,division = None,index=
 	if index == None:
 		pos = 0
 		current = all_combos[pos]
-		while verify(current) ==  False:
+		while verify(current) == False:
 			pos += 1
 			current = all_combos[pos]
 
@@ -506,45 +483,46 @@ def createSchedules(required,preferred,geneds,num_courses,division = None,index=
 
 
 def main():
-	begin = datetime.datetime.now()
-	print
-	print
-	x,pos = createSchedules([211,213],[],["HE","HB"],4,4)
-	print "Potential Schedules (section ids)"
-	print x
-	print pos
-	print
-	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
-	print x
-	print pos
-	print
-	print
-	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
-	print x
-	print pos
-	print
-	print
-	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
-	print x
-	print pos
-	print
-	print
-	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
-	print x
-	print pos
-	print
-	print
-	x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
-	print x
-	print pos
-	print
+	pass
+	# begin = datetime.datetime.now()
+	# print
+	# print
+	# x,pos = createSchedules([211,213],[],["HE","HB"],4,4)
+	# print "Potential Schedules (section ids)"
+	# print x
+	# print pos
+	# print
+	# x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
+	# print x
+	# print pos
+	# print
+	# print
+	# x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
+	# print x
+	# print pos
+	# print
+	# print
+	# x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
+	# print x
+	# print pos
+	# print
+	# print
+	# x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
+	# print x
+	# print pos
+	# print
+	# print
+	# x,pos = createSchedules([211,213],[],["HE","HB"],4,4,pos)
+	# print x
+	# print pos
+	# print
 
-	print "***********************************************"
-	end = datetime.datetime.now()
+	# print "***********************************************"
+	# end = datetime.datetime.now()
 
-	print end-begin
-	print
-	print
+	# print end-begin
+	# print
+	# print
 
 	# print
 	# print

@@ -600,7 +600,7 @@ class ScheduleCreation(Resource):
 		schedules = []
 
 		pos = index
-		for x in range(100):
+		for x in range(50):
 			if pos < len(all_combos)-1:
 				pos += 1 # x for index
 				current = all_combos[pos]
@@ -608,8 +608,9 @@ class ScheduleCreation(Resource):
 					pos += 1
 					current = all_combos[pos]
 
-				schedule = ScheduleCreationObject(self.verify(current),pos)
-				schedules.append(schedule.__dict__)
+				if pos < len(all_combos)-1:
+					schedule = ScheduleCreationObject(self.verify(current),pos)
+					schedules.append(schedule.__dict__)
 
 		return (schedules)
 

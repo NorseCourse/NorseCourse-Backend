@@ -39,9 +39,9 @@ class ScheduleCreation(Resource):
 		start_two = two[0]
 		end_two = two[1]
 
-		if betweenTimes((start_one,end_one),start_two):
+		if self.betweenTimes((start_one,end_one),start_two):
 			return True
-		if betweenTimes((start_one,end_one),end_two):
+		if self.betweenTimes((start_one,end_one),end_two):
 			return True
 
 		return False
@@ -91,7 +91,7 @@ class ScheduleCreation(Resource):
 				if section1 != section2:
 					for time1 in range(sections[section1][-1]):
 						for time2 in range(sections[section2][-1]):
-							if checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
+							if self.checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
 								return True
 
 		return False
@@ -185,7 +185,7 @@ class ScheduleCreation(Resource):
 
 						schedule.append(lab_id)
 
-						if (not checkScheduleConflict(schedule)):
+						if (not self.checkScheduleConflict(schedule)):
 							added = True
 						else:
 							schedule = schedule[:-1]
@@ -197,15 +197,15 @@ class ScheduleCreation(Resource):
 
 	def verify(self,schedule):
 
-		if checkLab(schedule):
-			s = addLab(schedule)
+		if self.checkLab(schedule):
+			s = self.addLab(schedule)
 			if s != False:
 				schedule = s
 
-		if checkScheduleConflict(schedule):
+		if self.checkScheduleConflict(schedule):
 			return False
 
-		if checkSameCourse(schedule):
+		if self.checkSameCourse(schedule):
 			return False
 
 		return schedule
@@ -433,30 +433,22 @@ class ScheduleCreation(Resource):
 		if index == None:
 			pos = 0
 			current = all_combos[pos]
-			while verify(current) == False:
+			while self.verify(current) == False:
 				pos += 1
 				current = all_combos[pos]
 
-			schedule = ScheduleCreationObject(verify(current),pos)
+			schedule = ScheduleCreationObject(self.verify(current),pos)
 			schedules.append(schedule.__dict__)
 			return schedule
 		else:
 			pos = index+1
 			current = all_combos[pos]
-			while verify(current) ==  False:
+			while self.verify(current) ==  False:
 				pos += 1
 				current = all_combos[pos]
 
-			schedule = ScheduleCreationObject(verify(current),pos)
+			schedule = ScheduleCreationObject(self.verify(current),pos)
 			schedules.append(schedule.__dict__)
 			return schedule
-
-		print
-		print
-		print "******************"
-		print 'HERE'
-		print
-		print
-		print
 
 

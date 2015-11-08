@@ -489,8 +489,8 @@ class ScheduleCreation(Resource):
 				current = all_combos[pos]
 
 			schedule = ScheduleCreationObject(self.verify(current),pos)
-			schedules.append(schedule.__dict__)
-			return schedule
+			return (schedule.__dict__)
+
 		else:
 			pos = index+1
 			current = all_combos[pos]
@@ -498,13 +498,8 @@ class ScheduleCreation(Resource):
 				pos += 1
 				current = all_combos[pos]
 
-			print "***********************\n here2"
 			c = self.verify(current)
-			print "\n\n\n\n\n scheudle \n\n", c
-
 			schedule = ScheduleCreationObject(c,pos)
-			print "\n\n\nhere \n\n\n"
-			schedules.append(schedule.__dict__)
-			return schedule
+			return (schedule.__dict__)
 
 

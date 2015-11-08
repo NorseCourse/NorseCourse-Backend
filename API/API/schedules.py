@@ -389,9 +389,9 @@ class ScheduleCreation(Resource):
 
 
 		# if the best schedule is valid
-		if self.verfiy(best) != False:
+		if self.verify(best) != False:
 
-			best = self.verfiy(best)
+			best = self.verify(best)
 
 			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
@@ -495,7 +495,7 @@ class ScheduleCreation(Resource):
 			while self.verify(best) == False:
 				best = best[:-1]
 
-			best = self.verfiy(best)
+			best = self.verify(best)
 
 			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):

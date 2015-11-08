@@ -599,7 +599,7 @@ class ScheduleCreation(Resource):
 
 		schedules = []
 
-		pos = 0
+		pos = index
 		for x in range(100):
 			if pos < len(all_combos)-1:
 				pos += 1 # x for index

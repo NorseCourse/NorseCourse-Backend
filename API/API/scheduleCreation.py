@@ -38,8 +38,8 @@ class ScheduleCreation(Resource):
 
 
 	# Grab the correct set of properties to use and create a connection pool
-	db_properties = config.db_pool_config
-	cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
+	# db_properties = config.db_pool_config
+	# cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 	def betweenTimes(original,check):
 		original_start = original[0]

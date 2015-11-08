@@ -281,8 +281,6 @@ class ScheduleCreation(Resource):
 
 		geneds = new_ge
 
-		print "\n\n\n\n\n\n\n\n\n\n"
-
 		if self.checkScheduleConflict(required) or len(required) > num_courses:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
 			return None
@@ -474,8 +472,6 @@ class ScheduleCreation(Resource):
 				best = (best+preferred[:-(num_removed)])
 
 
-		print "***********************\n\n\n\n\n\n\n\n here"
-
 		random.seed(0)
 		random.shuffle(all_combos)
 
@@ -498,8 +494,7 @@ class ScheduleCreation(Resource):
 				pos += 1
 				current = all_combos[pos]
 
-			c = self.verify(current)
-			schedule = ScheduleCreationObject(c,pos)
+			schedule = ScheduleCreationObject(self.verify(current),pos)
 			return (schedule.__dict__)
 
 

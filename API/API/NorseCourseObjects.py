@@ -86,3 +86,9 @@ class GenEdFulfillmentObject(object):
 		self.name = name
 		self.abbreviation = abbreviation
 		self.alsoFulfills = also_fulfills
+
+# Get potential schedules
+class ScheduleCreationObject(object):
+	def __init__(self, sections = None, index=None):
+		self.sections = sections
+		self.index = index

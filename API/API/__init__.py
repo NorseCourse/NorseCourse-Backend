@@ -19,4 +19,4 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-from API import courses, departments, divisions, genEds, schedules, sections, terms, recommendations, scheduleCreation
+from API import courses, departments, divisions, genEds, schedules, sections, terms, recommendations

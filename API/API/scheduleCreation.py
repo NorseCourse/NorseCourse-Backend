@@ -14,7 +14,7 @@ import datetime
 import random
 
 
-@API.route("/scheduleCreation")
+@API.route("/schedules")
 class ScheduleCreation(Resource):
 
 	# Function that takes a class time and a check time

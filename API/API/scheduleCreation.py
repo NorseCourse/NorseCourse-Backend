@@ -1,8 +1,6 @@
 
 
 from API import NorseCourse, API, cnx_pool
-from flask import Flask, request
-from flask.ext.restplus import Api, Resource
 from  NorseCourseObjects import ScheduleCreationObject
 
 import config
@@ -450,5 +448,13 @@ class ScheduleCreation(Resource):
 			schedule = ScheduleCreationObject(verify(current),pos)
 			schedules.append(schedule.__dict__)
 			return schedule
+
+		print
+		print
+		print "******************"
+		print 'HERE'
+		print
+		print
+		print
 
 

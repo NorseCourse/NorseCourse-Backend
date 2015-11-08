@@ -348,9 +348,9 @@ class ScheduleCreation(Resource):
 		if i != None:
 			index = int(i)
 
-		# if empty, default to zero
+		# if empty, default to -1
 		else:
-			index = 0
+			index = -1
 
 		# go through requirements and make int instead of unicode
 		new_r = []
@@ -373,23 +373,36 @@ class ScheduleCreation(Resource):
 
 		geneds = new_ge
 
-		if (len(geneds) + len(required) + len(preferred)) == 0:
-			return {}
+		# checks if there is enough information to create schedule
+		if (len(geneds) + len(required) + len(preferred)) <= 2:
+			schedule = ScheduleCreationObject([],0)
+			return (schedule.__dict__)
 
-		if self.checkScheduleConflict(required) or len(required) > num_courses:
+		# checks if there is a conflict on required courses
+		# if the required classes wont work, then return the empty dictionary
+		if self.verify(required) == False or len(required) > num_courses:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
-			return {}
+			schedule = ScheduleCreationObject([],0)
+			return (schedule.__dict__)
 
 		best = required+preferred
 
-		if not self.checkScheduleConflict(best):
 
+		# if the best schedule is valid
+		if self.verfiy(best) != False:
+
+			best = self.verfiy(best)
+
+			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
-				return best
+				schedule = ScheduleCreationObject(best,0)
+				return (schedule.__dict__) 
 
+			# if more courses are needed
 			if (len(best) < num_courses):
 				num_needed = num_courses - len(best)
 				
+				# if gen eds are wanted, add gen eds
 				if len(geneds) > 0:
 
 					possible_gened_classes = {}
@@ -424,13 +437,16 @@ class ScheduleCreation(Resource):
 
 					all_combos = list(itertools.product(*combo))
 
+				# no gen eds wanted
 				else:
 					all_combos = [best]
 
-
+				# if more is wanted after gen eds and best, look for recommendations
 				if num_needed > 0:
 
+					# check if they specified their division
 					if division != None:
+
 						# look for recommendations for division to fill schedule
 						classes = []
 						for i in range(num_needed):
@@ -464,28 +480,33 @@ class ScheduleCreation(Resource):
 
 							all_combos = new_all
 
-
+			# if there are too many courses
 			if (len(best) > num_courses):
 				# too many total courses, need to remove some preferred courses
 				num_removed = len(best) - num_courses
 				best = (best+preferred[:-(num_removed)])
 
 
-		# is a time conflict
+
+		# is best schedule is not valid for some reason
 		else:
-			while self.checkScheduleConflict(best):
+
+			# remove courses from best until no conflict.
+			while self.verify(best) == False:
 				best = best[:-1]
 
+			best = self.verfiy(best)
 
-			###########################
-			# same as above in if
-			##########################
+			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
-				return best
+				schedule = ScheduleCreationObject(best,0)
+				return (schedule.__dict__) 
 
+			# if more courses are needed
 			if (len(best) < num_courses):
 				num_needed = num_courses - len(best)
 				
+				# if gen eds are wanted, add gen eds
 				if len(geneds) > 0:
 
 					possible_gened_classes = {}
@@ -507,7 +528,6 @@ class ScheduleCreation(Resource):
 						cursor.close()
 						cnx.close()
 
-
 					combo = []
 
 					for b in best:
@@ -518,15 +538,19 @@ class ScheduleCreation(Resource):
 							combo.append(possible_gened_classes[x])
 							num_needed -= 1
 
+
 					all_combos = list(itertools.product(*combo))
 
+				# no gen eds wanted
 				else:
 					all_combos = [best]
 
-
+				# if more is wanted after gen eds and best, look for recommendations
 				if num_needed > 0:
 
+					# check if they specified their division
 					if division != None:
+
 						# look for recommendations for division to fill schedule
 						classes = []
 						for i in range(num_needed):
@@ -560,36 +584,29 @@ class ScheduleCreation(Resource):
 
 							all_combos = new_all
 
-
+			# if there are too many courses
 			if (len(best) > num_courses):
 				# too many total courses, need to remove some preferred courses
 				num_removed = len(best) - num_courses
 				best = (best+preferred[:-(num_removed)])
 
 
+
+		# shuffle list of all potential schedules
+		# set seed so it is the same everytime
 		random.seed(0)
 		random.shuffle(all_combos)
 
 		schedules = []
 
-		if index == None:
-			pos = 0
+
+		pos = index+1
+		current = all_combos[pos]
+		while self.verify(current) ==  False:
+			pos += 1
 			current = all_combos[pos]
-			while self.verify(current) == False:
-				pos += 1
-				current = all_combos[pos]
 
-			schedule = ScheduleCreationObject(self.verify(current),pos)
-			return (schedule.__dict__)
-
-		else:
-			pos = index+1
-			current = all_combos[pos]
-			while self.verify(current) ==  False:
-				pos += 1
-				current = all_combos[pos]
-
-			schedule = ScheduleCreationObject(self.verify(current),pos)
-			return (schedule.__dict__)
+		schedule = ScheduleCreationObject(self.verify(current),pos)
+		return (schedule.__dict__)
 
 

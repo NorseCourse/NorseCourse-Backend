@@ -18,7 +18,7 @@ def main():
     courses = pd.DataFrame.from_csv('course.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
-    courses['course_id'] = courses['Course Sections Id']
+    #courses['course_id'] = courses['Course Sections Id']
     del courses['Course Sections Id']
     courses['section_name'] = courses['Sec Name']
     del courses['Sec Name']
@@ -49,7 +49,7 @@ def main():
     meetings = pd.DataFrame.from_csv('meeting.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
-    meetings['course_id'] = meetings['Course Sections Id']
+    #meetings['course_id'] = meetings['Course Sections Id']
     del meetings['Course Sections Id']
     meetings['section_name'] = meetings['Sec Name']
     del meetings['Sec Name']
@@ -87,6 +87,38 @@ def main():
     del meetings['Sec Status']
     meetings['days'] = meetings['Csm Days']
     del meetings['Csm Days']
+
+
+    course_ids = {}
+    cid = 0
+    for idx,row in courses.iterrows():
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        if name not in course_ids:
+            course_ids[name] = cid
+            cid += 1
+
+
+    for idx,row in meetings.iterrows():
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        if name not in course_ids:
+            course_ids[name] = cid
+            cid += 1
+
+    c_CID = []
+    for idx,row in courses.iterrows():
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        c_CID.append(course_ids[name])
+
+
+    m_CID = []
+    for idx,row in meetings.iterrows():
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        m_CID.append(course_ids[name])
+
+
+    courses['course_id'] = c_CID
+    meetings['course_id'] = m_CID
+
 
     # merge together the two csv files
     data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
@@ -136,6 +168,7 @@ def main():
     faculty_first = []
     faculty_last = []
     building_names = []
+    course_id = []
 
 
     # iterate through all rows in the csv

@@ -76,9 +76,9 @@ def populateDB(cursor, data):
 			# Courses table
 			########################################################################
 			# if course not already added to database
-			if row['course_id'] not in courses:
+			if row['c_id'] not in courses:
 				# add course to check set
-				courses.add(row['course_id'])
+				courses.add(row['c_id'])
 
 
 				# SQL statement to find department id of current deparment
@@ -92,7 +92,7 @@ def populateDB(cursor, data):
 
 				# SQL insert statement of Courses
 				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(dept_id)s)"
-				cursor.execute(insert_course,{'cid':str(row['course_id']),
+				cursor.execute(insert_course,{'cid':str(row['c_id']),
 												'desc':str(row['course_description']),
 												'same_as':str(row['same_as']),
 												'number':str(row['section_name']),
@@ -198,9 +198,9 @@ def populateDB(cursor, data):
 			########################################################################
 
 			# check if course co/pre reqs are already added for that given course
-			if row['course_id'] not in courses2:
+			if row['c_id'] not in courses2:
 				# add course to course2 check set, so it wont be added again
-				courses2.add(row['course_id'])
+				courses2.add(row['c_id'])
 
 				# check if there is a co req
 				if type(row['co_reqs']) == str:
@@ -208,7 +208,7 @@ def populateDB(cursor, data):
 					insert_req = "INSERT INTO Requirements (details,req_type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
 					cursor.execute(insert_req,{'detail':str(row['co_reqs']),
 												'type':"CO",
-												'course':str(row['course_id'])
+												'course':str(row['c_id'])
 												})
 
 				# check if there is a pre req
@@ -217,7 +217,7 @@ def populateDB(cursor, data):
 					insert_req = "INSERT INTO Requirements (details,req_type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
 					cursor.execute(insert_req,{'detail':str(row['pre_reqs']),
 												'type':"PRE",
-												'course':str(row['course_id'])
+												'course':str(row['c_id'])
 												})
 
 				# check if there is a lab
@@ -226,7 +226,7 @@ def populateDB(cursor, data):
 					insert_req = "INSERT INTO Requirements (details,req_type,course_id) VALUES (%(detail)s,%(type)s,%(course)s)"
 					cursor.execute(insert_req,{'detail':str(row['lab']),
 												'type':"LAB",
-												'course':str(row['course_id'])
+												'course':str(row['c_id'])
 												})
 
 

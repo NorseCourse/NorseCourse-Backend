@@ -18,7 +18,7 @@ def main():
     courses = pd.DataFrame.from_csv('course.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
-    #courses['course_id'] = courses['Course Sections Id']
+    courses['course_id'] = courses['Course Sections Id']
     del courses['Course Sections Id']
     courses['section_name'] = courses['Sec Name']
     del courses['Sec Name']
@@ -49,7 +49,7 @@ def main():
     meetings = pd.DataFrame.from_csv('meeting.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
-    #meetings['course_id'] = meetings['Course Sections Id']
+    meetings['course_id'] = meetings['Course Sections Id']
     del meetings['Course Sections Id']
     meetings['section_name'] = meetings['Sec Name']
     del meetings['Sec Name']

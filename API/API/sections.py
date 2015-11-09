@@ -4,7 +4,6 @@ from flask.ext.restplus import Resource
 from  NorseCourseObjects import SectionObject, FacultyObject, SectionMeetingObject, RoomObject, GenEdFulfillmentObject
 
 
-
 # Returns JSON dictionary of faculty for a given section
 def getFaculty(self, section_id):
 	facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
@@ -103,6 +102,72 @@ def getGenEdFulfillment(self,section_id):
 
 
 
+@API.route("/sections", endpoint='sections')
+class Section(Resource):
+
+
+	@NorseCourse.doc(
+		params = {
+			"courses": "Provide a comma separated list of course IDs"
+		}
+	)
+
+	def get(self):
+		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
+		
+		course = request.args.get("courses")
+		id_list = []
+
+		if course != None:
+			id_list = course.split(",")
+			id_list = map(str, id_list)
+
+			sectionQuery += " WHERE course_id = %s"
+			for i in range(len(id_list) - 1):
+				sectionQuery += " OR course_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		if len(id_list) > 0:
+			cursor.execute(sectionQuery, tuple(id_list))
+		else:
+			cursor.execute(sectionQuery)
+
+
+		sections = []
+
+		for (term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id) in cursor:
+
+			prof = self.getFaculty(section_id)
+			sect_meeting = self.getSectionMeeting(section_id)
+			gef = self.getGenEdFulfillment(section_id)
+
+			if comments == "nan":
+				comments = None
+			if name == "nan":
+				name = None
+			if short_title == "nan":
+				short_title = None
+			if min_credits == "nan":
+				min_credits = None
+			if max_credits == "nan":
+				max_credits = None
+			if gef == []:
+				gef = None
+				
+			sect = SectionObject(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
+
+			sections.append(sect.__dict__)
+
+		cursor.close()
+		cnx.close()
+
+		return sections
+
+
+
+
 @API.route("/sections/<sectionId>", endpoint = "sections/")
 class Section(Resource):
 
@@ -168,68 +233,3 @@ class Section(Resource):
 
 		return sections
 
-
-
-
-@API.route("/sections", endpoint='sections')
-class Section(Resource):
-
-
-	@NorseCourse.doc(
-		params = {
-			"courses": "Provide a comma separated list of course IDs"
-		}
-	)
-
-	def get(self):
-		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
-		
-		course = request.args.get("courses")
-		id_list = []
-
-		if course != None:
-			id_list = course.split(",")
-			id_list = map(str, id_list)
-
-			sectionQuery += " WHERE course_id = %s"
-			for i in range(len(id_list) - 1):
-				sectionQuery += " OR course_id = %s"
-
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
-		if len(id_list) > 0:
-			cursor.execute(sectionQuery, tuple(id_list))
-		else:
-			cursor.execute(sectionQuery)
-
-
-		sections = []
-
-		for (term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id) in cursor:
-
-			prof = self.getFaculty(section_id)
-			sect_meeting = self.getSectionMeeting(section_id)
-			gef = self.getGenEdFulfillment(section_id)
-
-			if comments == "nan":
-				comments = None
-			if name == "nan":
-				name = None
-			if short_title == "nan":
-				short_title = None
-			if min_credits == "nan":
-				min_credits = None
-			if max_credits == "nan":
-				max_credits = None
-			if gef == []:
-				gef = None
-				
-			sect = SectionObject(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
-
-			sections.append(sect.__dict__)
-
-		cursor.close()
-		cnx.close()
-
-		return sections

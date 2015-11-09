@@ -66,27 +66,92 @@ class Courses(Resource):
 		}
 	)
 	def get(self):
-		courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses GROUP BY (name)"
+		# Get the URL params
+		fields = request.args.get("fields")
+		if fields == None:
+			showCourseId = True
+			fields = ["courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
+		else:
+			fields = fields.split(",")
+			if "courseId" not in fields:
+				showCourseId = False
+				fields.append("courseId")
 
+		# Gather the terms for the course query.
+		coursesTerms = []
+		for field in fields:
+			if field in coursesDict:
+				coursesTerms.append(coursesDict[field])
+
+		# Execute if there is anything needed from the course table
+		if coursesTerms:
+			# Build the course query
+			courseQuery = "SELECT "
+			termsLen = len(coursesTerms)
+			addComma = termsLen - 1
+
+			for i in range(termsLen):
+				courseQuery += coursesTerms[i]
+				if i < addComma:
+					courseQuery += ", "
+			courseQuery += " FROM Courses"
+		# else:
+		# 	courseQuery = "SELECT course_id FROM Courses"
+
+		print(courseQuery)
+
+		showRelevance = False
+		if "relevance" in fields:
+			showRelevance = True
+
+		showRequirements = False
+		if "requirements" in fields:
+			showRequirements = True
+
+		showRecommendations = False
+		if "recommendations" in fields:
+			showRecommendations = True;
+
+
+		# Get a connecgtion and open up a cursor and execute the query
 		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
-		###
-		# SOME MORE CODE TO DEAL WITH ABOVE PARAMS
-		# ALTER THE QUERY
-		###
-
+		cursor = cnx.cursor() 
 		cursor.execute(courseQuery)
 
 		courses = []
-		for (course_id, description, same_as, name, department_id) in cursor:
-			requirements = getRequirements(course_id)
-			recommendations = getRecommendations(course_id)
+		for result in cursor:
+			# Temp object for storing the course info as the fields can be passed in in any order.
+			tempObj = {
+				"course_id": None,
+				"description": None,
+				"same_as": None,
+				"name": None,
+				"department_id": None
+				}
 
-			if same_as == "nan":
-				course = CourseObject(course_id, description, None, name, department_id, None, requirements, recommendations)
+			for (item, ct) in zip(result, coursesTerms):
+				tempObj[ct] = item
+			if tempObj["same_as"] == "nan":
+				tempObj["same_as"] = None
+
+			# print(tempObj["course_id"])
+
+			relevance = None
+			if showRelevance:
+				pass
+
+			requirements = None
+			if showRequirements:
+				requirements = getRequirements(tempObj["course_id"])
+
+			recommendations = None
+			if showRecommendations:
+				recommendations = getRecommendations(tempObj["course_id"])
+
+			if showCourseId:
+				course = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
 			else:
-				course = CourseObject(course_id, description, same_as, name, department_id, None, requirements, recommendations)
+				course = CourseObject(None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
 
 			courses.append(course.__dict__)
 
@@ -94,6 +159,33 @@ class Courses(Resource):
 		cnx.close()
 
 		return courses
+
+
+
+
+		# courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses GROUP BY (name)"
+
+		# cnx = cnx_pool.get_connection()
+		# cursor = cnx.cursor()
+
+		# cursor.execute(courseQuery)
+
+		# courses = []
+		# for (course_id, description, same_as, name, department_id) in cursor:
+		# 	requirements = getRequirements(course_id)
+		# 	recommendations = getRecommendations(course_id)
+
+		# 	if same_as == "nan":
+		# 		course = CourseObject(course_id, description, None, name, department_id, None, requirements, recommendations)
+		# 	else:
+		# 		course = CourseObject(course_id, description, same_as, name, department_id, None, requirements, recommendations)
+
+		# 	courses.append(course.__dict__)
+
+		# cursor.close()
+		# cnx.close()
+
+		# return courses
 
 
 @API.route("/courses/<courseId>", endpoint = "courses/")
@@ -118,10 +210,6 @@ class Courses(Resource):
 			if field in coursesDict:
 				coursesTerms.append(coursesDict[field])
 
-		# Get a connecgtion and open up a cursor
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
 		# Te,p object for storing the course info as the fields can be passed in in any order.
 		tempObj = {
 			"course_id": None,
@@ -130,6 +218,10 @@ class Courses(Resource):
 			"name": None,
 			"department_id": None
 			}
+
+		# Get a connecgtion and open up a cursor and execute the query
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
 
 		# Execute if there is anything needed from the course table
 		if coursesTerms:
@@ -144,16 +236,14 @@ class Courses(Resource):
 					courseQuery += ", "
 			courseQuery += " FROM Courses WHERE course_id = %s"
 
-			# Execute the query
 			cursor.execute(courseQuery % str(courseId))
 
 			# Populate the temp object
 			for result in cursor:
-				print(result)
 				for item, ct in zip(result, coursesTerms):
 					tempObj[ct] = item
-			if tempObj["same_as"] == "nan":
-				tempObj["same_as"] = None
+				if tempObj["same_as"] == "nan":
+					tempObj["same_as"] = None
 
 		# Get the relevance if asked for
 		relevance = None

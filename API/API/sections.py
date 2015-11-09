@@ -5,12 +5,7 @@ from  NorseCourseObjects import SectionObject, FacultyObject, SectionMeetingObje
 
 
 
-
-@API.route("/sections/<sectionId>", endpoint = "sections/")
-class Section(Resource):
-
-
-		# Returns JSON dictionary of faculty for a given section
+# Returns JSON dictionary of faculty for a given section
 	def getFaculty(self, section_id):
 		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
 
@@ -105,6 +100,11 @@ class Section(Resource):
 		cnx.close()
 
 		return ge
+
+
+
+@API.route("/sections/<sectionId>", endpoint = "sections/")
+class Section(Resource):
 
 
 	@NorseCourse.doc(
@@ -173,103 +173,6 @@ class Section(Resource):
 
 @API.route("/sections", endpoint='sections')
 class Section(Resource):
-
-	# Returns JSON dictionary of faculty for a given section
-	def getFaculty(self, section_id):
-		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
-
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
-		cursor.execute(facultyQuery % str(section_id))
-
-		profs = []
-		for (first_initial, last_name) in cursor:
-			fi = first_initial.split(',')
-			ln = last_name.split(',')
-			for p in range(len(ln)):
-				faculty = FacultyObject(fi[p], ln[p])
-				profs.append(faculty.__dict__)
-
-		cursor.close()
-		cnx.close()
-
-		return profs
-
-
-	# Returns JSON dictionary of section Meeting info for a given section
-	def getSectionMeeting(self,section_id):
-
-		sectionMeetingQuery = "SELECT room_id, start_time, end_time, days FROM SectionMeetings WHERE section_id = %s"
-
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
-		cursor.execute(sectionMeetingQuery % str(section_id))
-
-		meetings = []
-		for (room_id, start_time, end_time, days) in cursor:
-			room = self.getRoom(room_id)
-
-			if start_time == "":
-				start_time = None
-			if end_time == "":
-				end_time = None
-
-			meet = SectionMeetingObject(room_id, start_time, end_time, days,room)
-			meetings.append(meet.__dict__)
-
-		cursor.close()
-		cnx.close()
-
-		return meetings
-
-
-	# Returns JSON dictionary of room info for a given room
-	def getRoom(self,room_id):
-		roomQuery = "SELECT number, name, abbreviation FROM Rooms, Buildings WHERE Buildings.building_id = Rooms.building_id AND room_id = %s"
-
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
-		cursor.execute(roomQuery % str(room_id))
-
-		room = []
-		for (number, name, abbreviation) in cursor:
-			r = RoomObject(room_id, number, name, abbreviation)
-			room.append(r.__dict__)
-
-		cursor.close()
-		cnx.close()
-
-		return room
-
-
-	# Returns JSON dictionary of gen ed fulfillments for a given section
-	def getGenEdFulfillment(self,section_id):
-
-		genedQuery = "SELECT GenEds.gen_ed_id, comments, name, abbreviation, also_fulfills FROM GenEdFulfillments, GenEds WHERE GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND section_id = %s"
-
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
-
-		cursor.execute(genedQuery % str(section_id))
-
-
-		ge = []
-		for (gen_ed_id, comments, name, abbreviation, also_fulfills) in cursor:
-
-			if also_fulfills == "":
-				also_fulfills = None
-
-			gef = GenEdFulfillmentObject(gen_ed_id, comments, name, abbreviation,also_fulfills)
-			ge.append(gef.__dict__)
-
-		cursor.close()
-		cnx.close()
-
-		return ge
-
 
 
 	@NorseCourse.doc(

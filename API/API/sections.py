@@ -109,11 +109,24 @@ class Section(Resource):
 
 	@NorseCourse.doc(
 		params = {
-			"courses": "Provide a comma separated list of course IDs"
+			"courses": "Provide a comma separated list of course IDs",
+			"fields": "Provide a comma separated list of fields you would like back"
 		}
 	)
 
 	def get(self):
+
+		# Get the URL params
+		fields = request.args.get("fields")
+		if fields == None:
+			fields = ['comments','courseId','faculty','GenEdFulfillments','id','maxCredits','minCredits','name','sectionMeetings','sevenWeeks','shortTitle','term']
+		else:
+			f = fields.split(",")
+			fields = []
+			for i in f:
+				fields.append(str(i).replace(" ",""))
+
+
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		
 		course = request.args.get("courses")
@@ -136,28 +149,85 @@ class Section(Resource):
 			cursor.execute(sectionQuery)
 
 
+
+		obj = {
+				'comments':None,
+				'courseId':None,
+				'faculty':None,
+				'GenEdFulfillments':None,
+				'id':None,
+				'maxCredits':None,
+				'minCredits':None,
+				'name':None,
+				'sectionMeetings':None,
+				'sevenWeeks':None,
+				'shortTitle':None,
+				'term':None
+				}
+
+				
 		sections = []
 
 		for (term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id) in cursor:
 
-			prof = self.getFaculty(section_id)
-			sect_meeting = self.getSectionMeeting(section_id)
-			gef = self.getGenEdFulfillment(section_id)
 
-			if comments == "nan":
-				comments = None
-			if name == "nan":
-				name = None
-			if short_title == "nan":
-				short_title = None
-			if min_credits == "nan":
-				min_credits = None
-			if max_credits == "nan":
-				max_credits = None
-			if gef == []:
-				gef = None
+			if "faculty" in fields:
+				prof = self.getFaculty(section_id)
+				obj['faculty'] = prof
+
+			if "sectionMeetings" in fields:
+				sect_meeting = self.getSectionMeeting(section_id)
+				obj["sectionMeetings"] = sect_meeting
+
+			if "GenEdFulfillments" in fields:
+				gef = self.getGenEdFulfillment(section_id)
+				obj['GenEdFulfillments'] = gef
+
+			if "term" in fields:
+				obj['term'] = term
+
+			if "sevenWeeks" in fields:
+				obj['sevenWeeks'] = seven_weeks
+
+			if "id" in fields:
+				obj['id'] = section_id
+
+			if "courseId" in fields:
+				obj['courseId'] = course_id
+
+			if comments != "nan" and "comments" in fields:
+				obj['comments'] = comments
+
+			if name != "nan" and "name" in fields:
+				obj['name'] = name
+
+			if short_title != "nan" and "shortTitle" in fields:
+				obj['shortTitle'] = short_title
+
+			if min_credits != "nan" and "minCredits" in fields:
+				obj['minCredits'] = min_credits
+
+			if max_credits != "nan" and "maxCredits" in fields:
+				obj['maxCredits'] = max_credits
+
+
+
 				
-			sect = SectionObject(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
+			sect = SectionObject(
+				obj['term'], 
+				obj['name'],
+				obj['shortTitle'],
+				obj['minCredits'],
+				obj['maxCredits'],
+				obj['comments'],
+				obj['sevenWeeks'],
+				obj['id'],
+				obj['courseId'],
+				obj['faculty'],
+				obj['sectionMeetings'],
+				obj['GenEdFulfillments']
+				)
+
 
 			sections.append(sect.__dict__)
 
@@ -280,6 +350,17 @@ class Section(Resource):
 
 	def get(self,sectionId):
 
+		# Get the URL params
+		fields = request.args.get("fields")
+		if fields == None:
+			fields = ['comments','courseId','faculty','GenEdFulfillments','id','maxCredits','minCredits','name','sectionMeetings','sevenWeeks','shortTitle','term']
+		else:
+			f = fields.split(",")
+			fields = []
+			for i in f:
+				fields.append(str(i).replace(" ",""))
+
+
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		
 		section_id = sectionId
@@ -303,28 +384,82 @@ class Section(Resource):
 			cursor.execute(sectionQuery)
 
 
+		obj = {
+				'comments':None,
+				'courseId':None,
+				'faculty':None,
+				'GenEdFulfillments':None,
+				'id':None,
+				'maxCredits':None,
+				'minCredits':None,
+				'name':None,
+				'sectionMeetings':None,
+				'sevenWeeks':None,
+				'shortTitle':None,
+				'term':None
+				}
+
+
 		sections = []
 
 		for (term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id) in cursor:
 
-			prof = self.getFaculty(section_id)
-			sect_meeting = self.getSectionMeeting(section_id)
-			gef = self.getGenEdFulfillment(section_id)
+			if "faculty" in fields:
+				prof = self.getFaculty(section_id)
+				obj['faculty'] = prof
 
-			if comments == "nan":
-				comments = None
-			if name == "nan":
-				name = None
-			if short_title == "nan":
-				short_title = None
-			if min_credits == "nan":
-				min_credits = None
-			if max_credits == "nan":
-				max_credits = None
-			if gef == []:
-				gef = None
+			if "sectionMeetings" in fields:
+				sect_meeting = self.getSectionMeeting(section_id)
+				obj["sectionMeetings"] = sect_meeting
+
+			if "GenEdFulfillments" in fields:
+				gef = self.getGenEdFulfillment(section_id)
+				obj['GenEdFulfillments'] = gef
+
+			if "term" in fields:
+				obj['term'] = term
+
+			if "sevenWeeks" in fields:
+				obj['sevenWeeks'] = seven_weeks
+
+			if "id" in fields:
+				obj['id'] = section_id
+
+			if "courseId" in fields:
+				obj['courseId'] = course_id
+
+			if comments != "nan" and "comments" in fields:
+				obj['comments'] = comments
+
+			if name != "nan" and "name" in fields:
+				obj['name'] = name
+
+			if short_title != "nan" and "shortTitle" in fields:
+				obj['shortTitle'] = short_title
+
+			if min_credits != "nan" and "minCredits" in fields:
+				obj['minCredits'] = min_credits
+
+			if max_credits != "nan" and "maxCredits" in fields:
+				obj['maxCredits'] = max_credits
+
+
+
 				
-			sect = SectionObject(term, name,short_title,min_credits,max_credits,comments,seven_weeks,section_id,course_id,prof,sect_meeting,gef)
+			sect = SectionObject(
+				obj['term'], 
+				obj['name'],
+				obj['shortTitle'],
+				obj['minCredits'],
+				obj['maxCredits'],
+				obj['comments'],
+				obj['sevenWeeks'],
+				obj['id'],
+				obj['courseId'],
+				obj['faculty'],
+				obj['sectionMeetings'],
+				obj['GenEdFulfillments']
+				)
 
 			sections.append(sect.__dict__)
 

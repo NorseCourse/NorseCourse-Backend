@@ -88,6 +88,36 @@ def main():
     meetings['days'] = meetings['Csm Days']
     del meetings['Csm Days']
 
+
+    course_ids = {}
+    cid = 0
+    for idx,row in courses.iterrows():
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        if name not in course_ids:
+            course_ids[name] = cid
+            cid += 1
+
+
+    for idx,row in meetings.iterrows():
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        if name not in course_ids:
+            course_ids[name] = cid
+            cid += 1
+
+    # c_CID = []
+    # for idx,row in courses.iterrows():
+    #     name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+    #     c_CID.append(course_ids[name])
+
+
+    # m_CID = []
+    # for idx,row in meetings.iterrows():
+    #     name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+    #     m_CID.append(course_ids[name])
+
+    # courses['cid'] = c_CID
+    # meetings['cid'] = m_CID
+
     # merge together the two csv files
     data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
 
@@ -136,11 +166,20 @@ def main():
     faculty_first = []
     faculty_last = []
     building_names = []
+    course_id = []
 
 
     # iterate through all rows in the csv
     # making the necessary changes
     for idx,row in data.iterrows():
+
+        ########################################################################
+        # add course id to column of course_id
+        ########################################################################
+        name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
+        course_id.append(course_ids[name])
+
+
 
         ########################################################################
         # add building name to column of building_names
@@ -566,6 +605,7 @@ def main():
     data['pre_reqs'] = pre_reqs
     data['co_reqs'] = co_reqs
     data['lab'] = lab
+    data['c_id'] = course_id
 
     ########################################################################
     # writing all this data into one csv called data.csv

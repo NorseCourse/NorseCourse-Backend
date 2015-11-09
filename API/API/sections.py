@@ -352,6 +352,9 @@ class Section(Resource):
 			if "id" in fields:
 				obj['id'] = section_id
 
+			if "courseId" in fields:
+				obj['courseId'] = course_id
+
 			if comments != "nan" and "comments" in fields:
 				obj['comments'] = comments
 
@@ -367,8 +370,8 @@ class Section(Resource):
 			if max_credits != "nan" and "maxCredits" in fields:
 				obj['maxCredits'] = max_credits
 
-			if gef != [] and "GenEdFulfillments" in fields:
-				obj['GenEdFulfillments'] = gef
+
+
 				
 			sect = SectionObject(
 				obj['term'], 

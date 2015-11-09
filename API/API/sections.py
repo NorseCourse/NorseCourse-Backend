@@ -183,6 +183,8 @@ class Section(Resource):
 
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		
+		section_id = sectionId
+		
 		id_list = []
 
 		if section_id != None:

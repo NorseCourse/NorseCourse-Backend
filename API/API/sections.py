@@ -179,11 +179,10 @@ class Section(Resource):
 		}
 	)
 
-	def get(self):
+	def get(self,sectionId):
 
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		
-		section_id = request.args.get("sectionsId")
 		id_list = []
 
 		if section_id != None:

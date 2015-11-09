@@ -46,6 +46,15 @@ def getRecommendations(course_id):
 		return None
 
 
+coursesDict = {
+	"courseId": "course_id",
+	"description": "description",
+	"sameAs": "same_as",
+	"name": "name",
+	"departmentId": "department_id"
+	}
+
+
 @API.route("/courses", endpoint = "courses")
 class Courses(Resource):
 	@NorseCourse.doc(
@@ -57,7 +66,7 @@ class Courses(Resource):
 		}
 	)
 	def get(self):
-		courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses GROUP BY (name);"
+		courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses GROUP BY (name)"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
@@ -96,31 +105,75 @@ class Courses(Resource):
 		}
 	)
 	def get(self, courseId):
-		courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses WHERE course_id = %s"
+		# Get the URL params
+		fields = request.args.get("fields")
+		if fields == None:
+			fields = ["courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
+		else:
+			fields = fields.split(",")
 
+		# Gather the terms for the course query.
+		coursesTerms = []
+		for field in fields:
+			if field in coursesDict:
+				coursesTerms.append(coursesDict[field])
+
+		# Get a connecgtion and open up a cursor
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
 
-		#MORE CODE FOR FIELD LIMITING
+		# Te,p object for storing the course info as the fields can be passed in in any order.
+		tempObj = {
+			"course_id": None,
+			"description": None,
+			"same_as": None,
+			"name": None,
+			"department_id": None
+			}
 
-		cursor.execute(courseQuery % str(courseId))
+		# Execute if there is anything needed from the course table
+		if coursesTerms:
+			# Build the course query
+			courseQuery = "SELECT "
+			termsLen = len(coursesTerms)
+			addComma = termsLen - 1
 
-		returnCourse = None
-		for (course_id, description, same_as, name, department_id) in cursor:
-			requirements = getRequirements(course_id)
-			recommendations = getRecommendations(course_id)
+			for i in range(termsLen):
+				courseQuery += coursesTerms[i]
+				if i < addComma:
+					courseQuery += ", "
+			courseQuery += " FROM Courses WHERE course_id = %s"
 
-			if same_as == "nan":
-				course = CourseObject(course_id, description, None, name, department_id, None, requirements, recommendations)
-			else:
-				course = CourseObject(course_id, description, same_as, name, department_id, None, requirements, recommendations)
+			# Execute the query
+			cursor.execute(courseQuery % str(courseId))
 
-			returnCourse = course.__dict__
+			# Populate the temp object
+			for result in cursor:
+				print(result)
+				for item, ct in zip(result, coursesTerms):
+					tempObj[ct] = item
+			if tempObj["same_as"] == "nan":
+				tempObj["same_as"] = None
 
+		# Get the relevance if asked for
+		relevance = None
+		if "relevance" in fields:
+			pass
+
+		# Get the requirements if asked for
+		requirements = None
+		if "requirements" in fields:
+			requirements = getRequirements(courseId)
+
+		# Get the recommendations is asked for
+		recommendations = None
+		if "recommendations" in fields:
+			recommendations = getRecommendations(courseId)
+
+		# Close the connection and cursor		
 		cursor.close()
 		cnx.close()
 
-		return returnCourse
-
-
-
+		# Build the object to be returned
+		returnCourse = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+		return returnCourse.__dict__

@@ -121,7 +121,10 @@ def main():
 
 
     # merge together the two csv files
-    data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
+    #data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
+
+    data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date'])
+
 
     # define the different divisions and their included departments
     science = ['BIO','CHEM','CS','HLTH','MATH','NURS','PHYS','SCI','ACCTG','BIO','PE','ENVS','ATHTR']

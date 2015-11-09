@@ -285,8 +285,11 @@ class Section(Resource):
 		if fields == None:
 			fields = ['comments','courseId','faculty','GenEdFulfillments','id','maxCredits','minCredits','name','sectionMeetings','sevenWeeks','shortTitle','term']
 		else:
-			fields = fields.split(",")
-
+			f = fields.split(",")
+			fields = []
+			for i in f:
+				fields.append(str(i).replace(" ",""))
+				
 
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		

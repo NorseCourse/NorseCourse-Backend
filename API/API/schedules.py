@@ -240,6 +240,35 @@ class ScheduleCreation(Resource):
 		return schedule
 
 
+
+	# Function takes a schedule and find if it has a good amount of credits
+	def checkBadCredits(self,schedule):
+
+		# default to no credits
+		credits = 0
+
+		for sect in schedule:
+			sectionQuery = "SELECT min_credits FROM Sections WHERE section_id = %s"
+
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
+
+			cursor.execute(sectionQuery % str(sect))
+
+			for (min_credits) in cursor:
+				# add credits for each section
+				credits += min_credits
+
+		# if bad schedule
+		if credits < 12 or credits > 18:
+			return True
+
+		# if good schedule
+		return False
+
+
+
+
 	# Function checks if a schedule is a valid schedule or not
 	# returns True schedule if it is valid, and False if not
 	def verify(self,schedule):
@@ -267,6 +296,12 @@ class ScheduleCreation(Resource):
 		if self.checkSameCourse(schedule):
 			# there were duplicates
 			return False
+
+		# check if there are too many or too little credits
+		if self.checkBadCredits(schedule):
+			# there was a bad amount of credits
+			return False
+
 
 		# it was a valid schedule, so return the schedule
 		return schedule

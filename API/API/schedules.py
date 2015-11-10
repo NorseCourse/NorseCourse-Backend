@@ -468,12 +468,12 @@ class ScheduleCreation(Resource):
 					possible_gened_classes = {}
 					for gened in range(len(geneds)):
 
-						classQuery = "SELECT section_id from GenEdFulfillments, GenEds where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s"
+						classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
 
 						cnx = cnx_pool.get_connection()
 						cursor = cnx.cursor()
 
-						cursor.execute(classQuery % str("'"+geneds[gened]+"'"))
+						cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'"))
 
 						classes = []
 						for (section_id) in cursor:
@@ -572,12 +572,12 @@ class ScheduleCreation(Resource):
 					possible_gened_classes = {}
 					for gened in range(len(geneds)):
 
-						classQuery = "SELECT section_id from GenEdFulfillments, GenEds where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s"
+						classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
 
 						cnx = cnx_pool.get_connection()
 						cursor = cnx.cursor()
 
-						cursor.execute(classQuery % str("'"+geneds[gened]+"'"))
+						cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'"))
 
 						classes = []
 						for (section_id) in cursor:

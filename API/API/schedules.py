@@ -248,7 +248,7 @@ class ScheduleCreation(Resource):
 		credits = 0
 
 		for sect in schedule:
-			
+
 			sectionQuery = "SELECT min_credits FROM Sections WHERE section_id = %s"
 
 			cnx = cnx_pool.get_connection()
@@ -259,6 +259,9 @@ class ScheduleCreation(Resource):
 			for (min_credits) in cursor:
 				# add credits for each section
 				credits += int(min_credits[0])
+
+			cursor.close()
+			cnx.close()
 
 		# if bad schedule
 		if credits > maxCredits:

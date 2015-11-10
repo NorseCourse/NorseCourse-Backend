@@ -242,12 +242,13 @@ class ScheduleCreation(Resource):
 
 
 	# Function takes a schedule and find if it has a good amount of credits
-	def checkBadCredits(self,schedule,minCredits, maxCredits):
+	def checkBadCredits(self,schedule, maxCredits):
 
 		# default to no credits
 		credits = 0
 
 		for sect in schedule:
+			
 			sectionQuery = "SELECT min_credits FROM Sections WHERE section_id = %s"
 
 			cnx = cnx_pool.get_connection()
@@ -257,10 +258,10 @@ class ScheduleCreation(Resource):
 
 			for (min_credits) in cursor:
 				# add credits for each section
-				credits += min_credits
+				credits += int(min_credits[0])
 
 		# if bad schedule
-		if credits < minCredits or credits > maxCredits:
+		if credits > maxCredits:
 			return True
 
 		# if good schedule
@@ -271,7 +272,7 @@ class ScheduleCreation(Resource):
 
 	# Function checks if a schedule is a valid schedule or not
 	# returns True schedule if it is valid, and False if not
-	def verify(self,schedule,minCredits, maxCredits):
+	def verify(self,schedule, maxCredits):
 
 		# checks if there is a lab in schedule
 		if self.checkLab(schedule):
@@ -298,7 +299,7 @@ class ScheduleCreation(Resource):
 			return False
 
 		# check if there are too many or too little credits
-		if self.checkBadCredits(schedule,minCredits,maxCredits):
+		if self.checkBadCredits(schedule,maxCredits):
 			# there was a bad amount of credits
 			return False
 
@@ -318,8 +319,7 @@ class ScheduleCreation(Resource):
 			"numCourses": "Provide an integer for desired number of courses wanted",
 			"division": "Provide a department ID that the student is a part of",
 			"index": "Provide an integer of last location in schedule list, if known",
-			"maxNumCredits": "Provide an integer for maximum number of credits wanted",
-			"minNumCredits": "Provide an integer for minimum number of credits wanted"
+			"maxNumCredits": "Provide an integer for maximum number of credits wanted"
 		}
 	)
 
@@ -336,17 +336,6 @@ class ScheduleCreation(Resource):
 		# if empty, default to 18
 		else:
 			maxNumCredits = 18
-
-
-		# checks if min credits are empty
-		minnc = request.args.get("minNumCredits")
-		# if not empty, it is int
-		if minnc != None:
-			minNumCredits = int(minnc)
-
-		# if empty, default to 18
-		else:
-			minNumCredits = 12
 
 
 		# checks if requirements are empty
@@ -440,8 +429,10 @@ class ScheduleCreation(Resource):
 
 		# checks if there is a conflict on required courses
 		# if the required classes wont work, then return the empty dictionary
-		if self.verify(required,minNumCredits, maxNumCredits) == False or len(required) > num_courses or maxNumCredits < minNumCredits:
-			print "Required courses conflict, or too many required courses, can not make a schedule"
+
+
+		if self.verify(required, maxNumCredits) == False or len(required) > num_courses:
+			print "\n\nRequired courses conflict, or too many required courses, can not make a schedule\n\n"
 			schedule = ScheduleCreationObject([],0)
 			return (schedule.__dict__)
 
@@ -449,9 +440,9 @@ class ScheduleCreation(Resource):
 
 
 		# if the best schedule is valid
-		if self.verify(best,minNumCredits, maxNumCredits) != False:
+		if self.verify(best, maxNumCredits) != False:
 
-			best = self.verify(best,minNumCredits, maxNumCredits)
+			best = self.verify(best, maxNumCredits)
 
 			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
@@ -552,10 +543,10 @@ class ScheduleCreation(Resource):
 		else:
 
 			# remove courses from best until no conflict.
-			while self.verify(best,minNumCredits, maxNumCredits) == False:
+			while self.verify(best, maxNumCredits) == False:
 				best = best[:-1]
 
-			best = self.verify(best,minNumCredits, maxNumCredits)
+			best = self.verify(best, maxNumCredits)
 
 			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
@@ -664,12 +655,12 @@ class ScheduleCreation(Resource):
 			if pos < len(all_combos)-1:
 				pos += 1 # x for index
 				current = all_combos[pos]
-				while self.verify(current,minNumCredits, maxNumCredits) == False and pos < len(all_combos)-1:
+				while self.verify(current, maxNumCredits) == False and pos < len(all_combos)-1:
 					pos += 1
 					current = all_combos[pos]
 
 				if pos < len(all_combos)-1:
-					schedule = ScheduleCreationObject(self.verify(current,minNumCredits, maxNumCredits),pos)
+					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits),pos)
 					schedules.append(schedule.__dict__)
 
 		return (schedules)

@@ -317,13 +317,37 @@ class ScheduleCreation(Resource):
 			"genEds": "Provide a comma separated list of Gen Ed abbreviation strings wanted",
 			"numCourses": "Provide an integer for desired number of courses wanted",
 			"division": "Provide a department ID that the student is a part of",
-			"index": "Provide an integer of last location in schedule list, if known"
+			"index": "Provide an integer of last location in schedule list, if known",
+			"maxNumCredits": "Provide an integer for maximum number of credits wanted",
+			"minNumCredits": "Provide an integer for minimum number of credits wanted"
 		}
 	)
 
 
 	# function that takes parameters and returns JSON schedule
 	def get(self):
+
+		# checks if max credits are empty
+		maxnc = request.args.get("maxNumCredits")
+		# if not empty, it is int
+		if maxnc != None:
+			maxNumCredits = int(maxnc)
+
+		# if empty, default to 18
+		else:
+			maxNumCredits = 18
+
+
+		# checks if min credits are empty
+		minnc = request.args.get("minNumCredits")
+		# if not empty, it is int
+		if minnc != None:
+			minNumCredits = int(minnc)
+
+		# if empty, default to 18
+		else:
+			minNumCredits = 12
+
 
 		# checks if requirements are empty
 		r = request.args.get("required")
@@ -408,6 +432,7 @@ class ScheduleCreation(Resource):
 
 		geneds = new_ge
 
+
 		# checks if there is enough information to create schedule
 		if (len(geneds) + len(required) + len(preferred)) <= 2:
 			schedule = ScheduleCreationObject([],0)
@@ -415,7 +440,7 @@ class ScheduleCreation(Resource):
 
 		# checks if there is a conflict on required courses
 		# if the required classes wont work, then return the empty dictionary
-		if self.verify(required) == False or len(required) > num_courses:
+		if self.verify(required) == False or len(required) > num_courses or maxNumCredits < minNumCredits:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
 			schedule = ScheduleCreationObject([],0)
 			return (schedule.__dict__)

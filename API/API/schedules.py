@@ -279,8 +279,8 @@ class ScheduleCreation(Resource):
 		params = {
 			"required": "Provide a comma separated list of section IDs that are required in schedule",
 			"preferred": "Provide a comma separated list of section IDs that are preferred in schedule",
-			"geneds": "Provide a comma separated list of Gen Ed abbreviation strings wanted",
-			"numcourses": "Provide an integer for desired number of courses wanted",
+			"genEds": "Provide a comma separated list of Gen Ed abbreviation strings wanted",
+			"numCourses": "Provide an integer for desired number of courses wanted",
 			"division": "Provide a department ID that the student is a part of",
 			"index": "Provide an integer of last location in schedule list, if known"
 		}
@@ -311,7 +311,7 @@ class ScheduleCreation(Resource):
 			preferred = []
 
 		# check if geneds are empty
-		g = request.args.get("geneds")
+		g = request.args.get("genEds")
 		# if not empty create list
 		if g != None:
 			geneds = (g).split(',')
@@ -321,7 +321,7 @@ class ScheduleCreation(Resource):
 			geneds = []
 
 		# check if num of courses are empty
-		n = request.args.get("numcourses")
+		n = request.args.get("numCourses")
 		# if not empty, make it an int
 		if n != None:
 			num_courses = int(n)

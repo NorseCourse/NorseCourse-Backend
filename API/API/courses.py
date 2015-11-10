@@ -66,6 +66,16 @@ class Courses(Resource):
 		}
 	)
 	def get(self):
+		# KEYWORDS: (Although I think I will just be calling the relevance function for this)
+		# SELECT course_id FROM Courses WHERE description LIKE '%KeYwOrD%' OR description LIKE .....
+
+		# DEPARTMENTS
+		# SELECT course_id FROM Courses WHERE department_id = %s OR department_id = %s .....
+
+		# GENEDS
+		# SELECT DISTINCT(Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.gen_ed_id = %s OR GenEds.gen_ed_id = %s OR...) AND GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND GenEdFulfillments.section_id = Sections.section_id and Sections.course_id = Courses.course_id
+
+
 		# Get the URL params
 		fields = request.args.get("fields")
 		if fields == None:

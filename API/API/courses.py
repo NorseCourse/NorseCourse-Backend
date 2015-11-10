@@ -74,6 +74,75 @@ class Courses(Resource):
 
 		# GENEDS
 		# SELECT DISTINCT(Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.gen_ed_id = %s OR GenEds.gen_ed_id = %s OR...) AND GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND GenEdFulfillments.section_id = Sections.section_id and Sections.course_id = Courses.course_id
+		
+		departments = request.args.get("departments")
+		if departments == None:
+			courseIdsByDept = []
+		else:
+			departments = departments.split(",")
+			getCoursesByDeptQuery = "SELECT course_id FROM Courses WHERE department_id = %s"
+			deptsLen = len(departments)
+			if deptsLen > 1:
+				for i in range(deptsLen - 1):
+					getCoursesByDeptQuery += " OR department_id = %s"
+			
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
+
+			courseIdsByDept = []
+			cursor.execute(getCoursesByDeptQuery % tuple(departments))
+			for res in cursor:
+				courseIdsByDept.append(res[0])
+ 
+			cursor.close()
+			cnx.close()
+
+		genEds = request.args.get("genEds")
+		if genEds == None:
+			courseIdsByGenEd = []
+		else:
+			genEds = genEds.split(",")
+			getCoursesByGenEdQuery = "SELECT DISTINCT (Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.abbreviation = '%s'"
+			genEdsLen = len(genEds)
+			if genEdsLen > 1:
+				for i in range(genEdsLen - 1):
+					getCoursesByGenEdQuery += " OR GenEds.abbreviation = '%s'"
+			getCoursesByGenEdQuery += ") AND GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND GenEdFulfillments.section_id = Sections.section_id AND Sections.course_id = Courses.course_id"
+			
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
+
+			courseIdsByGenEd = []
+			cursor.execute(getCoursesByGenEdQuery % tuple(genEds))
+			for res in cursor:
+				courseIdsByGenEd.append(res[0])
+
+			cursor.close()
+			cnx.close()
+
+		# CHECK THE LOGIC HERE! For the cominations of Sections
+		useFilter = True
+		courseIdsIntersection = []
+		if departments != None and genEds != None:
+			deptSet = set(courseIdsByDept)
+			genEdSet = set(courseIdsByGenEd)
+			courseIdsIntersection = list(deptSet.intersection(genEdSet))
+
+		elif departments != None:
+			courseIdsIntersection = courseIdsByDept
+
+		elif genEds != None:
+			courseIdsIntersection = courseIdsByGenEd
+
+		# elif keywords != None;
+		# 	courseIdsIntersection = courseIdsByKeywords
+			
+		else:
+			useFilter = False
+
+		# print(courseIdsIntersection, useFilter)
+
+
 
 
 		# Get the URL params

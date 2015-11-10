@@ -473,7 +473,7 @@ class ScheduleCreation(Resource):
 						cnx = cnx_pool.get_connection()
 						cursor = cnx.cursor()
 
-						cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'"))
+						cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'")))
 
 						classes = []
 						for (section_id) in cursor:
@@ -577,7 +577,7 @@ class ScheduleCreation(Resource):
 						cnx = cnx_pool.get_connection()
 						cursor = cnx.cursor()
 
-						cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'"))
+						cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'")))
 
 						classes = []
 						for (section_id) in cursor:

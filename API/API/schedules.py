@@ -242,7 +242,7 @@ class ScheduleCreation(Resource):
 
 
 	# Function takes a schedule and find if it has a good amount of credits
-	def checkBadCredits(self,schedule):
+	def checkBadCredits(self,schedule,minCredits, maxCredits):
 
 		# default to no credits
 		credits = 0
@@ -260,7 +260,7 @@ class ScheduleCreation(Resource):
 				credits += min_credits
 
 		# if bad schedule
-		if credits < 12 or credits > 18:
+		if credits < minCredits or credits > maxCredits:
 			return True
 
 		# if good schedule
@@ -271,7 +271,7 @@ class ScheduleCreation(Resource):
 
 	# Function checks if a schedule is a valid schedule or not
 	# returns True schedule if it is valid, and False if not
-	def verify(self,schedule):
+	def verify(self,schedule,minCredits, maxCredits):
 
 		# checks if there is a lab in schedule
 		if self.checkLab(schedule):
@@ -298,7 +298,7 @@ class ScheduleCreation(Resource):
 			return False
 
 		# check if there are too many or too little credits
-		if self.checkBadCredits(schedule):
+		if self.checkBadCredits(schedule,minCredits,maxCredits):
 			# there was a bad amount of credits
 			return False
 
@@ -440,7 +440,7 @@ class ScheduleCreation(Resource):
 
 		# checks if there is a conflict on required courses
 		# if the required classes wont work, then return the empty dictionary
-		if self.verify(required) == False or len(required) > num_courses or maxNumCredits < minNumCredits:
+		if self.verify(required,minNumCredits, maxNumCredits) == False or len(required) > num_courses or maxNumCredits < minNumCredits:
 			print "Required courses conflict, or too many required courses, can not make a schedule"
 			schedule = ScheduleCreationObject([],0)
 			return (schedule.__dict__)
@@ -449,9 +449,9 @@ class ScheduleCreation(Resource):
 
 
 		# if the best schedule is valid
-		if self.verify(best) != False:
+		if self.verify(best,minNumCredits, maxNumCredits) != False:
 
-			best = self.verify(best)
+			best = self.verify(best,minNumCredits, maxNumCredits)
 
 			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
@@ -552,10 +552,10 @@ class ScheduleCreation(Resource):
 		else:
 
 			# remove courses from best until no conflict.
-			while self.verify(best) == False:
+			while self.verify(best,minNumCredits, maxNumCredits) == False:
 				best = best[:-1]
 
-			best = self.verify(best)
+			best = self.verify(best,minNumCredits, maxNumCredits)
 
 			# if the best schedule has amount of sections wanted, return that
 			if (len(best) == num_courses):
@@ -664,12 +664,12 @@ class ScheduleCreation(Resource):
 			if pos < len(all_combos)-1:
 				pos += 1 # x for index
 				current = all_combos[pos]
-				while self.verify(current) == False and pos < len(all_combos)-1:
+				while self.verify(current,minNumCredits, maxNumCredits) == False and pos < len(all_combos)-1:
 					pos += 1
 					current = all_combos[pos]
 
 				if pos < len(all_combos)-1:
-					schedule = ScheduleCreationObject(self.verify(current),pos)
+					schedule = ScheduleCreationObject(self.verify(current,minNumCredits, maxNumCredits),pos)
 					schedules.append(schedule.__dict__)
 
 		return (schedules)

@@ -73,9 +73,11 @@ class Courses(Resource):
 			fields = ["courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
 		else:
 			fields = fields.split(",")
-			if "courseId" not in fields:
+			if "courseId" not in fields and ("relevance" in fields or "recommendations" in fields or "requirements" in fields):
 				showCourseId = False
 				fields.append("courseId")
+			else:
+				showCourseId = True
 
 		# Gather the terms for the course query.
 		coursesTerms = []
@@ -95,10 +97,7 @@ class Courses(Resource):
 				if i < addComma:
 					courseQuery += ", "
 			courseQuery += " FROM Courses"
-		# else:
-		# 	courseQuery = "SELECT course_id FROM Courses"
 
-		print(courseQuery)
 
 		showRelevance = False
 		if "relevance" in fields:

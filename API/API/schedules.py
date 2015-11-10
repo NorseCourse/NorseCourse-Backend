@@ -666,6 +666,10 @@ class ScheduleCreation(Resource):
 					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits),pos)
 					schedules.append(schedule.__dict__)
 
+		if schedules == []:
+			s = ScheduleCreationObject([],pos)
+			schedules.append(s.__dict__)
+
 		return (schedules)
 
 

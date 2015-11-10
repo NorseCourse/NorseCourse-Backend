@@ -66,6 +66,16 @@ class Courses(Resource):
 		}
 	)
 	def get(self):
+		# KEYWORDS: (Although I think I will just be calling the relevance function for this)
+		# SELECT course_id FROM Courses WHERE description LIKE '%KeYwOrD%' OR description LIKE .....
+
+		# DEPARTMENTS
+		# SELECT course_id FROM Courses WHERE department_id = %s OR department_id = %s .....
+
+		# GENEDS
+		# SELECT DISTINCT(Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.gen_ed_id = %s OR GenEds.gen_ed_id = %s OR...) AND GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND GenEdFulfillments.section_id = Sections.section_id and Sections.course_id = Courses.course_id
+
+
 		# Get the URL params
 		fields = request.args.get("fields")
 		if fields == None:
@@ -73,9 +83,11 @@ class Courses(Resource):
 			fields = ["courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
 		else:
 			fields = fields.split(",")
-			if "courseId" not in fields:
+			if "courseId" not in fields and ("relevance" in fields or "recommendations" in fields or "requirements" in fields):
 				showCourseId = False
 				fields.append("courseId")
+			else:
+				showCourseId = True
 
 		# Gather the terms for the course query.
 		coursesTerms = []
@@ -95,10 +107,7 @@ class Courses(Resource):
 				if i < addComma:
 					courseQuery += ", "
 			courseQuery += " FROM Courses"
-		# else:
-		# 	courseQuery = "SELECT course_id FROM Courses"
 
-		print(courseQuery)
 
 		showRelevance = False
 		if "relevance" in fields:

@@ -459,6 +459,25 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
+		temp = preferred
+
+		for c in temp:
+			classQuery = "SELECT section_id from Sections where course_id = %s"
+
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
+
+			cursor.execute(classQuery % (str(c)))
+
+			sects = []
+			for (section_id) in cursor:
+				sects.append(section_id[0])
+
+			lst.append(sects)
+
+			cursor.close()
+			cnx.close()
+
 
 		ps = list(itertools.product(*lst))
 
@@ -470,9 +489,11 @@ class ScheduleCreation(Resource):
 
 		all_combos = []
 
-		for required in possible_sections:
+		for option in possible_sections:
 
-			best = required+preferred
+			best = option
+			required = best[:len(required)]
+			preferred = best[len(required):]
 
 			# checks if there is enough information to create schedule
 			if (len(geneds) + len(required) + len(preferred)) <= 2:

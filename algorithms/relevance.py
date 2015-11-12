@@ -35,57 +35,88 @@ def tf(st):
 	return doc_dict
 
 
-def relevance(word,section_id):
+def relevance(words):
 
-	word = word.lower()
+	keywords = []
+	for word in words:
+		keywords.append(word.lower())
 
-	sectionQuery = "SELECT name, short_title, comments, course_id FROM Sections WHERE section_id = %s"
+	section_name = []
+	section_short_title = []
+	section_comments = []
+	course_description = []
+	course_name = []
+	course_number = []
+	course_ids = []
+	sect_course_ids = []
+
+	sectionQuery = "SELECT course_id, name, short_title, comments FROM Sections"
 
 	cnx = cnx_pool.get_connection()
 	cursor = cnx.cursor()
 
-	cursor.execute(sectionQuery % str(section_id))
+	cursor.execute(sectionQuery)
 
-	for (name, short_title, comments, course_id) in cursor:
-		section_name = name
-		section_short_title = short_title
-		section_comments = comments
-		section_course_id = course_id
+	for (course_id, name, short_title, comments) in cursor:
+		sect_course_ids.append(str(course_id))
+		section_name.append(str(name))
+		section_short_title.append(str(short_title))
+		section_comments.append(str(comments))
 
 
-	courseQuery = "SELECT description, name, number FROM Courses WHERE course_id = %s"
+	courseQuery = "SELECT course_id, description, name, number FROM Courses"
 
-	cursor.execute(courseQuery % str(section_course_id))
+	cursor.execute(courseQuery)
 
-	for (description, name, number) in cursor:
-		course_description = description
-		course_name = name
-		course_number = number
+	for (course_id, description, name, number) in cursor:
+		course_ids.append(str(course_id))
+		course_description.append(str(description))
+		course_name.append(str(name))
+		course_number.append(str(number))
 
 	cursor.close()
 	cnx.close()
 
+	cids = {}
+	for c in course_ids:
+		cids[c] = 0
+
+	for sect_idx in range(len(section_name)):
+		all_str = section_name[sect_idx] + " " + section_comments[sect_idx] + " " + section_short_title[sect_idx]
+		str_dict = tf(all_str)
+
+		for word in keywords:
+			if word in str_dict:
+				cids[sect_course_ids[sect_idx]] += str_dict[word]
+			elif word in all_str:
+				cids[sect_course_ids[sect_idx]] += 1
 
 
-	lst_of_details = [section_name,section_short_title,section_comments,course_description,course_name,course_number]
-	
+	for course_idx in range(len(course_name)):
+		all_str = course_description[course_idx] + " " + course_name[course_idx] + " " + course_number[course_idx]
+		str_dict = tf(all_str)
 
-	string_of_all = ""
-
-	for thing in lst_of_details:
-		if type(thing) == tuple:
-			thing = thing[0]
-		string_of_all += str(thing) + " "
-
-	string_dict = tf(string_of_all)
+		for word in keywords:
+			if word in str_dict:
+				cids[course_ids[course_idx]] += str_dict[word]
+			elif word in all_str:
+				cids[course_ids[course_idx]] += 1
 
 
-	if word in string_dict:
-		print(section_name)
-		return string_dict[word]
-	if word in string_of_all:
-		print(section_name)
-		return 1
-	
-	return 0
+	final = []
+	for cid in cids:
+		final.append((int(cid),cids[cid]))
+
+	return final
+
+
+
+
+
+
+
+
+
+
+
 

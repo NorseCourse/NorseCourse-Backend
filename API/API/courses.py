@@ -46,6 +46,49 @@ def getRecommendations(course_id):
 		return None
 
 
+def buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, showRecommendations, showCourseId):
+	courses = []
+	for result in cursor:
+		# Temp object for storing the course info as the fields can be passed in in any order.
+		tempObj = {
+			"course_id": None,
+			"description": None,
+			"same_as": None,
+			"name": None,
+			"department_id": None
+			}
+
+		for (item, ct) in zip(result, coursesTerms):
+			tempObj[ct] = item
+		if tempObj["same_as"] == "nan":
+			tempObj["same_as"] = None
+
+
+		relevance = None
+		if showRelevance:
+			pass
+
+		requirements = None
+		if showRequirements:
+			requirements = getRequirements(tempObj["course_id"])
+
+		recommendations = None
+		if showRecommendations:
+			recommendations = getRecommendations(tempObj["course_id"])
+
+		if showCourseId:
+			course = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+		else:
+			course = CourseObject(None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+
+		courses.append(course.__dict__)
+
+	if len(courses) > 1:
+		return courses
+	else:
+		return course.__dict__
+
+
 coursesDict = {
 	"courseId": "course_id",
 	"description": "description",
@@ -140,10 +183,6 @@ class Courses(Resource):
 		else:
 			useFilter = False
 
-		# print(courseIdsIntersection, useFilter)
-
-
-
 
 		# Get the URL params
 		fields = request.args.get("fields")
@@ -175,7 +214,10 @@ class Courses(Resource):
 				courseQuery += coursesTerms[i]
 				if i < addComma:
 					courseQuery += ", "
-			courseQuery += " FROM Courses"
+			if useFilter:
+				courseQuery += " FROM Courses WHERE course_id = %s"
+			else:
+				courseQuery += " FROM Courses"
 
 
 		showRelevance = False
@@ -193,45 +235,51 @@ class Courses(Resource):
 
 		# Get a connecgtion and open up a cursor and execute the query
 		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor() 
-		cursor.execute(courseQuery)
+		cursor = cnx.cursor()
 
-		courses = []
-		for result in cursor:
-			# Temp object for storing the course info as the fields can be passed in in any order.
-			tempObj = {
-				"course_id": None,
-				"description": None,
-				"same_as": None,
-				"name": None,
-				"department_id": None
-				}
+		if useFilter:
+			courses = []
+			for cId in courseIdsIntersection:
+				cursor.execute(courseQuery % str(cId))
+				courses.append(buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, showRecommendations, showCourseId))
 
-			for (item, ct) in zip(result, coursesTerms):
-				tempObj[ct] = item
-			if tempObj["same_as"] == "nan":
-				tempObj["same_as"] = None
+		else: 
+			cursor.execute(courseQuery)
+			courses = buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, showRecommendations, showCourseId)
+			# for result in cursor:
+			# 	# Temp object for storing the course info as the fields can be passed in in any order.
+			# 	tempObj = {
+			# 		"course_id": None,
+			# 		"description": None,
+			# 		"same_as": None,
+			# 		"name": None,
+			# 		"department_id": None
+			# 		}
 
-			# print(tempObj["course_id"])
+			# 	for (item, ct) in zip(result, coursesTerms):
+			# 		tempObj[ct] = item
+			# 	if tempObj["same_as"] == "nan":
+			# 		tempObj["same_as"] = None
 
-			relevance = None
-			if showRelevance:
-				pass
 
-			requirements = None
-			if showRequirements:
-				requirements = getRequirements(tempObj["course_id"])
+			# 	relevance = None
+			# 	if showRelevance:
+			# 		pass
 
-			recommendations = None
-			if showRecommendations:
-				recommendations = getRecommendations(tempObj["course_id"])
+			# 	requirements = None
+			# 	if showRequirements:
+			# 		requirements = getRequirements(tempObj["course_id"])
 
-			if showCourseId:
-				course = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
-			else:
-				course = CourseObject(None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+			# 	recommendations = None
+			# 	if showRecommendations:
+			# 		recommendations = getRecommendations(tempObj["course_id"])
 
-			courses.append(course.__dict__)
+			# 	if showCourseId:
+			# 		course = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+			# 	else:
+			# 		course = CourseObject(None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+
+			# 	courses.append(course.__dict__)
 
 		cursor.close()
 		cnx.close()

@@ -107,8 +107,11 @@ def populateDB(cursor, data):
 			########################################################################
 
 			# SQL statement to find the course_id of the section
-			course_num_query = "SELECT course_id FROM Courses WHERE number=%(num)s"
-			cursor.execute(course_num_query,{'num':str(row['section_name'])})
+			course_num_query = "SELECT course_id FROM Courses WHERE name=%(name)s"
+
+			n = str(row['department_abbreviation']) + " " + str(row['course_num'])
+
+			cursor.execute(course_num_query,{'name':n})
 
 			# define course as course_id
 			for (course_id) in cursor:

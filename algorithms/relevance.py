@@ -105,7 +105,8 @@ def relevance(words):
 
 	final = []
 	for cid in cids:
-		final.append((int(cid),cids[cid]))
+		if cids[cid] > 0:
+			final.append((int(cid),cids[cid]))
 
 	return final
 

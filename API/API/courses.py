@@ -145,11 +145,11 @@ class Courses(Resource):
 			courseIdsByGenEd = []
 		else:
 			genEds = genEds.split(",")
-			getCoursesByGenEdQuery = "SELECT DISTINCT (Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.abbreviation = '%s'"
+			getCoursesByGenEdQuery = "SELECT DISTINCT (Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.gen_ed_id = %s"
 			genEdsLen = len(genEds)
 			if genEdsLen > 1:
 				for i in range(genEdsLen - 1):
-					getCoursesByGenEdQuery += " OR GenEds.abbreviation = '%s'"
+					getCoursesByGenEdQuery += " OR GenEds.gen-Ed_id = %s"
 			getCoursesByGenEdQuery += ") AND GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND GenEdFulfillments.section_id = Sections.section_id AND Sections.course_id = Courses.course_id"
 			
 			cnx = cnx_pool.get_connection()

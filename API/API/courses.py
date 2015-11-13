@@ -2,6 +2,7 @@ from API import NorseCourse, API, cnx_pool
 from flask import request
 from flask.ext.restplus import Resource
 from  NorseCourseObjects import CourseObject, RequirementObject
+from relevance import relevance
 
 def getRequirements(course_id):
 	requirementQuery = "SELECT req_type, details FROM Requirements WHERE course_id = %s"
@@ -46,7 +47,7 @@ def getRecommendations(course_id):
 		return None
 
 
-def buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, showRecommendations, showCourseId):
+def buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevantCount, showRequirements, showRecommendations, showCourseId):
 	courses = []
 	for result in cursor:
 		# Temp object for storing the course info as the fields can be passed in in any order.
@@ -66,7 +67,10 @@ def buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, show
 
 		relevance = None
 		if showRelevance:
-			pass
+			if relevantNums != []:
+				relevance = relevantNums[relevantCount]
+			else:
+				relevance = "Must provide keywords in order to see relevance"
 
 		requirements = None
 		if showRequirements:
@@ -163,13 +167,47 @@ class Courses(Resource):
 			cursor.close()
 			cnx.close()
 
+
+		keywords = request.args.get("keywords")
+		if keywords == None:
+			coursesByKeyword = []
+		else:
+			keywords = keywords.split(",")
+			relevantCourses = relevance(keywords)
+			coursesByKeyword = [result[0] for result in relevantCourses]
+			relevanceNumber = [result[1] for result in relevantCourses]
+
+
 		# CHECK THE LOGIC HERE! For the cominations of Sections
 		useFilter = True
 		courseIdsIntersection = []
-		if departments != None and genEds != None:
+		relevantNums = []
+		if departments != None and genEds != None and keywords != None:
+			deptSet = set(courseIdsByDept)
+			genEdSet = set(courseIdsByGenEd)
+			courseIdsIntersection = deptSet.intersection(genEdSet)
+			courseIdsIntersection = list(courseIdsIntersection.intersection(coursesByKeyword))
+			for cId in courseIdsIntersection:
+				relevantNums.append(relevanceNumber[coursesByKeyword.index(cId)])
+
+		elif departments != None and genEds != None:
 			deptSet = set(courseIdsByDept)
 			genEdSet = set(courseIdsByGenEd)
 			courseIdsIntersection = list(deptSet.intersection(genEdSet))
+
+		elif departments != None and keywords != None:
+			deptSet = set(courseIdsByDept)
+			kwSet = set(coursesByKeyword)
+			courseIdsIntersection = list(deptSet.intersection(kwSet))
+			for cId in courseIdsIntersection:
+				relevantNums.append(relevanceNumber[coursesByKeyword.index(cId)])
+
+		elif genEds != None and keywords != None:
+			genEdSet = set(courseIdsByGenEd)
+			kwSet = set(coursesByKeyword)
+			courseIdsIntersection = list(genEdSet.intersection(kwSet))
+			for cId in courseIdsIntersection:
+				relevantNums.append(relevanceNumber[coursesByKeyword.index(cId)])
 
 		elif departments != None:
 			courseIdsIntersection = courseIdsByDept
@@ -177,8 +215,9 @@ class Courses(Resource):
 		elif genEds != None:
 			courseIdsIntersection = courseIdsByGenEd
 
-		# elif keywords != None;
-		# 	courseIdsIntersection = courseIdsByKeywords
+		elif keywords != None:
+			courseIdsIntersection = coursesByKeyword
+			relevantNums = relevanceNumber
 			
 		else:
 			useFilter = False
@@ -237,15 +276,17 @@ class Courses(Resource):
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
 
+		relevantCount = 0
 		if useFilter:
 			courses = []
 			for cId in courseIdsIntersection:
 				cursor.execute(courseQuery % str(cId))
-				courses.append(buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, showRecommendations, showCourseId))
+				courses.append(buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevantCount, showRequirements, showRecommendations, showCourseId))
+				relevantCount += 1
 
 		else: 
 			cursor.execute(courseQuery)
-			courses = buildCoursesJSON(cursor, coursesTerms, showRelevance, showRequirements, showRecommendations, showCourseId)
+			courses = buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevantCount, showRequirements, showRecommendations, showCourseId)
 			# for result in cursor:
 			# 	# Temp object for storing the course info as the fields can be passed in in any order.
 			# 	tempObj = {

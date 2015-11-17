@@ -715,11 +715,6 @@ class ScheduleCreation(Resource):
 								for (abbreviation) in cursor:
 									abbs.append(abbreviation)
 
-								print 
-								print
-								print abbs
-								print
-								print
 								for ge in abbs:
 									if ge in req_geneds:
 										req_geneds.remove(ge)

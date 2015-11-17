@@ -466,5 +466,5 @@ class Section(Resource):
 		cursor.close()
 		cnx.close()
 
-		return sections
+		return sections[0]
 

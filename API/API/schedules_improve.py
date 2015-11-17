@@ -318,7 +318,8 @@ class ScheduleCreation(Resource):
 		params = {
 			"requiredCourses": "Provide a comma separated list of courses IDs that are required in schedule",
 			"preferredCourses": "Provide a comma separated list of courses IDs that are preferred in schedule",
-			"genEds": "Provide a comma separated list of Gen Ed abbreviation strings wanted",
+			"requiredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings required",
+			"preferredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings preferred",
 			"numCourses": "Provide an integer for desired number of courses wanted",
 			"division": "Provide a department ID that the student is a part of",
 			"index": "Provide an integer of last location in schedule list, if known",
@@ -374,14 +375,24 @@ class ScheduleCreation(Resource):
 			preferred = []
 
 		# check if geneds are empty
-		g = request.args.get("genEds")
+		g = request.args.get("requiredGenEds")
 		# if not empty create list
 		if g != None:
-			geneds = (g).split(',')
+			req_geneds = (g).split(',')
 
 		# if empty, make empty list
 		else:
-			geneds = []
+			req_geneds = []
+
+		# check if geneds are empty
+		g = request.args.get("preferredGenEds")
+		# if not empty create list
+		if g != None:
+			preferred_geneds = (g).split(',')
+
+		# if empty, make empty list
+		else:
+			preferred_geneds = []
 
 		# check if num of courses are empty
 		n = request.args.get("numCourses")
@@ -495,75 +506,141 @@ class ScheduleCreation(Resource):
 			required = best[:len(required)]
 			preferred = best[len(required):]
 
-			# checks if there is enough information to create schedule
-			if (len(geneds) + len(required) + len(preferred)) <= 2:
-				#schedule = ScheduleCreationObject([],0)
-				#return (schedule.__dict__)
-				pass
-
-			# checks if there is a conflict on required courses
-			# if the required classes wont work, then return the empty dictionary
-
-
-			elif self.verify(required, maxNumCredits) == False or len(required) > num_courses:
-				print "\n\nRequired courses conflict, or too many required courses, can not make a schedule\n\n"
-				#schedule = ScheduleCreationObject([],0)
-				#return (schedule.__dict__)
-
-
 			# if the best schedule is valid
-			elif self.verify(best, maxNumCredits) != False:
+			if self.verify(best, maxNumCredits) != False:
 
 				best = self.verify(best, maxNumCredits)
 
-				# if the best schedule has amount of sections wanted, return that
+				# if the best schedule has amount of sections wanted, add schedule
 				if (len(best) == num_courses):
-					#schedule = ScheduleCreationObject(best,0)
-					#return (schedule.__dict__) 
 					all_combos += [best]
 
 				# if more courses are needed
 				elif (len(best) < num_courses):
 					num_needed = num_courses - len(best)
-					
+
 					# if gen eds are wanted, add gen eds
-					if len(geneds) > 0:
+					if len(req_geneds) + len(preferred_geneds) > 0:
+
+						for gened in range(len(req_geneds)):
+							for section in best:
+								classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
+
+								cnx = cnx_pool.get_connection()
+								cursor = cnx.cursor()
+
+								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+section+"'")))
+
+								abbs = []
+								for (abbreviation) in cursor:
+									abbs.append(abbreviation)
+
+								print 
+								print
+								print abbs
+								print
+								print
+								for ge in abbs:
+									if ge in req_geneds:
+										req_geneds.remove(ge)
+									if ge in preferred_geneds:
+										preferred_geneds.remove(ge)
+
+
+								cursor.close()
+								cnx.close()
+
+
 
 						possible_gened_classes = {}
-						for gened in range(len(geneds)):
+						for gened in range(len(req_geneds)):
 
 							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
 
 							cnx = cnx_pool.get_connection()
 							cursor = cnx.cursor()
 
-							cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'")))
+							cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'")))
 
 							classes = []
 							for (section_id) in cursor:
 								classes.append(section_id[0])
 
-							possible_gened_classes[geneds[gened]] = classes
+							possible_gened_classes[req_geneds[gened]] = classes
 
 							cursor.close()
 							cnx.close()
+
+						for gened in range(len(preferred_geneds)):
+
+							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
+
+							cnx = cnx_pool.get_connection()
+							cursor = cnx.cursor()
+
+							cursor.execute(classQuery % (str("'"+preferred_geneds[gened]+"'"),str("'"+preferred_geneds[gened]+"'")))
+
+							classes = []
+							for (section_id) in cursor:
+								classes.append(section_id[0])
+
+							possible_gened_classes[preferred_geneds[gened]] = classes
+
+							cursor.close()
+							cnx.close()
+
+
+						# find common geneds
+
+						doubles = {}
+
+						for ge in range(len(possible_gened_classes)-1):
+							for ge2 in range(ge+1,len(possible_gened_classes)):
+								if ge != ge2:
+									for class1 in possible_gened_classes[ge]:
+										for class2 in possible_gened_classes[ge2]:
+											if class1 == class2:
+												key = possible_gened_classes[ge]+" "+possible_gened_classes[ge2]
+												if key in doubles:
+													doubles[key].append(class1)
+												else:
+													doubles[key] = [class1] 
+
 
 						combo = []
 
 						for b in best:
 							combo.append([b])
 
+						for ge in doubles:
+							one,two = ge.split()
+							if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
+								combo.append(doubles[ge])
+								num_needed -= 1
+								if one in req_geneds:
+									req_geneds.remove(one)
+								if one in preferred_geneds:
+									preferred_geneds.remove(one)
+
+								if two in req_geneds:
+									req_geneds.remove(two)
+								if one in preferred_geneds:
+									preferred_geneds.remove(two)
+
+
 						for x in possible_gened_classes:
-							if num_needed > 0:
+							if num_needed > 0 and x in req_geneds:
+								combo.append(possible_gened_classes[x])
+								num_needed -= 1
+
+						for x in possible_gened_classes:
+							if num_needed > 0 and x in preferred_geneds:
 								combo.append(possible_gened_classes[x])
 								num_needed -= 1
 
 
 						all_combos += list(itertools.product(*combo))
 
-					# no gen eds wanted
-					else:
-						all_combos += [best]
 
 					# if more is wanted after gen eds and best, look for recommendations
 					if num_needed > 0:
@@ -590,26 +667,18 @@ class ScheduleCreation(Resource):
 								cnx.close()
 
 
-							if len(all_combos) > 1:
-								temp = []
-								for x in classes:
-									if num_needed > 0:
-										temp.append(x)
-										num_needed -= 1
+							temp = []
+							for x in classes:
+								if num_needed > 0:
+									temp.append(x)
+									num_needed -= 1
 
-								new_all = []
-								for x in all_combos:
+							new_all = []
+							for x in all_combos:
 
-									new_all.append(list(x) + temp)
+								new_all.append(list(x) + temp)
 
-								all_combos += new_all
-
-				# if there are too many courses
-				if (len(best) > num_courses):
-					# too many total courses, need to remove some preferred courses
-					num_removed = len(best) - num_courses
-					best = (best+preferred[:-(num_removed)])
-
+							all_combos += new_all
 
 
 			# is best schedule is not valid for some reason
@@ -622,54 +691,136 @@ class ScheduleCreation(Resource):
 
 				best = self.verify(best, maxNumCredits)
 
-				# if the best schedule has amount of sections wanted, return that
+				# if the best schedule has amount of sections wanted, add schedule
 				if (len(best) == num_courses):
-					#schedule = ScheduleCreationObject(best,0)
-					#return (schedule.__dict__)
-					all_combos += [best] 
+					all_combos += [best]
 
 				# if more courses are needed
 				elif (len(best) < num_courses):
 					num_needed = num_courses - len(best)
-					
+
 					# if gen eds are wanted, add gen eds
-					if len(geneds) > 0:
+					if len(req_geneds) + len(preferred_geneds) > 0:
+
+						for gened in range(len(req_geneds)):
+							for section in best:
+								classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
+
+								cnx = cnx_pool.get_connection()
+								cursor = cnx.cursor()
+
+								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+section+"'")))
+
+								abbs = []
+								for (abbreviation) in cursor:
+									abbs.append(abbreviation)
+
+								print 
+								print
+								print abbs
+								print
+								print
+								for ge in abbs:
+									if ge in req_geneds:
+										req_geneds.remove(ge)
+									if ge in preferred_geneds:
+										preferred_geneds.remove(ge)
+
+
+								cursor.close()
+								cnx.close()
+
+
 
 						possible_gened_classes = {}
-						for gened in range(len(geneds)):
+						for gened in range(len(req_geneds)):
 
 							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
 
 							cnx = cnx_pool.get_connection()
 							cursor = cnx.cursor()
 
-							cursor.execute(classQuery % (str("'"+geneds[gened]+"'"),str("'"+geneds[gened]+"'")))
+							cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'")))
 
 							classes = []
 							for (section_id) in cursor:
 								classes.append(section_id[0])
 
-							possible_gened_classes[geneds[gened]] = classes
+							possible_gened_classes[req_geneds[gened]] = classes
 
 							cursor.close()
 							cnx.close()
+
+						for gened in range(len(preferred_geneds)):
+
+							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
+
+							cnx = cnx_pool.get_connection()
+							cursor = cnx.cursor()
+
+							cursor.execute(classQuery % (str("'"+preferred_geneds[gened]+"'"),str("'"+preferred_geneds[gened]+"'")))
+
+							classes = []
+							for (section_id) in cursor:
+								classes.append(section_id[0])
+
+							possible_gened_classes[preferred_geneds[gened]] = classes
+
+							cursor.close()
+							cnx.close()
+
+
+						# find common geneds
+
+						doubles = {}
+
+						for ge in range(len(possible_gened_classes)-1):
+							for ge2 in range(ge+1,len(possible_gened_classes)):
+								if ge != ge2:
+									for class1 in possible_gened_classes[ge]:
+										for class2 in possible_gened_classes[ge2]:
+											if class1 == class2:
+												key = possible_gened_classes[ge]+" "+possible_gened_classes[ge2]
+												if key in doubles:
+													doubles[key].append(class1)
+												else:
+													doubles[key] = [class1] 
+
 
 						combo = []
 
 						for b in best:
 							combo.append([b])
 
+						for ge in doubles:
+							one,two = ge.split()
+							if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
+								combo.append(doubles[ge])
+								num_needed -= 1
+								if one in req_geneds:
+									req_geneds.remove(one)
+								if one in preferred_geneds:
+									preferred_geneds.remove(one)
+
+								if two in req_geneds:
+									req_geneds.remove(two)
+								if one in preferred_geneds:
+									preferred_geneds.remove(two)
+
+
 						for x in possible_gened_classes:
-							if num_needed > 0:
+							if num_needed > 0 and x in req_geneds:
+								combo.append(possible_gened_classes[x])
+								num_needed -= 1
+
+						for x in possible_gened_classes:
+							if num_needed > 0 and x in preferred_geneds:
 								combo.append(possible_gened_classes[x])
 								num_needed -= 1
 
 
 						all_combos += list(itertools.product(*combo))
 
-					# no gen eds wanted
-					else:
-						all_combos += [best]
 
 					# if more is wanted after gen eds and best, look for recommendations
 					if num_needed > 0:
@@ -696,25 +847,18 @@ class ScheduleCreation(Resource):
 								cnx.close()
 
 
-							if len(all_combos) > 1:
-								temp = []
-								for x in classes:
-									if num_needed > 0:
-										temp.append(x)
-										num_needed -= 1
+							temp = []
+							for x in classes:
+								if num_needed > 0:
+									temp.append(x)
+									num_needed -= 1
 
-								new_all = []
-								for x in all_combos:
+							new_all = []
+							for x in all_combos:
 
-									new_all.append(list(x) + temp)
+								new_all.append(list(x) + temp)
 
-								all_combos += new_all
-
-				# if there are too many courses
-				if (len(best) > num_courses):
-					# too many total courses, need to remove some preferred courses
-					num_removed = len(best) - num_courses
-					best = (best+preferred[:-(num_removed)])
+							all_combos += new_all
 
 
 

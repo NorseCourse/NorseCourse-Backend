@@ -14,7 +14,7 @@ def getRequirements(course_id):
 
 	requirements = []
 	for (req_type, details) in cursor:
-		requirement = RequirementObject(req_type, course_id, details)
+		requirement = RequirementObject(req_type, details)
 		requirements.append(requirement.__dict__)
 
 	cursor.close()

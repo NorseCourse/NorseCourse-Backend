@@ -34,9 +34,8 @@ class CourseObject(object):
 
 # What a requirement object should contain
 class RequirementObject(object):
-	def __init__(self, req_type = None, course_id = None, details = None):
+	def __init__(self, req_type = None, details = None):
 		self.reqType = req_type
-		self.courseId = course_id
 		self.details = details
 
 # What a section object should contain

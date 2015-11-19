@@ -656,9 +656,6 @@ class ScheduleCreation(Resource):
 
 						all_combos += list(itertools.product(*combo))
 
-					else:
-						all_combos += [best]
-
 
 					# if more is wanted after gen eds and best, look for recommendations
 					if num_needed > 0:
@@ -846,8 +843,6 @@ class ScheduleCreation(Resource):
 
 						all_combos += list(itertools.product(*combo))
 
-					else:
-						all_combos += [best]
 
 					# if more is wanted after gen eds and best, look for recommendations
 					if num_needed > 0:

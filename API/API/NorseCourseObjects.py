@@ -57,8 +57,8 @@ class SectionObject(object):
 # What a faculty object should contain
 class FacultyObject(object):
 	def __init__(self, first_initial = None, last_name = None):
-		self.first_initial = first_initial
-		self.last_name = last_name
+		self.firstInitial = first_initial
+		self.lastName = last_name
 
 # What a sectionMeeting object should contain
 class SectionMeetingObject(object):

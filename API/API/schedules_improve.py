@@ -529,17 +529,13 @@ class ScheduleCreation(Resource):
 								cnx = cnx_pool.get_connection()
 								cursor = cnx.cursor()
 
-								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+section+"'")))
+								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+str(section)+"'")))
 
 								abbs = []
 								for (abbreviation) in cursor:
-									abbs.append(abbreviation)
+									abbs.append(str(abbreviation[0]))
 
-								print 
-								print
-								print abbs
-								print
-								print
+
 								for ge in abbs:
 									if ge in req_geneds:
 										req_geneds.remove(ge)
@@ -594,17 +590,28 @@ class ScheduleCreation(Resource):
 
 						doubles = {}
 
-						for ge in range(len(possible_gened_classes)-1):
-							for ge2 in range(ge+1,len(possible_gened_classes)):
+						for ge in possible_gened_classes:
+							for ge2 in possible_gened_classes:
 								if ge != ge2:
 									for class1 in possible_gened_classes[ge]:
 										for class2 in possible_gened_classes[ge2]:
 											if class1 == class2:
-												key = possible_gened_classes[ge]+" "+possible_gened_classes[ge2]
+												key = ge+" "+ge2
 												if key in doubles:
 													doubles[key].append(class1)
 												else:
 													doubles[key] = [class1] 
+
+						keys = []
+						for key in doubles:
+							one,two = key.split()
+							new = set((one,two))
+							if new not in keys:
+								keys.append(new)
+
+						for k in keys:
+							delKey = list(k)[0] + " " + list(k)[1]
+							del doubles[delKey]
 
 
 						combo = []
@@ -709,11 +716,12 @@ class ScheduleCreation(Resource):
 								cnx = cnx_pool.get_connection()
 								cursor = cnx.cursor()
 
-								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+section+"'")))
+								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+str(section)+"'")))
 
 								abbs = []
 								for (abbreviation) in cursor:
-									abbs.append(abbreviation)
+									abbs.append(str(abbreviation[0]))
+
 
 								for ge in abbs:
 									if ge in req_geneds:
@@ -769,17 +777,28 @@ class ScheduleCreation(Resource):
 
 						doubles = {}
 
-						for ge in range(len(possible_gened_classes)-1):
-							for ge2 in range(ge+1,len(possible_gened_classes)):
+						for ge in possible_gened_classes:
+							for ge2 in possible_gened_classes:
 								if ge != ge2:
 									for class1 in possible_gened_classes[ge]:
 										for class2 in possible_gened_classes[ge2]:
 											if class1 == class2:
-												key = possible_gened_classes[ge]+" "+possible_gened_classes[ge2]
+												key = ge+" "+ge2
 												if key in doubles:
 													doubles[key].append(class1)
 												else:
 													doubles[key] = [class1] 
+
+						keys = []
+						for key in doubles:
+							one,two = key.split()
+							new = set((one,two))
+							if new not in keys:
+								keys.append(new)
+
+						for k in keys:
+							delKey = list(k)[0] + " " + list(k)[1]
+							del doubles[delKey]
 
 
 						combo = []
@@ -854,7 +873,6 @@ class ScheduleCreation(Resource):
 								new_all.append(list(x) + temp)
 
 							all_combos += new_all
-
 
 
 

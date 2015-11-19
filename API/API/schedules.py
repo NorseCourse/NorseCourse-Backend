@@ -442,10 +442,18 @@ class ScheduleCreation(Resource):
 
 		# go through geneds and make string instead of unicode
 		new_ge = []
-		for x in geneds:
+		for x in preferred_geneds:
 			new_ge.append(str(x))
 
-		geneds = new_ge
+		preferred_geneds = new_ge
+
+
+		# go through geneds and make string instead of unicode
+		new_ge = []
+		for x in req_geneds:
+			new_ge.append(str(x))
+
+		req_geneds = new_ge
 
 
 

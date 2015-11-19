@@ -316,15 +316,15 @@ class ScheduleCreation(Resource):
 
 	@NorseCourse.doc(
 		params = {
-			"requiredCourses": "Provide a comma separated list of courses IDs that are required in schedule",
-			"preferredCourses": "Provide a comma separated list of courses IDs that are preferred in schedule",
-			"requiredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings required",
-			"preferredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings preferred",
-			"numCourses": "Provide an integer for desired number of courses wanted",
-			"division": "Provide a department ID that the student is a part of",
-			"index": "Provide an integer of last location in schedule list, if known",
-			"maxNumCredits": "Provide an integer for maximum number of credits wanted",
-			"limit":"Provide a max amount of schdedules wanted to be returned"
+			"requiredCourses": "Provide a comma separated list of courses IDs that are required in schedule, defaults to nothing",
+			"preferredCourses": "Provide a comma separated list of courses IDs that are preferred in schedule, defaults to nothing",
+			"requiredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings required, defaults to nothing",
+			"preferredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings preferred, defaults to nothing",
+			"numCourses": "Provide an integer for desired number of courses wanted, defaults to 4",
+			"division": "Provide a department ID that the student is a part of, defaults to nothing",
+			"index": "Provide an integer of last location in schedule list, if known, defaults to -1",
+			"maxNumCredits": "Provide an integer for maximum number of credits wanted, defaults to 18",
+			"limit":"Provide a max amount of schdedules wanted to be returned, defaults to 20"
 		}
 	)
 

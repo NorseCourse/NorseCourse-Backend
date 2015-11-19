@@ -33,7 +33,6 @@ for gened in range(len(req_geneds)):
 print possible_gened_classes
 
 doubles = {}
-keys = []
 
 for ge in possible_gened_classes:
 	for ge2 in possible_gened_classes:
@@ -48,8 +47,6 @@ for ge in possible_gened_classes:
 							doubles[key] = [class1] 
 
 
-print doubles
-
 keys = []
 for key in doubles:
 	one,two = key.split()
@@ -57,14 +54,11 @@ for key in doubles:
 	if new not in keys:
 		keys.append(new)
 
-print keys
 
 for k in keys:
 	delKey = list(k)[0] + " " + list(k)[1]
 	del doubles[delKey]
 
-print
-print doubles
 
 
 

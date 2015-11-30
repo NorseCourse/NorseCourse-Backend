@@ -1,8 +1,13 @@
 #!/bin/bash 
 export PATH="/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin/"
 
-BOLD=$(tput bold)
-NORMAL=$(tput sgr0)
+if [ -t 1 ]; then
+    BOLD=$(tput bold)
+    NORMAL=$(tput sgr0)
+else
+    BOLD=$""
+    NORMAL=$""
+fi
 
 echo "Subject: NorseCourse API production build complete"
 echo
@@ -57,4 +62,8 @@ echo "-------------------------------------------------"
 echo
 echo "Happy Hosting!"
 
-sendmail "schabl01@luther.edu,norsecourse16@gmail.com" < ~/NorseCourse/Build/emailAPI.txt
+if [ -t 1 ]; then
+    echo "${BOLD}API BUILD IS COMPLETE${NORMAL}"
+else
+    sendmail "schabl01@luther.edu,norsecourse16@gmail.com" < ~/NorseCourse/Build/emailAPI.txt
+fi

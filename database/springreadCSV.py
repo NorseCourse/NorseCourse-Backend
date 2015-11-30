@@ -14,6 +14,22 @@ import re
 
 def main():
 
+
+    # max_cid_query = "select max(course_id) from Courses"
+
+    # cnx = cnx_pool.get_connection()
+    # cursor = cnx.cursor()
+
+    # cursor.execute(max_cid_query)
+
+    # for (cid) in cursor:
+    #     max_cid = cid
+
+    # cursor.close()
+    # cnx.close()
+
+    # print("\n\n\n", max_cid, "\n\n\n")
+
     # read in first csv we are given
     courses = pd.DataFrame.from_csv('spring_course.csv', sep=None,index_col=None)
 
@@ -90,7 +106,7 @@ def main():
 
 
     course_ids = {}
-    cid = 0
+    cid = 479
     for idx,row in courses.iterrows():
         name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
         if name not in course_ids:
@@ -110,11 +126,11 @@ def main():
 
     # define the different divisions and their included departments
     science = ['BIO','CHEM','CS','HLTH','MATH','NURS','PHYS','SCI','ACCTG','BIO','PE','ENVS','ATHTR']
-    social_science = ['AFRS','COMS', 'ECON', 'IS','EDUC','HIST','POLS','PSYC','SOC','ANTH','SW','GS','WGST','MGT','PHIL','INTS','MUST','JOUR']
+    social_science = ['FCUL','AS','AFRS','COMS', 'ECON', 'IS','EDUC','HIST','POLS','PSYC','SOC','ANTH','SW','GS','WGST','MGT','PHIL','INTS','MUST','JOUR']
     humanities = ['CLAS','ENG','REL','RUS','SCST','SPAN','ART','MUS','LING','FREN','GER','LAT','CHIN','GRK','HEB','THE','DAN','PAID','ITAL']
 
     # dictionary of department abbreviation to department name
-    department_dict = {'BIO':'Biology','CHEM':'Chemistry','CS':'Computer Science','HLTH':'Health','MATH':'Mathematics','NURS':'Nursing','PHYS':'Physics','SCI':'Science','ACCTG':'Accounting','PE':'Physical Education','ENVS':'Enviromental Studies','AFRS':'African Studies','COMS':'Communications', 'ECON':'Economics', 'IS':'Information Systems','EDUC':'Education','HIST':'History','POLS':'Political Science','PSYC':'Psychology','SOC':'Sociology','ANTH':'Anthropology','SW':'Social Work','GS':'Gender Studies','ATHTR':'Atheltic Training','WGST':"Women's Gender Studies",'MGT':'Management','PHIL':'Philosophy','INTS':'International Studies','MUST':'Museam Studies','JOUR':'Journalism','CLAS':'Classics','ENG':'English','REL':'Religion','RUS':'Russian','SCST':'Scandinavian Studies','SPAN':'Spanish','ART':'Art','MUS':'Music','LING':'Linguistics','FREN':'French','GER':'German','LAT':'Latin','CHIN':'Chinese','GRK':'Greek','HEB':'Hebrew','THE':'Theatre','DAN':'Dance','PAID':'Paideia','ITAL':'Italian'}
+    department_dict = {"AS":'Asian Studies','FCUL':"Foreign Culture",'BIO':'Biology','CHEM':'Chemistry','CS':'Computer Science','HLTH':'Health','MATH':'Mathematics','NURS':'Nursing','PHYS':'Physics','SCI':'Science','ACCTG':'Accounting','PE':'Physical Education','ENVS':'Enviromental Studies','AFRS':'African Studies','COMS':'Communications', 'ECON':'Economics', 'IS':'Information Systems','EDUC':'Education','HIST':'History','POLS':'Political Science','PSYC':'Psychology','SOC':'Sociology','ANTH':'Anthropology','SW':'Social Work','GS':'Gender Studies','ATHTR':'Atheltic Training','WGST':"Women's Gender Studies",'MGT':'Management','PHIL':'Philosophy','INTS':'International Studies','MUST':'Museam Studies','JOUR':'Journalism','CLAS':'Classics','ENG':'English','REL':'Religion','RUS':'Russian','SCST':'Scandinavian Studies','SPAN':'Spanish','ART':'Art','MUS':'Music','LING':'Linguistics','FREN':'French','GER':'German','LAT':'Latin','CHIN':'Chinese','GRK':'Greek','HEB':'Hebrew','THE':'Theatre','DAN':'Dance','PAID':'Paideia','ITAL':'Italian'}
 
     # dictionary of gen eds abbreviation and gen eds name
     gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human Behavior Social Science Methods', 'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 'HIST': 'Historical', 'INTCL': 'Intercultural','NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab','QUANT': 'Quantitative','REL': 'Religion','SKL': 'Skills Course','WEL': 'Wellness Course'}
@@ -131,7 +147,7 @@ def main():
     # these are the columns that are missing
     # or will need to be edited
     # in the new csv file
-    divison = []
+    division = []
     depts_abb = []
     depts_name = []
     nums = []
@@ -172,7 +188,10 @@ def main():
         ########################################################################
         # add building name to column of building_names
         ########################################################################
-        building_names.append(buildings_dict[row['building_abb']])
+        if pd.notnull(row['building_abb']):
+            building_names.append(buildings_dict[row['building_abb']])
+        else:
+            building_names.append("ARR")
 
 
 
@@ -505,16 +524,16 @@ def main():
         ########################################################################
         # isolate the department for the course
         ########################################################################    
-        # define which divison it is a part of
+        # define which division it is a part of
         dept = row['section_name'].split('-')[0]
         depts_abb.append(dept)
         depts_name.append(department_dict[dept])    
         if dept in science:
-            divison.append("Sciences")
+            division.append("Sciences")
         if dept in social_science:
-            divison.append("Social Sciences")
+            division.append("Social Sciences")
         if dept in humanities:
-            divison.append("Humanities")
+            division.append("Humanities")
 
 
 
@@ -565,7 +584,7 @@ def main():
     data['building_names'] = building_names
     data['faculty_first'] = faculty_first
     data['faculty_last'] = faculty_last
-    data['division'] = divison
+    data['division'] = division
     data['department_abbreviation'] = depts_abb
     data['department_name'] = depts_name
     data['course_num'] = nums

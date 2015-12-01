@@ -137,8 +137,22 @@ def populateDB(cursor, data):
 			########################################################################
 
 			# define GenEd names from abbreviation, and what gends cover others
-			gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human Behavior Social Science Methods', 'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 'HIST': 'Historical', 'INTCL': 'Intercultural','NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab','QUANT': 'Quantitative','REL': 'Religion','SKL': 'Skills Course','WEL': 'Wellness Course'}
-			also_geneds = {'HBSSM':'HB','HEPT':'HE','NWL':'NWNL','BL':'', 'HB': '', 'HE': '', 'HIST': '', 'INTCL': '','NWNL': '','QUANT': '','REL': '','SKL': '','WEL': ''}
+			gen_eds_dict = {'BL':'Biblical Studies', 
+								'HB': 'Human Behavior', 
+								'HBSSM': 'Human Behavior Social Science Methods', 
+								'HE': 'Human Expression', 
+								'HEPT': 'Human Expression Primary Text', 
+								'HIST': 'Historical', 'INTCL': 'Intercultural',
+								'NWL': 'Natural World Lab',
+								'NWNL': 'Natural World Non-Lab',
+								'QUANT': 'Quantitative','REL': 'Religion',
+								'SKL': 'Skills Course','WEL': 'Wellness Course'}
+
+			also_geneds = {'HBSSM':'HB','HEPT':'HE',
+							'NWL':'NWNL','BL':'', 'HB': '', 
+							'HE': '', 'HIST': '', 'INTCL': '',
+							'NWNL': '','QUANT': '','REL': '',
+							'SKL': '','WEL': ''}
 
 			# if there is a gen ed
 			if type(row['gen_ed_abb']) == str:

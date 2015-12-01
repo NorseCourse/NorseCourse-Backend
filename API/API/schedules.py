@@ -456,6 +456,7 @@ class ScheduleCreation(Resource):
 		req_geneds = new_ge
 
 
+		# add all sections of required courses
 		temp = required
 		lst = []
 
@@ -476,6 +477,8 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
+
+		# add all sections of preferred courses
 		temp = preferred
 
 		for c in temp:
@@ -495,17 +498,19 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
-
+		# Create all possible schedules from required and preferred.
 		ps = list(itertools.product(*lst))
-
 
 		possible_sections = []
 		for c in ps:
 			possible_sections.append(list(c))
 
 
+		# all possible schedules
 		all_combos = []
 
+
+		# for each possible schedule with req/preferred
 		for option in possible_sections:
 
 			best = option
@@ -528,6 +533,8 @@ class ScheduleCreation(Resource):
 					# if gen eds are wanted, add gen eds
 					if len(req_geneds) + len(preferred_geneds) > 0:
 
+
+						# checks if req/preferred classes cover any gen eds required.
 						for gened in range(len(req_geneds)):
 							for section in best:
 								classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
@@ -553,7 +560,7 @@ class ScheduleCreation(Resource):
 								cnx.close()
 
 
-
+						# find all classes that cover req gen eds
 						possible_gened_classes = {}
 						for gened in range(len(req_geneds)):
 
@@ -573,6 +580,7 @@ class ScheduleCreation(Resource):
 							cursor.close()
 							cnx.close()
 
+						# find all classes that cover req gen eds
 						for gened in range(len(preferred_geneds)):
 
 							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
@@ -593,7 +601,6 @@ class ScheduleCreation(Resource):
 
 
 						# find common geneds
-
 						doubles = {}
 
 						for ge in possible_gened_classes:

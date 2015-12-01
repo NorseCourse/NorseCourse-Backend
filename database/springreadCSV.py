@@ -125,23 +125,91 @@ def main():
     data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
 
     # define the different divisions and their included departments
-    science = ['BIO','CHEM','CS','HLTH','MATH','NURS','PHYS','SCI','ACCTG','BIO','PE','ENVS','ATHTR']
-    social_science = ['LIST','FCUL','AS','AFRS','COMS', 'ECON', 'IS','EDUC','HIST','POLS','PSYC','SOC','ANTH','SW','GS','WGST','MGT','PHIL','INTS','MUST','JOUR']
-    humanities = ['CLAS','ENG','REL','RUS','SCST','SPAN','ART','MUS','LING','FREN','GER','LAT','CHIN','GRK','HEB','THE','DAN','PAID','ITAL']
+    science = ['BIO','CHEM','CS',
+                'HLTH','MATH','NURS',
+                'PHYS','SCI','ACCTG',
+                'BIO','PE','ENVS','ATHTR']
+
+    social_science = ['LIST','FCUL','AS',
+                        'AFRS','COMS', 'ECON', 
+                        'IS','EDUC','HIST','POLS',
+                        'PSYC','SOC','ANTH','SW',
+                        'GS','WGST','MGT','PHIL',
+                        'INTS','MUST','JOUR']
+
+    humanities = ['CLAS','ENG','REL',
+                    'RUS','SCST','SPAN',
+                    'ART','MUS','LING',
+                    'FREN','GER','LAT',
+                    'CHIN','GRK','HEB',
+                    'THE','DAN','PAID',
+                    'ITAL']
 
     # dictionary of department abbreviation to department name
-    department_dict = {'LIST':'Library/Information Systems', "AS":'Asian Studies','FCUL':"Foreign Culture",'BIO':'Biology','CHEM':'Chemistry','CS':'Computer Science','HLTH':'Health','MATH':'Mathematics','NURS':'Nursing','PHYS':'Physics','SCI':'Science','ACCTG':'Accounting','PE':'Physical Education','ENVS':'Enviromental Studies','AFRS':'African Studies','COMS':'Communications', 'ECON':'Economics', 'IS':'International Studies','EDUC':'Education','HIST':'History','POLS':'Political Science','PSYC':'Psychology','SOC':'Sociology','ANTH':'Anthropology','SW':'Social Work','GS':'Gender Studies','ATHTR':'Atheltic Training','WGST':"Women's Gender Studies",'MGT':'Management','PHIL':'Philosophy','INTS':'Intersections','MUST':'Museam Studies','JOUR':'Journalism','CLAS':'Classics','ENG':'English','REL':'Religion','RUS':'Russian','SCST':'Scandinavian Studies','SPAN':'Spanish','ART':'Art','MUS':'Music','LING':'Linguistics','FREN':'French','GER':'German','LAT':'Latin','CHIN':'Chinese','GRK':'Greek','HEB':'Hebrew','THE':'Theatre','DAN':'Dance','PAID':'Paideia','ITAL':'Italian'}
+    department_dict = {'LIST':'Library/Information Systems', 
+                        "AS":'Asian Studies','FCUL':"Foreign Culture",
+                        'BIO':'Biology','CHEM':'Chemistry',
+                        'CS':'Computer Science','HLTH':'Health',
+                        'MATH':'Mathematics','NURS':'Nursing',
+                        'PHYS':'Physics','SCI':'Science',
+                        'ACCTG':'Accounting','PE':'Physical Education',
+                        'ENVS':'Enviromental Studies',
+                        'AFRS':'African Studies','COMS':'Communications', 
+                        'ECON':'Economics', 'IS':'International Studies',
+                        'EDUC':'Education','HIST':'History',
+                        'POLS':'Political Science','PSYC':'Psychology',
+                        'SOC':'Sociology','ANTH':'Anthropology',
+                        'SW':'Social Work','GS':'Gender Studies',
+                        'ATHTR':'Atheltic Training',
+                        'WGST':"Women's Gender Studies",
+                        'MGT':'Management','PHIL':'Philosophy',
+                        'INTS':'Intersections','MUST':'Museam Studies',
+                        'JOUR':'Journalism','CLAS':'Classics',
+                        'ENG':'English','REL':'Religion','RUS':'Russian',
+                        'SCST':'Scandinavian Studies','SPAN':'Spanish',
+                        'ART':'Art','MUS':'Music','LING':'Linguistics',
+                        'FREN':'French','GER':'German','LAT':'Latin',
+                        'CHIN':'Chinese','GRK':'Greek','HEB':'Hebrew',
+                        'THE':'Theatre','DAN':'Dance','PAID':'Paideia',
+                        'ITAL':'Italian'}
 
     # dictionary of gen eds abbreviation and gen eds name
-    gen_eds_dict = {'BL':'Biblical Studies', 'HB': 'Human Behavior', 'HBSSM': 'Human Behavior Social Science Methods', 'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 'HIST': 'Historical', 'INTCL': 'Intercultural','NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab','QUANT': 'Quantitative','REL': 'Religion','SKL': 'Skills Course','WEL': 'Wellness Course'}
+    gen_eds_dict = {'BL':'Biblical Studies', 
+                        'HB': 'Human Behavior', 
+                        'HBSSM': 'Human Behavior Social Science Methods', 
+                        'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 
+                        'HIST': 'Historical', 'INTCL': 'Intercultural',
+                        'NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab',
+                        'QUANT': 'Quantitative','REL': 'Religion',
+                        'SKL': 'Skills Course','WEL': 'Wellness Course'}
+
+
     # defines gen eds that also cover others
     also_geneds = {'HBSSM':'HB','HEPT':'HE','NWL':'NWNL'}
 
     # Define building name locations
-    buildings_dict = {'GJER':"Gjerset House", 'CMPH':"Campus House", 'CART':"Center for the Arts", 'LARS':"Larson Hall",'ROCH':"Rock House",'REGE':"Regents Center", 'STOR':"Storre Theatre", 'LOYA':"Loyalty Hall", 'SAMP':"Sampson Hoffland Laboratories", 'KORE':"Koren", 'ARR':"To be Announced", 'VALD':"Valders Hall of Science", 'JENS':"Jenson-Noble Hall of Music", 'OCKH':"Ockham House", 'PREU':"Preus Library", 'OLIN':"Olin", 'MAIN':"Main Building"}
+    buildings_dict = {'GJER':"Gjerset House", 'CMPH':"Campus House", 
+                        'CART':"Center for the Arts", 'LARS':"Larson Hall",
+                        'ROCH':"Rock House",'REGE':"Regents Center", 
+                        'STOR':"Storre Theatre", 'LOYA':"Loyalty Hall", 
+                        'SAMP':"Sampson Hoffland Laboratories", 
+                        'KORE':"Koren", 'ARR':"To be Announced", 
+                        'VALD':"Valders Hall of Science", 
+                        'JENS':"Jenson-Noble Hall of Music", 
+                        'OCKH':"Ockham House", 'PREU':"Preus Library", 
+                        'OLIN':"Olin", 'MAIN':"Main Building"}
 
     # define acceptable characters in the comments for sections
-    chars = set([' ','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','0','1','2','3','4','5','6','7','8','9','!','@','#','$','%','^','&','*','(',')','_','-','+','=','[',']','{','}','\\','/',';',':',',','.','<','>'])
+    chars = set([' ','A','B','C','D','E','F','G','H',
+                    'I','J','K','L','M','N','O','P','Q',
+                    'R','S','T','U','V','W','X','Y','Z',
+                    'a','b','c','d','e','f','g','h','i',
+                    'j','k','l','m','n','o','p','q','r',
+                    's','t','u','v','w','x','y','z','0',
+                    '1','2','3','4','5','6','7','8','9',
+                    '!','@','#','$','%','^','&','*','(',
+                        ')','_','-','+','=','[',']','{',
+                    '}','\\','/',';',':',',','.','<','>'])
 
     # initialize list to be new columns
     # these are the columns that are missing

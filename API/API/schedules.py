@@ -456,8 +456,6 @@ class ScheduleCreation(Resource):
 		req_geneds = new_ge
 
 
-
-
 		temp = required
 		lst = []
 

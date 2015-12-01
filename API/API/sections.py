@@ -148,7 +148,8 @@ class Section(Resource):
 		else:
 			cursor.execute(sectionQuery)
 
-
+		cursor.close()
+		cnx.close()
 
 		obj = {
 				'comments':None,
@@ -210,8 +211,6 @@ class Section(Resource):
 			if max_credits != "nan" and "maxCredits" in fields:
 				obj['maxCredits'] = max_credits
 
-
-
 				
 			sect = SectionObject(
 				obj['term'], 
@@ -228,11 +227,7 @@ class Section(Resource):
 				obj['GenEdFulfillments']
 				)
 
-
 			sections.append(sect.__dict__)
-
-		cursor.close()
-		cnx.close()
 
 		return sections
 
@@ -383,6 +378,8 @@ class Section(Resource):
 		else:
 			cursor.execute(sectionQuery)
 
+		cursor.close()
+		cnx.close()
 
 		obj = {
 				'comments':None,
@@ -398,7 +395,6 @@ class Section(Resource):
 				'shortTitle':None,
 				'term':None
 				}
-
 
 		sections = []
 
@@ -443,8 +439,6 @@ class Section(Resource):
 			if max_credits != "nan" and "maxCredits" in fields:
 				obj['maxCredits'] = max_credits
 
-
-
 				
 			sect = SectionObject(
 				obj['term'], 
@@ -462,9 +456,6 @@ class Section(Resource):
 				)
 
 			sections.append(sect.__dict__)
-
-		cursor.close()
-		cnx.close()
 
 		return sections[0]
 

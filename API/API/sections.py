@@ -148,9 +148,6 @@ class Section(Resource):
 		else:
 			cursor.execute(sectionQuery)
 
-		cursor.close()
-		cnx.close()
-
 		obj = {
 				'comments':None,
 				'courseId':None,
@@ -228,6 +225,9 @@ class Section(Resource):
 				)
 
 			sections.append(sect.__dict__)
+
+		cursor.close()
+		cnx.close()
 
 		return sections
 
@@ -378,9 +378,6 @@ class Section(Resource):
 		else:
 			cursor.execute(sectionQuery)
 
-		cursor.close()
-		cnx.close()
-
 		obj = {
 				'comments':None,
 				'courseId':None,
@@ -456,6 +453,9 @@ class Section(Resource):
 				)
 
 			sections.append(sect.__dict__)
+
+		cursor.close()
+		cnx.close()
 
 		return sections[0]
 

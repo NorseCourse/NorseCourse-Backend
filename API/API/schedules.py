@@ -711,181 +711,183 @@ class ScheduleCreation(Resource):
 
 				best = self.verify(best, maxNumCredits)
 
-				# if the best schedule has amount of sections wanted, add schedule
-				if (len(best) == num_courses):
-					all_combos += [best]
+				if len(best) >= len(required):
 
-				# if more courses are needed
-				elif (len(best) < num_courses):
-					num_needed = num_courses - len(best)
+					# if the best schedule has amount of sections wanted, add schedule
+					if (len(best) == num_courses):
+						all_combos += [best]
 
-					# if gen eds are wanted, add gen eds
-					if len(req_geneds) + len(preferred_geneds) > 0:
+					# if more courses are needed
+					elif (len(best) < num_courses):
+						num_needed = num_courses - len(best)
 
-						for gened in range(len(req_geneds)):
-							for section in best:
-								classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
+						# if gen eds are wanted, add gen eds
+						if len(req_geneds) + len(preferred_geneds) > 0:
+
+							for gened in range(len(req_geneds)):
+								for section in best:
+									classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
+
+									cnx = cnx_pool.get_connection()
+									cursor = cnx.cursor()
+
+									cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+str(section)+"'")))
+
+									abbs = []
+									for (abbreviation) in cursor:
+										abbs.append(str(abbreviation[0]))
+
+
+									for ge in abbs:
+										if ge in req_geneds:
+											req_geneds.remove(ge)
+										if ge in preferred_geneds:
+											preferred_geneds.remove(ge)
+
+
+									cursor.close()
+									cnx.close()
+
+
+
+							possible_gened_classes = {}
+							for gened in range(len(req_geneds)):
+
+								classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
 
 								cnx = cnx_pool.get_connection()
 								cursor = cnx.cursor()
 
-								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+str(section)+"'")))
-
-								abbs = []
-								for (abbreviation) in cursor:
-									abbs.append(str(abbreviation[0]))
-
-
-								for ge in abbs:
-									if ge in req_geneds:
-										req_geneds.remove(ge)
-									if ge in preferred_geneds:
-										preferred_geneds.remove(ge)
-
-
-								cursor.close()
-								cnx.close()
-
-
-
-						possible_gened_classes = {}
-						for gened in range(len(req_geneds)):
-
-							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
-
-							cnx = cnx_pool.get_connection()
-							cursor = cnx.cursor()
-
-							cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'")))
-
-							classes = []
-							for (section_id) in cursor:
-								classes.append(section_id[0])
-
-							possible_gened_classes[req_geneds[gened]] = classes
-
-							cursor.close()
-							cnx.close()
-
-						for gened in range(len(preferred_geneds)):
-
-							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
-
-							cnx = cnx_pool.get_connection()
-							cursor = cnx.cursor()
-
-							cursor.execute(classQuery % (str("'"+preferred_geneds[gened]+"'"),str("'"+preferred_geneds[gened]+"'")))
-
-							classes = []
-							for (section_id) in cursor:
-								classes.append(section_id[0])
-
-							possible_gened_classes[preferred_geneds[gened]] = classes
-
-							cursor.close()
-							cnx.close()
-
-
-						# find common geneds
-
-						doubles = {}
-
-						for ge in possible_gened_classes:
-							for ge2 in possible_gened_classes:
-								if ge != ge2:
-									for class1 in possible_gened_classes[ge]:
-										for class2 in possible_gened_classes[ge2]:
-											if class1 == class2:
-												key = ge+" "+ge2
-												if key in doubles:
-													doubles[key].append(class1)
-												else:
-													doubles[key] = [class1] 
-
-						keys = []
-						for key in doubles:
-							one,two = key.split()
-							new = set((one,two))
-							if new not in keys:
-								keys.append(new)
-
-						for k in keys:
-							delKey = list(k)[0] + " " + list(k)[1]
-							del doubles[delKey]
-
-
-						combo = []
-
-						for b in best:
-							combo.append([b])
-
-						for ge in doubles:
-							one,two = ge.split()
-							if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
-								combo.append(doubles[ge])
-								num_needed -= 1
-								if one in req_geneds:
-									req_geneds.remove(one)
-								if one in preferred_geneds:
-									preferred_geneds.remove(one)
-
-								if two in req_geneds:
-									req_geneds.remove(two)
-								if one in preferred_geneds:
-									preferred_geneds.remove(two)
-
-
-						for x in possible_gened_classes:
-							if num_needed > 0 and x in req_geneds:
-								combo.append(possible_gened_classes[x])
-								num_needed -= 1
-
-						for x in possible_gened_classes:
-							if num_needed > 0 and x in preferred_geneds:
-								combo.append(possible_gened_classes[x])
-								num_needed -= 1
-
-
-						all_combos += list(itertools.product(*combo))
-
-
-					# if more is wanted after gen eds and best, look for recommendations
-					if num_needed > 0:
-
-						# check if they specified their division
-						if division != None:
-
-							# look for recommendations for division to fill schedule
-							classes = []
-							for i in range(num_needed):
-
-								classQuery = "SELECT Sections.section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
-								
-								cnx = cnx_pool.get_connection()
-								cursor = cnx.cursor()
-
-								cursor.execute(classQuery % str(division))
+								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'")))
 
 								classes = []
 								for (section_id) in cursor:
 									classes.append(section_id[0])
 
+								possible_gened_classes[req_geneds[gened]] = classes
+
+								cursor.close()
+								cnx.close()
+
+							for gened in range(len(preferred_geneds)):
+
+								classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
+
+								cnx = cnx_pool.get_connection()
+								cursor = cnx.cursor()
+
+								cursor.execute(classQuery % (str("'"+preferred_geneds[gened]+"'"),str("'"+preferred_geneds[gened]+"'")))
+
+								classes = []
+								for (section_id) in cursor:
+									classes.append(section_id[0])
+
+								possible_gened_classes[preferred_geneds[gened]] = classes
+
 								cursor.close()
 								cnx.close()
 
 
-							temp = []
-							for x in classes:
-								if num_needed > 0:
-									temp.append(x)
+							# find common geneds
+
+							doubles = {}
+
+							for ge in possible_gened_classes:
+								for ge2 in possible_gened_classes:
+									if ge != ge2:
+										for class1 in possible_gened_classes[ge]:
+											for class2 in possible_gened_classes[ge2]:
+												if class1 == class2:
+													key = ge+" "+ge2
+													if key in doubles:
+														doubles[key].append(class1)
+													else:
+														doubles[key] = [class1] 
+
+							keys = []
+							for key in doubles:
+								one,two = key.split()
+								new = set((one,two))
+								if new not in keys:
+									keys.append(new)
+
+							for k in keys:
+								delKey = list(k)[0] + " " + list(k)[1]
+								del doubles[delKey]
+
+
+							combo = []
+
+							for b in best:
+								combo.append([b])
+
+							for ge in doubles:
+								one,two = ge.split()
+								if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
+									combo.append(doubles[ge])
+									num_needed -= 1
+									if one in req_geneds:
+										req_geneds.remove(one)
+									if one in preferred_geneds:
+										preferred_geneds.remove(one)
+
+									if two in req_geneds:
+										req_geneds.remove(two)
+									if one in preferred_geneds:
+										preferred_geneds.remove(two)
+
+
+							for x in possible_gened_classes:
+								if num_needed > 0 and x in req_geneds:
+									combo.append(possible_gened_classes[x])
 									num_needed -= 1
 
-							new_all = []
-							for x in all_combos:
+							for x in possible_gened_classes:
+								if num_needed > 0 and x in preferred_geneds:
+									combo.append(possible_gened_classes[x])
+									num_needed -= 1
 
-								new_all.append(list(x) + temp)
 
-							all_combos += new_all
+							all_combos += list(itertools.product(*combo))
+
+
+						# if more is wanted after gen eds and best, look for recommendations
+						if num_needed > 0:
+
+							# check if they specified their division
+							if division != None:
+
+								# look for recommendations for division to fill schedule
+								classes = []
+								for i in range(num_needed):
+
+									classQuery = "SELECT Sections.section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
+									
+									cnx = cnx_pool.get_connection()
+									cursor = cnx.cursor()
+
+									cursor.execute(classQuery % str(division))
+
+									classes = []
+									for (section_id) in cursor:
+										classes.append(section_id[0])
+
+									cursor.close()
+									cnx.close()
+
+
+								temp = []
+								for x in classes:
+									if num_needed > 0:
+										temp.append(x)
+										num_needed -= 1
+
+								new_all = []
+								for x in all_combos:
+
+									new_all.append(list(x) + temp)
+
+								all_combos += new_all
 
 
 

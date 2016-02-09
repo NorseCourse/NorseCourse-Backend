@@ -14,7 +14,6 @@ import re
 
 def main():
 
-
     # max_cid_query = "select max(course_id) from Courses"
 
     # cnx = cnx_pool.get_connection()
@@ -688,7 +687,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
 

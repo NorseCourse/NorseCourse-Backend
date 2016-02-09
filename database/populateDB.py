@@ -29,12 +29,10 @@ def populateDB(cursor, data):
 		rooms = set()
 		profs = set()
 
-
 		########################################################################
 		# iterrate through all rows in data
 		########################################################################
 		for idx,row in data.iterrows():
-
 
 			########################################################################
 			# Divisions table
@@ -46,7 +44,6 @@ def populateDB(cursor, data):
 				# SQL statement to insert Division into Divisions table in database
 				insert_division = "INSERT INTO Divisions (name) VALUES (%(name)s)"
 				cursor.execute(insert_division, {"name": str(row['division'])})
-
 
 
 			########################################################################
@@ -71,7 +68,6 @@ def populateDB(cursor, data):
 				cursor.execute(insert_department, {"name": str(row['department_name']),"abb": str(row['department_abbreviation']),"d_id": str(div_id)})
 	
 
-
 			########################################################################
 			# Courses table
 			########################################################################
@@ -80,7 +76,6 @@ def populateDB(cursor, data):
 				# add course to check set
 				courses.add(row['c_id'])
 
-
 				# SQL statement to find department id of current deparment
 				dept_id_query = "SELECT department_id FROM Departments WHERE name=%(name)s"
 				cursor.execute(dept_id_query,{'name':str(row['department_name'])})
@@ -88,7 +83,6 @@ def populateDB(cursor, data):
 				# defines current department as dept_id
 				for (department_id) in cursor:
 					dept_id = int(department_id[0])
-
 
 				# SQL insert statement of Courses
 				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(dept_id)s)"
@@ -99,7 +93,6 @@ def populateDB(cursor, data):
 												'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
 												'dept_id':str(dept_id)
 												})	
-
 
 
 			########################################################################
@@ -117,7 +110,6 @@ def populateDB(cursor, data):
 			for (course_id) in cursor:
 				course_id = int(course_id[0])
 
-
 			# SQL statement to insert into Sections
 			insert_course = "INSERT INTO Sections (term,name,short_title,min_credits,max_credits,comments,seven_weeks,course_id) VALUES (%(term)s,%(name)s,%(short_title)s,%(min_credits)s,%(max_credits)s,%(comments)s,%(seven_weeks)s,%(course_id)s)"
 			cursor.execute(insert_course,{'term':str(row['term']),
@@ -129,7 +121,6 @@ def populateDB(cursor, data):
 											'seven_weeks':str(row['seven_week']),
 											'course_id':str(course_id)
 											})
-
 
 
 			########################################################################

@@ -1,8 +1,6 @@
-# Import needed packakes.
+# Import packages
 import mysql.connector
 import re
-
-import config
 
 
 # Function to creater a databaes based on the name that is passed in.

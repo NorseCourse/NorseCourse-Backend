@@ -29,10 +29,12 @@ def populateDB(cursor, data):
 		rooms = set()
 		profs = set()
 
+
 		########################################################################
 		# iterrate through all rows in data
 		########################################################################
 		for idx,row in data.iterrows():
+
 
 			########################################################################
 			# Divisions table
@@ -68,6 +70,7 @@ def populateDB(cursor, data):
 				cursor.execute(insert_department, {"name": str(row['department_name']),"abb": str(row['department_abbreviation']),"d_id": str(div_id)})
 	
 
+
 			########################################################################
 			# Courses table
 			########################################################################
@@ -76,6 +79,7 @@ def populateDB(cursor, data):
 				# add course to check set
 				courses.add(row['c_id'])
 
+
 				# SQL statement to find department id of current deparment
 				dept_id_query = "SELECT department_id FROM Departments WHERE name=%(name)s"
 				cursor.execute(dept_id_query,{'name':str(row['department_name'])})
@@ -83,6 +87,7 @@ def populateDB(cursor, data):
 				# defines current department as dept_id
 				for (department_id) in cursor:
 					dept_id = int(department_id[0])
+
 
 				# SQL insert statement of Courses
 				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(dept_id)s)"
@@ -93,6 +98,7 @@ def populateDB(cursor, data):
 												'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
 												'dept_id':str(dept_id)
 												})	
+
 
 
 			########################################################################
@@ -109,6 +115,7 @@ def populateDB(cursor, data):
 			# define course as course_id
 			for (course_id) in cursor:
 				course_id = int(course_id[0])
+
 
 			# SQL statement to insert into Sections
 			insert_course = "INSERT INTO Sections (term,name,short_title,min_credits,max_credits,comments,seven_weeks,course_id) VALUES (%(term)s,%(name)s,%(short_title)s,%(min_credits)s,%(max_credits)s,%(comments)s,%(seven_weeks)s,%(course_id)s)"
@@ -129,21 +136,21 @@ def populateDB(cursor, data):
 
 			# define GenEd names from abbreviation, and what gends cover others
 			gen_eds_dict = {'BL':'Biblical Studies', 
-							'HB': 'Human Behavior', 
-							'HBSSM': 'Human Behavior Social Science Methods', 
-							'HE': 'Human Expression', 
-							'HEPT': 'Human Expression Primary Text', 
-							'HIST': 'Historical', 'INTCL': 'Intercultural',
-							'NWL': 'Natural World Lab',
-							'NWNL': 'Natural World Non-Lab',
-							'QUANT': 'Quantitative','REL': 'Religion',
-							'SKL': 'Skills Course','WEL': 'Wellness Course'}
+								'HB': 'Human Behavior', 
+								'HBSSM': 'Human Behavior Social Science Methods', 
+								'HE': 'Human Expression', 
+								'HEPT': 'Human Expression Primary Text', 
+								'HIST': 'Historical', 'INTCL': 'Intercultural',
+								'NWL': 'Natural World Lab',
+								'NWNL': 'Natural World Non-Lab',
+								'QUANT': 'Quantitative','REL': 'Religion',
+								'SKL': 'Skills Course','WEL': 'Wellness Course'}
 
 			also_geneds = {'HBSSM':'HB','HEPT':'HE',
-							'NWL':'NWNL','BL':'', 
-							'HB': '', 'HE': '', 'HIST': '', 
-							'INTCL': '','NWNL': '',
-							'QUANT': '','REL': '','SKL': '','WEL': ''}
+							'NWL':'NWNL','BL':'', 'HB': '', 
+							'HE': '', 'HIST': '', 'INTCL': '',
+							'NWNL': '','QUANT': '','REL': '',
+							'SKL': '','WEL': ''}
 
 			# if there is a gen ed
 			if type(row['gen_ed_abb']) == str:
@@ -372,7 +379,7 @@ def populateDB(cursor, data):
 ##############################################################################
 
 # open data.csv file to get data to populate database with
-data = pd.DataFrame.from_csv('data.csv', sep=None,index_col=None)
+data = pd.DataFrame.from_csv('spring_data.csv', sep=None,index_col=None)
 
 # set up database connection
 populate_db_properties = config.db_pool_config

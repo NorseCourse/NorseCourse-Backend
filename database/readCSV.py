@@ -14,8 +14,23 @@ import re
 
 def main():
 
+    # max_cid_query = "select max(course_id) from Courses"
+
+    # cnx = cnx_pool.get_connection()
+    # cursor = cnx.cursor()
+
+    # cursor.execute(max_cid_query)
+
+    # for (cid) in cursor:
+    #     max_cid = cid
+
+    # cursor.close()
+    # cnx.close()
+
+    # print("\n\n\n", max_cid, "\n\n\n")
+
     # read in first csv we are given
-    courses = pd.DataFrame.from_csv('course.csv', sep=None,index_col=None)
+    courses = pd.DataFrame.from_csv('spring_course.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
     courses['course_id'] = courses['Course Sections Id']
@@ -46,7 +61,7 @@ def main():
     del courses['Course Types CSV']
 
     #read in second csv file we are given
-    meetings = pd.DataFrame.from_csv('meeting.csv', sep=None,index_col=None)
+    meetings = pd.DataFrame.from_csv('spring_meeting.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
     meetings['course_id'] = meetings['Course Sections Id']
@@ -90,7 +105,7 @@ def main():
 
 
     course_ids = {}
-    cid = 0
+    cid = 479
     for idx,row in courses.iterrows():
         name = row['section_name'].split("-")[0]+"-"+row['section_name'].split("-")[1]
         if name not in course_ids:
@@ -109,19 +124,29 @@ def main():
     data = pd.merge(meetings, courses, how='inner', on=['course_id','section_name','start_date','end_date','section_status'])
 
     # define the different divisions and their included departments
-    science = ['BIO','CHEM','CS','HLTH','MATH','NURS','PHYS','SCI','ACCTG','BIO','PE','ENVS','ATHTR']
-    
-    social_science = ['AFRS','COMS', 'ECON', 'IS','EDUC',
-                        'HIST','POLS','PSYC','SOC','ANTH',
-                        'SW','GS','WGST','MGT','PHIL','INTS',
-                        'MUST','JOUR','LIST']
+    science = ['BIO','CHEM','CS',
+                'HLTH','MATH','NURS',
+                'PHYS','SCI','ACCTG',
+                'BIO','PE','ENVS','ATHTR']
 
-    humanities = ['CLAS','ENG','REL','RUS','SCST','SPAN',
-                    'ART','MUS','LING','FREN','GER','LAT',
-                    'CHIN','GRK','HEB','THE','DAN','PAID','ITAL']
+    social_science = ['LIST','FCUL','AS',
+                        'AFRS','COMS', 'ECON', 
+                        'IS','EDUC','HIST','POLS',
+                        'PSYC','SOC','ANTH','SW',
+                        'GS','WGST','MGT','PHIL',
+                        'INTS','MUST','JOUR']
+
+    humanities = ['CLAS','ENG','REL',
+                    'RUS','SCST','SPAN',
+                    'ART','MUS','LING',
+                    'FREN','GER','LAT',
+                    'CHIN','GRK','HEB',
+                    'THE','DAN','PAID',
+                    'ITAL']
 
     # dictionary of department abbreviation to department name
-    department_dict = {'LIST':'Library/Information Systems',
+    department_dict = {'LIST':'Library/Information Systems', 
+                        "AS":'Asian Studies','FCUL':"Foreign Culture",
                         'BIO':'Biology','CHEM':'Chemistry',
                         'CS':'Computer Science','HLTH':'Health',
                         'MATH':'Mathematics','NURS':'Nursing',
@@ -134,7 +159,8 @@ def main():
                         'POLS':'Political Science','PSYC':'Psychology',
                         'SOC':'Sociology','ANTH':'Anthropology',
                         'SW':'Social Work','GS':'Gender Studies',
-                        'ATHTR':'Atheltic Training','WGST':"Women's Gender Studies",
+                        'ATHTR':'Atheltic Training',
+                        'WGST':"Women's Gender Studies",
                         'MGT':'Management','PHIL':'Philosophy',
                         'INTS':'Intersections','MUST':'Museam Studies',
                         'JOUR':'Journalism','CLAS':'Classics',
@@ -150,13 +176,12 @@ def main():
     gen_eds_dict = {'BL':'Biblical Studies', 
                         'HB': 'Human Behavior', 
                         'HBSSM': 'Human Behavior Social Science Methods', 
-                        'HE': 'Human Expression', 
-                        'HEPT': 'Human Expression Primary Text', 
+                        'HE': 'Human Expression', 'HEPT': 'Human Expression Primary Text', 
                         'HIST': 'Historical', 'INTCL': 'Intercultural',
-                        'NWL': 'Natural World Lab',
-                        'NWNL': 'Natural World Non-Lab','QUANT': 
-                        'Quantitative','REL': 'Religion',
+                        'NWL': 'Natural World Lab','NWNL': 'Natural World Non-Lab',
+                        'QUANT': 'Quantitative','REL': 'Religion',
                         'SKL': 'Skills Course','WEL': 'Wellness Course'}
+
 
     # defines gen eds that also cover others
     also_geneds = {'HBSSM':'HB','HEPT':'HE','NWL':'NWNL'}
@@ -166,29 +191,30 @@ def main():
                         'CART':"Center for the Arts", 'LARS':"Larson Hall",
                         'ROCH':"Rock House",'REGE':"Regents Center", 
                         'STOR':"Storre Theatre", 'LOYA':"Loyalty Hall", 
-                        'SAMP':"Sampson Hoffland Laboratories", 'KORE':"Koren", 
-                        'ARR':"To be Announced", 'VALD':"Valders Hall of Science",
-                         'JENS':"Jenson-Noble Hall of Music", 'OCKH':"Ockham House",
-                          'PREU':"Preus Library", 'OLIN':"Olin", 'MAIN':"Main Building"}
+                        'SAMP':"Sampson Hoffland Laboratories", 
+                        'KORE':"Koren", 'ARR':"To be Announced", 
+                        'VALD':"Valders Hall of Science", 
+                        'JENS':"Jenson-Noble Hall of Music", 
+                        'OCKH':"Ockham House", 'PREU':"Preus Library", 
+                        'OLIN':"Olin", 'MAIN':"Main Building"}
 
     # define acceptable characters in the comments for sections
     chars = set([' ','A','B','C','D','E','F','G','H',
-                    'I','J','K','L','M','N','O','P',
-                    'Q','R','S','T','U','V','W','X',
-                    'Y','Z','a','b','c','d','e','f',
-                    'g','h','i','j','k','l','m','n',
-                    'o','p','q','r','s','t','u','v',
-                    'w','x','y','z','0','1','2','3',
-                    '4','5','6','7','8','9','!','@',
-                    '#','$','%','^','&','*','(',')',
-                    '_','-','+','=','[',']','{','}',
-                    '\\','/',';',':',',','.','<','>'])
+                    'I','J','K','L','M','N','O','P','Q',
+                    'R','S','T','U','V','W','X','Y','Z',
+                    'a','b','c','d','e','f','g','h','i',
+                    'j','k','l','m','n','o','p','q','r',
+                    's','t','u','v','w','x','y','z','0',
+                    '1','2','3','4','5','6','7','8','9',
+                    '!','@','#','$','%','^','&','*','(',
+                        ')','_','-','+','=','[',']','{',
+                    '}','\\','/',';',':',',','.','<','>'])
 
     # initialize list to be new columns
     # these are the columns that are missing
     # or will need to be edited
     # in the new csv file
-    divison = []
+    division = []
     depts_abb = []
     depts_name = []
     nums = []
@@ -225,10 +251,15 @@ def main():
         course_id.append(course_ids[name])
 
 
+
         ########################################################################
         # add building name to column of building_names
         ########################################################################
-        building_names.append(buildings_dict[row['building_abb']])
+        if pd.notnull(row['building_abb']):
+            building_names.append(buildings_dict[row['building_abb']])
+        else:
+            building_names.append("ARR")
+
 
 
         ########################################################################
@@ -254,6 +285,7 @@ def main():
             # add first and last name to column
             faculty_first.append(row['faculty_name'].split('.')[0])
             faculty_last.append(row['faculty_name'].split('.')[1])
+
 
 
 
@@ -318,6 +350,8 @@ def main():
             else:
                 # adds empty string to pre req
                 pre_reqs.append("")
+
+
 
 
 
@@ -395,6 +429,8 @@ def main():
 
 
 
+
+
         ########################################################################
         # check for lab
         ########################################################################
@@ -419,6 +455,7 @@ def main():
 
 
 
+
         ########################################################################
         # check for section comments
         ########################################################################
@@ -437,6 +474,7 @@ def main():
             # add empty string to comment column
             comments.append("")
         
+
 
 
         ########################################################################
@@ -458,11 +496,13 @@ def main():
                 
         
 
+
         ########################################################################
         # isolate the start and end dates of a section with no times
         ########################################################################
         start_dates.append(row['start_date'].split()[0])
         end_dates.append(row['end_date'].split()[0])
+        
         
 
         ########################################################################
@@ -477,6 +517,7 @@ def main():
             start_times.append((row['start_time'].split()[1])[:-3])
             end_times.append((row['end_time'].split()[1])[:-3])    
         
+
 
         ########################################################################
         # define term of course
@@ -500,6 +541,7 @@ def main():
         if (start[:2] == '02') or (end[:2] == '05'):
             current_term = "Spring"
             term.append("Spring "+start[6:10])     
+        
 
 
         ########################################################################
@@ -537,6 +579,7 @@ def main():
                 seven_week.append(2)   
                 
 
+
         ########################################################################
         # isolate the course number and add to new column
         ########################################################################
@@ -544,19 +587,21 @@ def main():
         nums.append(num)
 
 
+
         ########################################################################
         # isolate the department for the course
         ########################################################################    
-        # define which divison it is a part of
+        # define which division it is a part of
         dept = row['section_name'].split('-')[0]
         depts_abb.append(dept)
         depts_name.append(department_dict[dept])    
         if dept in science:
-            divison.append("Sciences")
+            division.append("Sciences")
         if dept in social_science:
-            divison.append("Social Sciences")
+            division.append("Social Sciences")
         if dept in humanities:
-            divison.append("Humanities")
+            division.append("Humanities")
+
 
 
         ########################################################################
@@ -606,7 +651,7 @@ def main():
     data['building_names'] = building_names
     data['faculty_first'] = faculty_first
     data['faculty_last'] = faculty_last
-    data['division'] = divison
+    data['division'] = division
     data['department_abbreviation'] = depts_abb
     data['department_name'] = depts_name
     data['course_num'] = nums
@@ -637,8 +682,9 @@ def main():
     ########################################################################
     # writing all this data into one csv called data.csv
     ########################################################################
-    data.to_csv("data.csv")
+    data.to_csv("spring_data.csv")
 
 
 if __name__ == '__main__':
     main()
+

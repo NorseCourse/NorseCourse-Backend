@@ -48,7 +48,6 @@ def populateDB(cursor, data):
 				cursor.execute(insert_division, {"name": str(row['division'])})
 
 
-
 			########################################################################
 			# Departments table
 			########################################################################
@@ -129,7 +128,6 @@ def populateDB(cursor, data):
 											'seven_weeks':str(row['seven_week']),
 											'course_id':str(course_id)
 											})
-
 
 
 			########################################################################

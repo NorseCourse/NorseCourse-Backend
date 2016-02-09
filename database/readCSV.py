@@ -225,12 +225,10 @@ def main():
         course_id.append(course_ids[name])
 
 
-
         ########################################################################
         # add building name to column of building_names
         ########################################################################
         building_names.append(buildings_dict[row['building_abb']])
-
 
 
         ########################################################################
@@ -256,7 +254,6 @@ def main():
             # add first and last name to column
             faculty_first.append(row['faculty_name'].split('.')[0])
             faculty_last.append(row['faculty_name'].split('.')[1])
-
 
 
 
@@ -321,8 +318,6 @@ def main():
             else:
                 # adds empty string to pre req
                 pre_reqs.append("")
-
-
 
 
 
@@ -400,8 +395,6 @@ def main():
 
 
 
-
-
         ########################################################################
         # check for lab
         ########################################################################
@@ -426,7 +419,6 @@ def main():
 
 
 
-
         ########################################################################
         # check for section comments
         ########################################################################
@@ -445,7 +437,6 @@ def main():
             # add empty string to comment column
             comments.append("")
         
-
 
 
         ########################################################################
@@ -467,13 +458,11 @@ def main():
                 
         
 
-
         ########################################################################
         # isolate the start and end dates of a section with no times
         ########################################################################
         start_dates.append(row['start_date'].split()[0])
         end_dates.append(row['end_date'].split()[0])
-        
         
 
         ########################################################################
@@ -488,7 +477,6 @@ def main():
             start_times.append((row['start_time'].split()[1])[:-3])
             end_times.append((row['end_time'].split()[1])[:-3])    
         
-
 
         ########################################################################
         # define term of course
@@ -512,7 +500,6 @@ def main():
         if (start[:2] == '02') or (end[:2] == '05'):
             current_term = "Spring"
             term.append("Spring "+start[6:10])     
-        
 
 
         ########################################################################
@@ -550,13 +537,11 @@ def main():
                 seven_week.append(2)   
                 
 
-
         ########################################################################
         # isolate the course number and add to new column
         ########################################################################
         num = row['section_name'].split('-')[1]
         nums.append(num)
-
 
 
         ########################################################################
@@ -572,7 +557,6 @@ def main():
             divison.append("Social Sciences")
         if dept in humanities:
             divison.append("Humanities")
-
 
 
         ########################################################################
@@ -658,7 +642,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-

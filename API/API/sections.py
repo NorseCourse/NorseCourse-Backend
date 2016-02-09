@@ -8,7 +8,6 @@ from  NorseCourseObjects import SectionObject, FacultyObject, SectionMeetingObje
 @API.route("/sections", endpoint='sections')
 class Section(Resource):
 
-
 	# Returns JSON dictionary of faculty for a given section
 	def getFaculty(self, section_id):
 		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
@@ -237,7 +236,6 @@ class Section(Resource):
 @API.route("/sections/<sectionId>", endpoint = "sections/")
 class Section(Resource):
 
-
 	# Returns JSON dictionary of faculty for a given section
 	def getFaculty(self, section_id):
 		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
@@ -318,7 +316,6 @@ class Section(Resource):
 		cursor = cnx.cursor()
 
 		cursor.execute(genedQuery % str(section_id))
-
 
 		ge = []
 		for (gen_ed_id, comments, name, abbreviation, also_fulfills) in cursor:

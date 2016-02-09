@@ -105,6 +105,7 @@ class ScheduleCreation(Resource):
 		for section1 in range(len(sections)):
 			for section2 in range(section1,len(sections)):
 				if sections[section2] != (None,None) and sections[section1] != (None,None) and section1 != section2:
+					# have one section comparing it to another, get every time they meet
 					for time1 in range(sections[section1][-1]):
 						for time2 in range(sections[section2][-1]):
 							if self.checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
@@ -404,7 +405,6 @@ class ScheduleCreation(Resource):
 		else:
 			num_courses = 4
 
-
 		# check if division is empty
 		d = request.args.get("division")
 		# if not empty, make int
@@ -414,7 +414,6 @@ class ScheduleCreation(Resource):
 		# if empty, make None
 		else:
 			division = None
-
 
 		# check if index is empty
 		i = request.args.get("index")
@@ -447,14 +446,12 @@ class ScheduleCreation(Resource):
 
 		preferred_geneds = new_ge
 
-
 		# go through geneds and make string instead of unicode
 		new_ge = []
 		for x in req_geneds:
 			new_ge.append(str(x))
 
 		req_geneds = new_ge
-
 
 		# add all sections of required courses
 		temp = required
@@ -533,7 +530,6 @@ class ScheduleCreation(Resource):
 					# if gen eds are wanted, add gen eds
 					if len(req_geneds) + len(preferred_geneds) > 0:
 
-
 						# checks if req/preferred classes cover any gen eds required.
 						for gened in range(len(req_geneds)):
 							for section in best:
@@ -548,19 +544,16 @@ class ScheduleCreation(Resource):
 								for (abbreviation) in cursor:
 									abbs.append(str(abbreviation[0]))
 
-
 								for ge in abbs:
 									if ge in req_geneds:
 										req_geneds.remove(ge)
 									if ge in preferred_geneds:
 										preferred_geneds.remove(ge)
 
-
 								cursor.close()
 								cnx.close()
 
-
-						# find all classes that cover req gen eds
+						# find all classes that cover required gen eds
 						possible_gened_classes = {}
 						for gened in range(len(req_geneds)):
 
@@ -580,7 +573,7 @@ class ScheduleCreation(Resource):
 							cursor.close()
 							cnx.close()
 
-						# find all classes that cover req gen eds
+						# find all classes that cover preferred gen eds
 						for gened in range(len(preferred_geneds)):
 
 							classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
@@ -599,7 +592,6 @@ class ScheduleCreation(Resource):
 							cursor.close()
 							cnx.close()
 
-
 						# find common geneds
 						doubles = {}
 
@@ -615,6 +607,8 @@ class ScheduleCreation(Resource):
 												else:
 													doubles[key] = [class1] 
 
+						# remove duplicate strings that appear in different orders
+						# for example HE,HB vs HB,HE
 						keys = []
 						for key in doubles:
 							one,two = key.split()
@@ -626,8 +620,8 @@ class ScheduleCreation(Resource):
 							delKey = list(k)[0] + " " + list(k)[1]
 							del doubles[delKey]
 
-
 						combo = []
+
 
 						for b in best:
 							combo.append([b])

@@ -28,9 +28,9 @@ class CourseObject(object):
 		self.sameAs = same_as
 		self.name = name
 		self.departmentId = department_id
-		self.relevance = relevance	#Some number based on a keyword search
-		self.requirements = requirements	#This will be a requirements object
-		self.recommendations = recommendations	#This will be a relevance object
+		self.relevance = relevance					#Some number based on a keyword search
+		self.requirements = requirements			#This will be a requirements object
+		self.recommendations = recommendations		#This will be a relevance object
 
 # What a requirement object should contain
 class RequirementObject(object):

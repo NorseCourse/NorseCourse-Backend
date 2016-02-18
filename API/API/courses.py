@@ -4,6 +4,7 @@ from flask.ext.restplus import Resource
 from  NorseCourseObjects import CourseObject, RequirementObject
 from relevance import relevance
 
+
 def getRequirements(course_id):
 	requirementQuery = "SELECT req_type, details FROM Requirements WHERE course_id = %s"
 
@@ -113,15 +114,6 @@ class Courses(Resource):
 		}
 	)
 	def get(self):
-		# KEYWORDS: (Although I think I will just be calling the relevance function for this)
-		# SELECT course_id FROM Courses WHERE description LIKE '%KeYwOrD%' OR description LIKE .....
-
-		# DEPARTMENTS
-		# SELECT course_id FROM Courses WHERE department_id = %s OR department_id = %s .....
-
-		# GENEDS
-		# SELECT DISTINCT(Courses.course_id) FROM Courses, Sections, GenEdFulfillments, GenEds WHERE (GenEds.gen_ed_id = %s OR GenEds.gen_ed_id = %s OR...) AND GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND GenEdFulfillments.section_id = Sections.section_id and Sections.course_id = Courses.course_id
-		
 		departments = request.args.get("departments")
 		if departments == None:
 			courseIdsByDept = []
@@ -177,8 +169,7 @@ class Courses(Resource):
 			coursesByKeyword = [result[0] for result in relevantCourses]
 			relevanceNumber = [result[1] for result in relevantCourses]
 
-
-		# CHECK THE LOGIC HERE! For the cominations of Sections
+		# Logic to decide how which courses whould be searched for
 		useFilter = True
 		courseIdsIntersection = []
 		relevantNums = []
@@ -287,72 +278,13 @@ class Courses(Resource):
 		else: 
 			cursor.execute(courseQuery)
 			courses = buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevantCount, showRequirements, showRecommendations, showCourseId)
-			# for result in cursor:
-			# 	# Temp object for storing the course info as the fields can be passed in in any order.
-			# 	tempObj = {
-			# 		"course_id": None,
-			# 		"description": None,
-			# 		"same_as": None,
-			# 		"name": None,
-			# 		"department_id": None
-			# 		}
-
-			# 	for (item, ct) in zip(result, coursesTerms):
-			# 		tempObj[ct] = item
-			# 	if tempObj["same_as"] == "nan":
-			# 		tempObj["same_as"] = None
 
 
-			# 	relevance = None
-			# 	if showRelevance:
-			# 		pass
-
-			# 	requirements = None
-			# 	if showRequirements:
-			# 		requirements = getRequirements(tempObj["course_id"])
-
-			# 	recommendations = None
-			# 	if showRecommendations:
-			# 		recommendations = getRecommendations(tempObj["course_id"])
-
-			# 	if showCourseId:
-			# 		course = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
-			# 	else:
-			# 		course = CourseObject(None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
-
-			# 	courses.append(course.__dict__)
-
+		# Close connection and cursor, then return the courses
 		cursor.close()
 		cnx.close()
 
 		return courses
-
-
-
-
-		# courseQuery = "SELECT course_id, description, same_as, name, department_id FROM Courses GROUP BY (name)"
-
-		# cnx = cnx_pool.get_connection()
-		# cursor = cnx.cursor()
-
-		# cursor.execute(courseQuery)
-
-		# courses = []
-		# for (course_id, description, same_as, name, department_id) in cursor:
-		# 	requirements = getRequirements(course_id)
-		# 	recommendations = getRecommendations(course_id)
-
-		# 	if same_as == "nan":
-		# 		course = CourseObject(course_id, description, None, name, department_id, None, requirements, recommendations)
-		# 	else:
-		# 		course = CourseObject(course_id, description, same_as, name, department_id, None, requirements, recommendations)
-
-		# 	courses.append(course.__dict__)
-
-		# cursor.close()
-		# cnx.close()
-
-		# return courses
 
 
 @API.route("/courses/<courseId>", endpoint = "courses/")

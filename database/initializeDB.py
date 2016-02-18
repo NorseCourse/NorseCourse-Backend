@@ -1,4 +1,5 @@
 # Import packages.
+import config
 import mysql.connector
 import re
 
@@ -54,20 +55,15 @@ db_name = str(raw_input("Enter a name for the new database (case sensitive), or 
 # Setting the default (NorseCourse) if a database name is not provided.
 # Adding validation to generate a error if the name provided does 
 # not comply with the rules for how a MySQL database can be named.
-create_db = True
 if db_name == "":
 	db_name = "NorseCourse"
 else:
-	if re.match(r"[A-Za-z0-9$_]", db_name):
-		print("Since you did not use the defalt database name, be sure to change the database proberty under db_pool_config in the config.py file in order for your installation to run correctly")
-	else:
-		create_db = False
-		print("You have entered and invalid database name")
+	print("Since you did not use the defalt database name, be sure to change the database proberty under db_pool_config in the config.py file in order for your installation to run correctly")
+
 
 # If requirements are met then create datase and tables.
-if create_db:
-	createDB(cnx, cursor, db_name)
-	createTables(cnx, cursor, db_name)
+createDB(cnx, cursor, db_name)
+createTables(cnx, cursor, db_name)
 
 #Close the cursor and connection.
 cursor.close()

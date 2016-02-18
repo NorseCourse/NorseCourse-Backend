@@ -1,0 +1,16 @@
+Parameters recieved from form
+
+	req course
+	pref courses
+	req Gen Eds
+	pref Gen Eds
+	max and Min credits  (delete numcourse)
+	req time block, start and end range of times.  one for each MWF and TR
+	req Sections (could have both req section courses, ignore course and only use section)
+	pref Sections (only 1 per course)
+
+
+
+
+
+	add status of failure if no schedules returned

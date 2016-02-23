@@ -14,21 +14,6 @@ import re
 
 def main():
 
-    # max_cid_query = "select max(course_id) from Courses"
-
-    # cnx = cnx_pool.get_connection()
-    # cursor = cnx.cursor()
-
-    # cursor.execute(max_cid_query)
-
-    # for (cid) in cursor:
-    #     max_cid = cid
-
-    # cursor.close()
-    # cnx.close()
-
-    # print("\n\n\n", max_cid, "\n\n\n")
-
     # read in first csv we are given
     courses = pd.DataFrame.from_csv('spring_course.csv', sep=None,index_col=None)
 
@@ -478,7 +463,7 @@ def main():
 
 
         ########################################################################
-        # check for lab
+        # check for max credits
         ########################################################################
         # if L in section name
         if pd.isnull(row['max_credits']):

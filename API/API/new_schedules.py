@@ -31,6 +31,21 @@ class ScheduleCreation(Resource):
 		return False
 
 
+
+	# Function that takes start and end times of a schedule
+	# It checks if they are all inbetween time range given
+	# returns True if there is a conflict
+	def validTimes(self, starts, ends, sect_times):
+
+		for sect in sect_times:
+			for day in sect:
+				for x in range(5):
+					if starts[x].tm_wday == day[0].tm_wday:
+						if starts[x] > day[0] or day[0] > ends[x]:
+							return True
+		return False 
+
+
 	# Function that takes two classes and checks if they conflict in time
 	# it calls the betweenTimes function above
 	# Return True if time conflic, False otherwise
@@ -53,7 +68,7 @@ class ScheduleCreation(Resource):
 	# Function takes a schedule (list of section ids), and checks for time conflict
 	# it calls checkTimeConflict function above, between all combos of two classes in schedule
 	# returns True if there is a time conflict, and false otherwise
-	def checkScheduleConflict(self,section_ids):
+	def checkScheduleConflict(self,section_ids,time_range):
 
 		sections = []
 		# create dictionary for datetime days of week
@@ -111,8 +126,21 @@ class ScheduleCreation(Resource):
 							if self.checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
 								return True
 
-		# no time conflict was found in schedule, return False meaning its a valid schedule time wise
-		return False
+
+		sect_times = []
+		for sect in sections:
+			sect_times.append(sect[0])
+
+		valid_starts = []
+		valid_ends = []
+		for x in ['2','3','4','5','6']:
+			valid_starts.append(time.strptime(time_range[0]+' '+x, '%H:%M %w'))
+			valid_ends.append(time.strptime(time_range[1]+' '+x, '%H:%M %w'))
+
+
+		# returns False if there was no time conflict was found in schedule, return False meaning its a valid schedule time wise
+		# returns True if the schedule does not fit inbetween req time block, meaning its a bad schedule
+		return validTimes(valid_starts,valid_ends,sect_times)
 
 
 	# function takes a schedule (list of section ids)
@@ -180,7 +208,7 @@ class ScheduleCreation(Resource):
 
 
 	# Function takes a schedule and adds labs to any courses needing one
-	def addLab(self,schedule):
+	def addLab(self,schedule,time_range):
 		schedule = list(schedule)
 		labs = []
 
@@ -227,7 +255,7 @@ class ScheduleCreation(Resource):
 						schedule.append(lab_id)
 
 						# if the lab fits into schedule, it will be added
-						if (not self.checkScheduleConflict(schedule)):
+						if (not self.checkScheduleConflict(schedule,time_range)):
 							added = True
 						else:
 							schedule = schedule[:-1]
@@ -243,7 +271,7 @@ class ScheduleCreation(Resource):
 
 
 	# Function takes a schedule and find if it has a good amount of credits
-	def checkBadCredits(self,schedule, maxCredits):
+	def checkBadCredits(self,schedule, maxCredits, minCredits):
 
 		# default to no credits
 		credits = 0
@@ -268,20 +296,48 @@ class ScheduleCreation(Resource):
 		if credits > maxCredits:
 			return True
 
+		if credits < minCredits:
+			return True
+
 		# if good schedule
 		return False
+
+
+	# Function that takes a schedule and returns the amount of credits
+	def getNumCredits(self, best):
+		# default to no credits
+		credits = 0
+
+		for sect in schedule:
+
+			sectionQuery = "SELECT min_credits FROM Sections WHERE section_id = %s"
+
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
+
+			cursor.execute(sectionQuery % str(sect))
+
+			for (min_credits) in cursor:
+				# add credits for each section
+				credits += int(min_credits[0])
+
+			cursor.close()
+			cnx.close()
+
+		return credits
+
 
 
 
 
 	# Function checks if a schedule is a valid schedule or not
 	# returns True schedule if it is valid, and False if not
-	def verify(self,schedule, maxCredits):
+	def verify(self,schedule, maxCredits, minCredits,time_range):
 
 		# checks if there is a lab in schedule
 		if self.checkLab(schedule):
 			# trys to add lab to schedule
-			s = self.addLab(schedule)
+			s = self.addLab(schedule,time_range)
 			# if lab fit into schedule
 			if s != False:
 				# update schdule with lab
@@ -293,7 +349,7 @@ class ScheduleCreation(Resource):
 				return False
 
 		# check if there is a time conflict in schedule
-		if self.checkScheduleConflict(schedule):
+		if self.checkScheduleConflict(schedule,time_range):
 			# if there is a time conflict, invalid schedule
 			return False
 
@@ -303,7 +359,7 @@ class ScheduleCreation(Resource):
 			return False
 
 		# check if there are too many or too little credits
-		if self.checkBadCredits(schedule,maxCredits):
+		if self.checkBadCredits(schedule,maxCredits,minNumCredits):
 			# there was a bad amount of credits
 			return False
 
@@ -321,11 +377,13 @@ class ScheduleCreation(Resource):
 			"preferredCourses": "Provide a comma separated list of courses IDs that are preferred in schedule, defaults to nothing",
 			"requiredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings required, defaults to nothing",
 			"preferredGenEds": "Provide a comma separated list of Gen Ed abbreviation strings preferred, defaults to nothing",
-			"numCourses": "Provide an integer for desired number of courses wanted, defaults to 4",
-			"division": "Provide a department ID that the student is a part of, defaults to nothing",
+			"minCredits": "Provide an integer for maximum number of credits wanted, defaults to 12",
+			"maxCredits": "Provide an integer for maximum number of credits wanted, defaults to 18",
 			"index": "Provide an integer of last location in schedule list, if known, defaults to -1",
-			"maxNumCredits": "Provide an integer for maximum number of credits wanted, defaults to 18",
-			"limit":"Provide a max amount of schdedules wanted to be returned, defaults to 20"
+			"limit":"Provide a max amount of schdedules wanted to be returned, defaults to 20",
+			"requiredTimeBlock":"Provide comma seperated times, start time and end time Example: (9:00-2:00), defaults to any time allowed",
+			"requiredSections": "Provide a comma separated list of section IDs that are required in schedule, defaults to nothing",
+			"preferredSections": "Provide a comma separated list of section IDs that are preferred in schedule, defaults to nothing.  Allow one per course."
 		}
 	)
 
@@ -333,6 +391,7 @@ class ScheduleCreation(Resource):
 	# function that takes parameters and returns JSON schedule
 	def get(self):
 
+		#######################################################
 		# checks if limit is empty
 		lim = request.args.get("limit")
 		# if not empty, it is int
@@ -344,8 +403,9 @@ class ScheduleCreation(Resource):
 			limit = 20
 
 
+		#######################################################
 		# checks if max credits are empty
-		maxnc = request.args.get("maxNumCredits")
+		maxnc = request.args.get("maxCredits")
 		# if not empty, it is int
 		if maxnc != None:
 			maxNumCredits = int(maxnc)
@@ -355,26 +415,79 @@ class ScheduleCreation(Resource):
 			maxNumCredits = 18
 
 
+		#######################################################
+		# checks if min credits are empty
+		minnc = request.args.get("minCredits")
+		# if not empty, it is int
+		if minnc != None:
+			minNumCredits = int(minnc)
+
+		# if empty, default to 18
+		else:
+			minNumCredits = 12
+
+
+		#######################################################
 		# checks if requirements are empty
 		r = request.args.get("requiredCourses")
 		# if not empty, create list
 		if r != None:
-			required = (r).split(',')
+			required_courses = (r).split(',')
 
 		# if empty, make empty list
 		else:
-			required = []
+			required_courses = []
 
+
+		#######################################################
 		# check if preferred are empty
 		p = request.args.get("preferredCourses")
 		# if not empty, create list
 		if p != None:
-			preferred = (p).split(',')
+			preferred_courses = (p).split(',')
 
 		# if empty, make empty list
 		else:
-			preferred = []
+			preferred_courses = []
 
+
+		#######################################################
+		# checks if requirements are empty
+		r = request.args.get("requiredSections")
+		# if not empty, create list
+		if r != None:
+			required_sections = (r).split(',')
+
+		# if empty, make empty list
+		else:
+			required_sections = []
+
+
+		#######################################################		
+		# check if preferred are empty
+		p = request.args.get("preferredSections")
+		# if not empty, create list
+		if p != None:
+			preferred_sections = (p).split(',')
+
+		# if empty, make empty list
+		else:
+			preferred_sections = []
+
+
+		#######################################################
+		# check if preferred are empty
+		rtb = request.args.get("requiredTimeBlock")
+		# if not empty, create list
+		if rtb != None:
+			req_time_block = (rtb).split(',')
+
+		# if empty, make empty list
+		else:
+			req_time_block = []
+
+
+		#######################################################
 		# check if geneds are empty
 		g = request.args.get("requiredGenEds")
 		# if not empty create list
@@ -385,6 +498,8 @@ class ScheduleCreation(Resource):
 		else:
 			req_geneds = []
 
+
+		#######################################################
 		# check if geneds are empty
 		g = request.args.get("preferredGenEds")
 		# if not empty create list
@@ -395,26 +510,8 @@ class ScheduleCreation(Resource):
 		else:
 			preferred_geneds = []
 
-		# check if num of courses are empty
-		n = request.args.get("numCourses")
-		# if not empty, make it an int
-		if n != None:
-			num_courses = int(n)
 
-		# if empty, default to 4 courses
-		else:
-			num_courses = 4
-
-		# check if division is empty
-		d = request.args.get("division")
-		# if not empty, make int
-		if d != None:
-			division = int(d)
-
-		# if empty, make None
-		else:
-			division = None
-
+		#######################################################
 		# check if index is empty
 		i = request.args.get("index")
 		# if not empty, make int
@@ -425,19 +522,40 @@ class ScheduleCreation(Resource):
 		else:
 			index = -1
 
-		# go through requirements and make int instead of unicode
+
+		#######################################################
+		#######################################################
+		##################### Format input ####################
+		#######################################################
+		#######################################################
+
+		# go through required courses and make int instead of unicode
 		new_r = []
-		for x in required:
+		for x in required_courses:
 			new_r.append(int(x))
 
-		required = new_r
+		required_courses = new_r
 
-		# go through preferred and make int instead of unicode
+		# go through preferred courses and make int instead of unicode
 		new_p = []
-		for x in preferred:
+		for x in preferred_courses:
 			new_p.append(int(x))
 
-		preferred = new_p
+		preferred_courses = new_p
+
+		# go through required Sections and make int instead of unicode
+		new_r = []
+		for x in required_sections:
+			new_r.append(int(x))
+
+		required_sections = new_r
+
+		# go through preferred Sections and make int instead of unicode
+		new_p = []
+		for x in preferred_sections:
+			new_p.append(int(x))
+
+		preferred_sections = new_p
 
 		# go through geneds and make string instead of unicode
 		new_ge = []
@@ -453,11 +571,35 @@ class ScheduleCreation(Resource):
 
 		req_geneds = new_ge
 
+		# go through times and make string instead of unicode
+		new_times = []
+		for x in req_time_block:
+			new_times.append(str(x))
+
+		req_time_block = new_times
+
+
+		########################################################################
+		########################################################################
+		####################### Begin Creating Schedule ########################
+		########################################################################
+		########################################################################
+
 		# add all sections of required courses
-		temp = required
+		temp = required_courses
+
+		# list of (lists of sections for a given course)
 		lst = []
 
+
+		# Add all required setions
+		for sect in required_sections:
+			lst.append([sect])
+
+
 		for c in temp:
+			alreadyAdded = False
+
 			classQuery = "SELECT section_id from Sections where course_id = %s"
 
 			cnx = cnx_pool.get_connection()
@@ -467,18 +609,30 @@ class ScheduleCreation(Resource):
 
 			sects = []
 			for (section_id) in cursor:
-				sects.append(section_id[0])
+				if [section_id[0]] in lst:
+					alreadyAdded = True
+				else:
+					sects.append(section_id[0])
 
-			lst.append(sects)
+			if not alreadyAdded:
+				lst.append(sects)
 
 			cursor.close()
 			cnx.close()
+
+
+
+		# Add all required setions
+		for sect in required_sections:
+			lst.append([sect])
 
 
 		# add all sections of preferred courses
-		temp = preferred
+		temp = preferred_courses
 
 		for c in temp:
+			alreadyAdded = False
+
 			classQuery = "SELECT section_id from Sections where course_id = %s"
 
 			cnx = cnx_pool.get_connection()
@@ -488,14 +642,18 @@ class ScheduleCreation(Resource):
 
 			sects = []
 			for (section_id) in cursor:
-				sects.append(section_id[0])
+				if [section_id[0]] in lst:
+					alreadyAdded = True
+				else:
+					sects.append(section_id[0])
 
-			lst.append(sects)
+			if not alreadyAdded:
+				lst.append(sects)
 
 			cursor.close()
 			cnx.close()
 
-		# Create all possible schedules from required and preferred.
+		# Create all possible schedules from required and preferred courses and sections.
 		ps = list(itertools.product(*lst))
 
 		possible_sections = []
@@ -503,7 +661,10 @@ class ScheduleCreation(Resource):
 			possible_sections.append(list(c))
 
 
+		###########################################
 		# all possible schedules
+		# master list of schedules
+		###########################################
 		all_combos = []
 
 
@@ -511,21 +672,20 @@ class ScheduleCreation(Resource):
 		for option in possible_sections:
 
 			best = option
-			required = best[:len(required)]
-			preferred = best[len(required):]
+			required = best[:(len(required_courses) + len(required_sections))]
+			preferred = best[(len(required_courses)+len(required_sections)):]
 
 			# if the best schedule is valid
-			if self.verify(best, maxNumCredits) != False:
+			best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
+			if best != False:
 
-				best = self.verify(best, maxNumCredits)
-
-				# if the best schedule has amount of sections wanted, add schedule
-				if (len(best) == num_courses):
+				# if the best schedule has a valid amount of credits wanted, add schedule
+				if minNumCredits <= numCredits <= maxNumCredits:
 					all_combos += [best]
 
-				# if more courses are needed
-				elif (len(best) < num_courses):
-					num_needed = num_courses - len(best)
+				# if more courses can be added
+				if (numCredits < maxNumCredits):
+					num_needed = maxNumCredits - numCredits
 
 					# if gen eds are wanted, add gen eds
 					if len(req_geneds) + len(preferred_geneds) > 0:
@@ -656,64 +816,25 @@ class ScheduleCreation(Resource):
 						all_combos += list(itertools.product(*combo))
 
 
-					# if more is wanted after gen eds and best, look for recommendations
-					if num_needed > 0:
-
-						# check if they specified their division
-						if division != None:
-
-							# look for recommendations for division to fill schedule
-							classes = []
-							for i in range(num_needed):
-
-								classQuery = "SELECT Sections.section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
-								
-								cnx = cnx_pool.get_connection()
-								cursor = cnx.cursor()
-
-								cursor.execute(classQuery % str(division))
-
-								classes = []
-								for (section_id) in cursor:
-									classes.append(section_id[0])
-
-								cursor.close()
-								cnx.close()
-
-
-							temp = []
-							for x in classes:
-								if num_needed > 0:
-									temp.append(x)
-									num_needed -= 1
-
-							new_all = []
-							for x in all_combos:
-
-								new_all.append(list(x) + temp)
-
-							all_combos += new_all
-
-
 			# is best schedule is not valid for some reason
 			else:
 				best = required+preferred
 
 				# remove courses from best until no conflict.
-				while self.verify(best, maxNumCredits) == False:
+				while self.verify(best, maxNumCredits,minNumCredits,req_time_block) == False:
 					best = best[:-1]
 
-				best = self.verify(best, maxNumCredits)
+				best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 
 				if len(best) >= len(required):
 
-					# if the best schedule has amount of sections wanted, add schedule
-					if (len(best) == num_courses):
+					# if the best schedule has a valid amount of credits wanted, add schedule
+					if minNumCredits <= numCredits <= maxNumCredits:
 						all_combos += [best]
 
-					# if more courses are needed
-					elif (len(best) < num_courses):
-						num_needed = num_courses - len(best)
+					# if more courses can be added
+					if (numCredits < maxNumCredits):
+						num_needed = maxNumCredits - numCredits
 
 						# if gen eds are wanted, add gen eds
 						if len(req_geneds) + len(preferred_geneds) > 0:
@@ -845,46 +966,6 @@ class ScheduleCreation(Resource):
 							all_combos += list(itertools.product(*combo))
 
 
-						# if more is wanted after gen eds and best, look for recommendations
-						if num_needed > 0:
-
-							# check if they specified their division
-							if division != None:
-
-								# look for recommendations for division to fill schedule
-								classes = []
-								for i in range(num_needed):
-
-									classQuery = "SELECT Sections.section_id from Sections, Courses, Recommendations where Courses.course_id = Recommendations.course_id and Courses.course_id = Sections.course_id and Recommendations.division_id = %s"
-									
-									cnx = cnx_pool.get_connection()
-									cursor = cnx.cursor()
-
-									cursor.execute(classQuery % str(division))
-
-									classes = []
-									for (section_id) in cursor:
-										classes.append(section_id[0])
-
-									cursor.close()
-									cnx.close()
-
-
-								temp = []
-								for x in classes:
-									if num_needed > 0:
-										temp.append(x)
-										num_needed -= 1
-
-								new_all = []
-								for x in all_combos:
-
-									new_all.append(list(x) + temp)
-
-								all_combos += new_all
-
-
-
 		# shuffle list of all potential schedules
 		# set seed so it is the same everytime
 		random.seed(0)
@@ -897,12 +978,12 @@ class ScheduleCreation(Resource):
 			if pos < len(all_combos)-1:
 				pos += 1 # x for index
 				current = all_combos[pos]
-				while self.verify(current, maxNumCredits) == False and pos < len(all_combos)-1:
+				while self.verify(current, maxNumCredits,minNumCredits,req_time_block) == False and pos < len(all_combos)-1:
 					pos += 1
 					current = all_combos[pos]
 
 				if pos < len(all_combos)-1:
-					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits),pos)
+					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos)
 					schedules.append(schedule.__dict__)
 
 		if schedules == []:

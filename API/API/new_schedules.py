@@ -5,7 +5,7 @@ from flask import request
 from flask.ext.restplus import Resource
 from  API.NorseCourseObjects import ScheduleCreationObject2
 
-import API.config
+from API import config
 import string
 import time
 import itertools

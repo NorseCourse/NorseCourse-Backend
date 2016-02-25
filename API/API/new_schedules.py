@@ -307,7 +307,7 @@ class ScheduleCreation2(Resource):
 
 
 	# Function that takes a schedule and returns the amount of credits
-	def getNumCredits(self, best):
+	def getNumCredits(self, schedule):
 		# default to no credits
 		credits = 0
 
@@ -682,6 +682,8 @@ class ScheduleCreation2(Resource):
 			best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 			if best != False:
 
+				numCredits = self.getNumCredits(best)
+
 				# if the best schedule has a valid amount of credits wanted, add schedule
 				if minNumCredits <= numCredits <= maxNumCredits:
 					all_combos += [best]
@@ -830,6 +832,8 @@ class ScheduleCreation2(Resource):
 				best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 
 				if len(best) >= len(required):
+
+					numCredits = self.getNumCredits(best)
 
 					# if the best schedule has a valid amount of credits wanted, add schedule
 					if minNumCredits <= numCredits <= maxNumCredits:

@@ -1,0 +1,874 @@
++------------+-----------+---------------+--------------------------------+
+| section_id | course_id | name          | short_title                    |
++------------+-----------+---------------+--------------------------------+
+|          1 |       781 | FCUL-142-A    | China in the World             |
+|          2 |       546 | FCUL-243-A    | Time of Stalin                 |
+|          3 |       693 | WGST-243-A    | Time of Stalin                 |
+|          4 |       709 | CHIN-102-A    | Beginning Chinese              |
+|          5 |       713 | CHIN-202-A    | Intermediate Chinese           |
+|          6 |       642 | FREN-101-A    | Elementary French I            |
+|          7 |       645 | FREN-102-A    | Elementary French II           |
+|          8 |       616 | COMS-130-A    | Interpersonal Communication    |
+|          9 |       616 | COMS-130-B    | Interpersonal Communication    |
+|         10 |       645 | FREN-102-B    | Elementary French II           |
+|         11 |       617 | COMS-132-A    | Public Address                 |
+|         12 |       648 | FREN-201-A    | Intermediate French            |
+|         13 |       617 | COMS-132-B    | Public Address                 |
+|         14 |       650 | FREN-202-A    | Intermediate French            |
+|         15 |       609 | COMS-342-A    | Feminist Rhetorical Theories   |
+|         16 |       680 | FREN-345-A    | Conversation and Phonetics     |
+|         17 |       684 | FREN-346-A    | Intro to French Literature I   |
+|         18 |       696 | FREN-490-A    | Senior Project                 |
+|         19 |       701 | GER-101-A     | Elementary German I            |
+|         20 |       679 | WGST-342-A    | Feminist Rhetorical Theories   |
+|         21 |       704 | GER-102-A     | Elementary German II           |
+|         22 |       704 | GER-102-B     | Elementary German II           |
+|         23 |       800 | COMS-347-A    | Critical Television Studies    |
+|         24 |       652 | COMS-348-A    | Radio Journalism               |
+|         25 |       774 | COMS-330-A    | Family Communication           |
+|         26 |       705 | GER-201-A     | Intermediate German            |
+|         27 |       619 | COMS-490-A    | Senior Project                 |
+|         28 |       641 | COMS-233-A    | Rhetoric of Spirituality       |
+|         29 |       812 | GER-346-A     | Intro to Ger Lit: Runes to Rap |
+|         30 |       618 | COMS-357-A    | Research Methods               |
+|         31 |       750 | COMS-320-A    | Urb Amer and Serial Television |
+|         32 |       876 | ITAL-102-A    | Beginning Italian II           |
+|         33 |       620 | LING-131-A    | Intro to Linguistics           |
+|         34 |       602 | ACCTG-110-A   | Intro to Accounting            |
+|         35 |       666 | LING-245-A    | History of Romance Languages   |
+|         36 |       752 | LING-490-A    | Senior Project                 |
+|         37 |       485 | RUS-102-A     | Beginning Russian II           |
+|         38 |       673 | ACCTG-150-A   | Fundamentals of Accounting     |
+|         39 |       673 | ACCTG-150-B   | Fundamentals of Accounting     |
+|         40 |       673 | ACCTG-150-C   | Fundamentals of Accounting     |
+|         41 |       674 | ACCTG-250-A   | Acctg for Decision Making      |
+|         42 |       479 | ACCTG-354-A   | Intermediate Accounting II     |
+|         43 |       539 | ACCTG-468-A   | Federal Income Taxation        |
+|         44 |       659 | ACCTG-490-A   | Senior Project                 |
+|         45 |       659 | ACCTG-490-B   | Senior Project                 |
+|         46 |       526 | ACCTG-357-A   | Acctg for Gov't and Nonprofit  |
+|         47 |       564 | ECON-130-A    | Principles of Economics        |
+|         48 |       564 | ECON-130-B    | Principles of Economics        |
+|         49 |       763 | ECON-142-A    | Economic Numeracy              |
+|         50 |       763 | ECON-142-B    | Economic Numeracy              |
+|         51 |       565 | ECON-248-A    | Interm Economic Theory:Micro   |
+|         52 |       577 | ECON-490-A    | Senior Project                 |
+|         53 |       566 | ECON-255-A    | Environmental Economics        |
+|         54 |       572 | ECON-268-A    | Law and Economics              |
+|         55 |       571 | ECON-366-A    | Public Finance                 |
+|         56 |       783 | MGT-150-A     | Statistics                     |
+|         57 |       783 | MGT-150-B     | Statistics                     |
+|         58 |       779 | MGT-240-A     | Principles of Management       |
+|         59 |       779 | MGT-240-B     | Principles of Management       |
+|         60 |       740 | MGT-371-A     | Project Management             |
+|         61 |       887 | MGT-351-A     | Principles of Marketing        |
+|         62 |       887 | MGT-351-B     | Principles of Marketing        |
+|         63 |       888 | MGT-352-A     | Human Resource Management      |
+|         64 |       888 | MGT-352-B     | Human Resource Management      |
+|         65 |       889 | MGT-353-A     | Financial Management           |
+|         66 |       889 | MGT-353-B     | Financial Management           |
+|         67 |       890 | MGT-362-A     | Entrepreneurship               |
+|         68 |       891 | MGT-364-A     | Sales/Advertising/Promotion    |
+|         69 |       892 | MGT-365-A     | Investments                    |
+|         70 |       893 | MGT-367-A     | Organizational Behavior        |
+|         71 |       894 | MGT-490-A     | Senior Project                 |
+|         72 |       894 | MGT-490-B     | Senior Project                 |
+|         73 |       894 | MGT-490-D     | Senior Project                 |
+|         74 |       894 | MGT-490-F     | Senior Project                 |
+|         75 |       894 | MGT-490-G     | Senior Project                 |
+|         76 |       894 | MGT-490-H     | Senior Project                 |
+|         77 |       894 | MGT-490-I     | Senior Project                 |
+|         78 |       487 | RUS-202-A     | Intermediate Russian           |
+|         79 |       498 | SCST-102-A    | Elementary Norwegian II        |
+|         80 |       498 | SCST-102-B    | Elementary Norwegian II        |
+|         81 |       498 | SCST-102-C    | Elementary Norwegian II        |
+|         82 |       499 | SCST-202-A    | Intermediate Norwegian         |
+|         83 |       786 | SCST-251-A    | Topics in Nordic Film          |
+|         84 |       785 | FCUL-251-A    | Topics in Nordic Film          |
+|         85 |       515 | SPAN-101-A    | Elementary Spanish I           |
+|         86 |       516 | SPAN-102-A    | Elementary Spanish II          |
+|         87 |       517 | SPAN-201-A    | Intermediate Spanish           |
+|         88 |       517 | SPAN-201-B    | Intermediate Spanish           |
+|         89 |       517 | SPAN-201-C    | Intermediate Spanish           |
+|         90 |       606 | ENVS-134-A    | Environmental Geology          |
+|         91 |       622 | ENVS-134L-A01 | Environmental Geology Lab      |
+|         92 |       622 | ENVS-134L-A02 | Environmental Geology Lab      |
+|         93 |       517 | SPAN-201-D    | Intermediate Spanish           |
+|         94 |       519 | SPAN-302-A    | Conversation & Listening Comp  |
+|         95 |       519 | SPAN-302-B    | Conversation & Listening Comp  |
+|         96 |       520 | SPAN-303-A    | Written Expression             |
+|         97 |       520 | SPAN-303-B    | Written Expression             |
+|         98 |       838 | SPAN-339-A    | ST:Cultu Expres of Hisp World  |
+|         99 |       521 | SPAN-346-A    | Intro Study Hispanic Lit       |
+|        100 |       658 | SPAN-350-A    | Prac & Prof Uses of Spanish    |
+|        101 |       660 | SPAN-460-A    | Sem:Lat Am Lit and Culture     |
+|        102 |       681 | ENVS-215-A    | Environmental Education        |
+|        103 |       712 | ENVS-215L-A01 | Environ Education Lab          |
+|        104 |       523 | SPAN-490-A    | Senior Project                 |
+|        105 |       837 | ENVS-485-A    | Environment and Community      |
+|        106 |       560 | REL-101-A     | Intro to Biblical Studies      |
+|        107 |       638 | ENVS-490-A    | Senior Project                 |
+|        108 |       560 | REL-101-B     | Intro to Biblical Studies      |
+|        109 |       622 | ENVS-134L-A03 | Environmental Geology Lab      |
+|        110 |       839 | ENVS-239-A    | ST:Rivers and Society          |
+|        111 |       560 | REL-101-C     | Intro to Biblical Studies      |
+|        112 |       711 | MATH-110-A    | Mathematics in Our World       |
+|        113 |       711 | MATH-110-B    | Mathematics in Our World       |
+|        114 |       560 | REL-101-D     | Intro to Biblical Studies      |
+|        115 |       560 | REL-101-E     | Intro to Biblical Studies      |
+|        116 |       646 | MATH-115-A    | Introduction to Statistics     |
+|        117 |       560 | REL-101-F     | Intro to Biblical Studies      |
+|        118 |       646 | MATH-115-B    | Introduction to Statistics     |
+|        119 |       646 | MATH-115-C    | Introduction to Statistics     |
+|        120 |       646 | MATH-115-D    | Introduction to Statistics     |
+|        121 |       560 | REL-101-G     | Intro to Biblical Studies      |
+|        122 |       560 | REL-101-H     | Intro to Biblical Studies      |
+|        123 |       718 | MATH-141-A    | Calculus with Algebra & Trig   |
+|        124 |       718 | MATH-141-B    | Calculus with Algebra & Trig   |
+|        125 |       560 | REL-101-I     | Intro to Biblical Studies      |
+|        126 |       718 | MATH-141-C    | Calculus with Algebra & Trig   |
+|        127 |       560 | REL-101-J     | Intro to Biblical Studies      |
+|        128 |       719 | MATH-151-A    | Calculus I                     |
+|        129 |       482 | REL-112-A     | Intro to the New Test Studies  |
+|        130 |       722 | MATH-152-A    | Calculus II                    |
+|        131 |       722 | MATH-152-B    | Calculus II                    |
+|        132 |       488 | REL-222-A     | Religion in America            |
+|        133 |       489 | REL-230-A     | Philosophy of Religion         |
+|        134 |       730 | MATH-220-A    | Discrete Structures            |
+|        135 |       819 | PHIL-130-A    | Philosophy of Religion         |
+|        136 |       730 | MATH-220-B    | Discrete Structures            |
+|        137 |       725 | MATH-240-A    | Linear Algebra                 |
+|        138 |       731 | MATH-253-A    | Multivariable Calculus         |
+|        139 |       731 | MATH-253-B    | Multivariable Calculus         |
+|        140 |       737 | MATH-322-A    | Probability and Statistics II  |
+|        141 |       630 | MATH-328-A    | Applied Statistics II          |
+|        142 |       738 | MATH-365-A    | Geometry                       |
+|        143 |       745 | MATH-454-A    | Principles of Real Analysis    |
+|        144 |       772 | MATH-490-A    | Senior Project                 |
+|        145 |       851 | MATH-339-A    | ST: Combinatorics              |
+|        146 |       852 | MATH-439-A    | ST:Meth of Applied Math        |
+|        147 |       489 | REL-230-B     | Philosophy of Religion         |
+|        148 |       819 | PHIL-130-B    | Philosophy of Religion         |
+|        149 |       561 | REL-232-A     | Christian Theology             |
+|        150 |       561 | REL-232-B     | Christian Theology             |
+|        151 |       491 | REL-233-A     | God and Gender                 |
+|        152 |       678 | WGST-337-A    | God and Gender                 |
+|        153 |       853 | REL-239-A     | ST: Religion and Bioethics     |
+|        154 |       853 | REL-239-A     | ST: Eco-Reformation            |
+|        155 |       853 | REL-239-A     | ST:Genesis, God, Poli of Crea  |
+|        156 |       853 | REL-239-A     | ST:Construc Identit Archaelog  |
+|        157 |       490 | REL-243-A     | Environmental Ethics           |
+|        158 |       567 | REL-256-A     | Islam                          |
+|        159 |       486 | REL-261-A     | Religions of South Asia        |
+|        160 |       662 | ART-103-A     | Foundations:Circa NOW          |
+|        161 |       486 | REL-261-B     | Religions of South Asia        |
+|        162 |       663 | ART-104-A     | Foundations:Visual Thinking    |
+|        163 |       494 | REL-490-A     | Senior Project                 |
+|        164 |       493 | CHEM-114-A    | The Enviro: a Chemical Persp   |
+|        165 |       497 | CHEM-114L-A01 |  The Env:Chemical Persp Lab    |
+|        166 |       497 | CHEM-114L-A02 |  The Env:Chemical Persp Lab    |
+|        167 |       702 | CHEM-141-A    | Essentials of Chemistry        |
+|        168 |       703 | CHEM-141L-A01 | Essentials of Chemistry Lab    |
+|        169 |       504 | CHEM-152-A    | Chemical Principles II         |
+|        170 |       504 | CHEM-152-B    | Chemical Principles II         |
+|        171 |       522 | CHEM-152L-01  | Chemical Principles II Lab     |
+|        172 |       522 | CHEM-152L-02  | Chemical Principles II Lab     |
+|        173 |       533 | ART-108-A     | Foundations: Drawing           |
+|        174 |       533 | ART-108-B     | Foundations: Drawing           |
+|        175 |       522 | CHEM-152L-03  | Chemical Principles II Lab     |
+|        176 |       522 | CHEM-152L-04  | Chemical Principles II Lab     |
+|        177 |       720 | ART-110-A     | Handbuilding with Clay         |
+|        178 |       534 | ART-200-A     | Painting                       |
+|        179 |       534 | ART-200-A     | Painting                       |
+|        180 |       522 | CHEM-152L-05  | Chemical Principles II Lab     |
+|        181 |       522 | CHEM-152L-06  | Chemical Principles II Lab     |
+|        182 |       527 | CHEM-202-A    | Analytical Chemistry           |
+|        183 |       528 | CHEM-202L-A01 | Analytical Chemistry Lab       |
+|        184 |       528 | CHEM-202L-A02 | Analytical Chemistry Lab       |
+|        185 |       528 | CHEM-202L-A03 | Analytical Chemistry Lab       |
+|        186 |       524 | CHEM-242-A    | Organic Chemistry II           |
+|        187 |       525 | CHEM-242L-01  | Organic Chem II Lab            |
+|        188 |       525 | CHEM-242L-02  | Organic Chem II Lab            |
+|        189 |       525 | CHEM-242L-03  | Organic Chem II Lab            |
+|        190 |       525 | CHEM-242L-04  | Organic Chem II Lab            |
+|        191 |       695 | CHEM-301-A    | Biochemistry I                 |
+|        192 |       530 | CHEM-361-A    | Quantum Chemistry & Spectrosco |
+|        193 |       613 | CHEM-365-A    | Spectroscopy & Separation Lab  |
+|        194 |       535 | CHEM-490-A    | Senior Project                 |
+|        195 |       726 | ART-202-A     | Design Concepts                |
+|        196 |       726 | ART-202-A     | Design Concepts                |
+|        197 |       815 | ART-206-A     | Graphic Design                 |
+|        198 |       816 | THE-206-A     | Graphic Design                 |
+|        199 |       727 | ART-208-A     | Life Drawing                   |
+|        200 |       817 | ART-210-A     | Wheel - Throwing               |
+|        201 |       848 | ART-239-A     | ST:Mod & Contemp Chinese Art   |
+|        202 |       538 | ART-252-A     | Survey of Western Art II       |
+|        203 |       540 | ART-300-A     | Intermediate Painting          |
+|        204 |       540 | ART-300-A     | Intermediate Painting          |
+|        205 |       818 | ART-310-A     | Intermediate Ceramics          |
+|        206 |       849 | ART-339-A     | ST:Global Currents Local Res   |
+|        207 |       754 | ART-379-A     | Art History Methods            |
+|        208 |       754 | ART-379-A     | Art History Methods            |
+|        209 |       541 | ART-490-A     | Studio, Senior Project         |
+|        210 |       496 | SCI-111-A     | Physical Science               |
+|        211 |       541 | ART-490-B     | Art History, Senior Project    |
+|        212 |       872 | IS-230-A      | Intro to International Studie  |
+|        213 |       873 | IS-485-A      | International Studies Seminar  |
+|        214 |       746 | IS-490-A      | Senior Project                 |
+|        215 |       595 | EDUC-221-A    | Diverse & Exceptional Learner  |
+|        216 |       595 | EDUC-221-B    | Diverse & Exceptional Learner  |
+|        217 |       608 | EDUC-222-A    | Instruct Strategies Comp Apps  |
+|        218 |       608 | EDUC-222-B    | Instruct Strategies Comp Apps  |
+|        219 |       625 | EDUC-223-A    | Children's Literature          |
+|        220 |       644 | EDUC-246-A    | Classroom Mgt & Collaboration  |
+|        221 |       627 | EDUC-252-A    | Intro Middle/HS 5-12 Methods   |
+|        222 |       697 | EDUC-278-A    | Content Area Read, Secondar    |
+|        223 |       698 | EDUC-323-A    | Teach Methods Eng Lang Learn   |
+|        224 |       686 | EDUC-328-A    | Social Studies Methods         |
+|        225 |       686 | EDUC-328-A    | Social Studies Methods         |
+|        226 |       685 | EDUC-329-A    | Science Methods                |
+|        227 |       610 | EDUC-344-A    | Method/Strategy LD & Behavior  |
+|        228 |       808 | EDUC-367-A    | Adv Teach Meth II-Eng          |
+|        229 |       808 | EDUC-367-A    | Adv Teach Meth II-Math         |
+|        230 |       808 | EDUC-367-A    | Adv Teach Meth II:Science      |
+|        231 |       808 | EDUC-367-A    | Adv Teach Meth II:Wrld Lang    |
+|        232 |       808 | EDUC-367-A    | Adv Teach Meth II-Soc St       |
+|        233 |       557 | EDUC-376-A    | Adv Literacy:Assess/Inst Des   |
+|        234 |       589 | EDUC-378-A    | Content Area Read: K-12        |
+|        235 |       589 | EDUC-378-B    | Content Area Read: Elem/Midl   |
+|        236 |       589 | EDUC-378-A    | Practicum: Content Area Read   |
+|        237 |       721 | ART-491-A     | Senior Exhibition              |
+|        238 |       537 | ART-228-A     | Art in the Elementary Schools  |
+|        239 |       699 | EDUC-486-A    | Teaching Practicum             |
+|        240 |       700 | EDUC-490-A    | Senior Project                 |
+|        241 |       686 | EDUC-328-B    | Elem Social Studies Methods    |
+|        242 |       686 | EDUC-328-B    | Elem Social Studies Methods    |
+|        243 |       685 | EDUC-329-B    | Elementary Science Methods     |
+|        244 |       843 | MUS-491-A     | Senior Project in Mus Educ     |
+|        245 |       481 | ANTH-101-A    | Cultural Anthropology          |
+|        246 |       481 | ANTH-101-B    | Cultural Anthropology          |
+|        247 |       481 | ANTH-101-C    | Cultural Anthropology          |
+|        248 |       511 | ANTH-103-A    | Linguistic Anthropology        |
+|        249 |       518 | ANTH-104-A    | Archaeology                    |
+|        250 |       751 | ANTH-208-A    | Medical Anthropology           |
+|        251 |       765 | DAN-105-A     | Mvmt Fund I:Prac Align Func    |
+|        252 |       845 | ANTH-209-A    | Born to Run                    |
+|        253 |       825 | DAN-199-A     | Dance Synthesis                |
+|        254 |       764 | DAN-130-A     | Contact Improvisation          |
+|        255 |       747 | WGST-131-A    | Contact Improvisation          |
+|        256 |       766 | DAN-205-A     | Mvmt Fund II:Prac Range Eff    |
+|        257 |       529 | ANTH-401-A    | Anthropological Theory         |
+|        258 |       532 | ANTH-490-A    | Senior Project                 |
+|        259 |       500 | SOC-101-A     | Intro To Sociology             |
+|        260 |       500 | SOC-101-B     | Intro To Sociology             |
+|        261 |       500 | SOC-101-C     | Intro To Sociology             |
+|        262 |       657 | SOC-261-A     | Social Conflict                |
+|        263 |       649 | SOC-351-A     | Gender and Crime               |
+|        264 |       691 | WGST-351-A    | Gender and Crime               |
+|        265 |       501 | SOC-345-A     | Constructs of Race and Racial  |
+|        266 |       832 | AFRS-345-A    | Constructs of Race and Racial  |
+|        267 |       502 | SOC-350-A     | Social Statistics              |
+|        268 |       760 | DAN-230-A     | Contact Improvisation II       |
+|        269 |       503 | SOC-472-A     | Sem:Social Institutions        |
+|        270 |       505 | SOC-490-A     | Senior Project                 |
+|        271 |       506 | SW-101-A      | Intro To Soc Work & Soc Welf   |
+|        272 |       767 | DAN-264-A     | Perf Res:Happenings Course     |
+|        273 |       507 | SW-201-A      | Fund of Social Work Pract I    |
+|        274 |       508 | SW-204-A      | Human Behv in Soc Env I        |
+|        275 |       510 | SW-304-A      | Social Welfare Policy & Issues |
+|        276 |       509 | SW-305-A      | Research Methods for Soc Work  |
+|        277 |       768 | THE-127-A     | Design I:Visual Principles     |
+|        278 |       512 | SW-402-A      | Field Instr in Soc Wk Pract    |
+|        279 |       513 | SW-403-A      | Professional Seminar           |
+|        280 |       514 | SW-490-A      | Senior Project                 |
+|        281 |       854 | IS-450-A      | Global Citizenship             |
+|        282 |       824 | THE-199-A     | Theatre Synthesis              |
+|        283 |       769 | THE-200-A     | Stagecraft Practicum           |
+|        284 |       804 | THE-222-A     | Acting Shakespeare             |
+|        285 |       855 | REL-485-A     | Sem: Rel, Glob, Viol & Quest   |
+|        286 |       853 | REL-239-A     |  ST: Black Lives Matter        |
+|        287 |       856 | AFRS-239-A    |  ST: Black Lives Matter        |
+|        288 |       771 | THE-327-A     | Design II:Scenography          |
+|        289 |       762 | THE-352-A     | Theatre History II             |
+|        290 |       770 | THE-360-A     | Directing                      |
+|        291 |       655 | MUST-220-A    | Collections Management         |
+|        292 |       794 | PHIL-100-A    | Introduction to Philosophy     |
+|        293 |       811 | PHIL-110-A    | Logic                          |
+|        294 |       811 | PHIL-110-B    | Logic                          |
+|        295 |       807 | PHIL-120-A    | Ethics                         |
+|        296 |       806 | PHIL-220-A    | Early Modern Philosophy        |
+|        297 |       820 | PHIL-230-A    | Philosophy of Science          |
+|        298 |       694 | PHIL-310-A    | Metaphysics & Epistemology     |
+|        299 |       835 | PHIL-490-A    | Senior Project                 |
+|        300 |       794 | PHIL-100-B    | Introduction to Philosophy     |
+|        301 |       794 | PHIL-100-C    | Introduction to Philosophy     |
+|        302 |       897 | POLS-130-A    | American Politics              |
+|        303 |       881 | AFRS-147-A    | Lit of the African Peoples     |
+|        304 |       682 | POLS-132-A    | Global Politics                |
+|        305 |       573 | ENG-147-A     | Lit of the African Peoples     |
+|        306 |       682 | POLS-132-B    | Global Politics                |
+|        307 |       734 | WGST-147-A    | Lit of African Peoples         |
+|        308 |       653 | AFRS-172-A    | History of Modern Africa       |
+|        309 |       904 | POLS-247-A    | Social Policy                  |
+|        310 |       631 | POLS-258-A    | Environmental Politics & Polic |
+|        311 |       914 | POLS-363-A    | International Relations        |
+|        312 |       654 | HIST-172-A    | History of Modern Africa       |
+|        313 |       915 | POLS-364-A    | U.S. Foreign Policy            |
+|        314 |       916 | POLS-366-A    | Political Thought              |
+|        315 |       902 | AFRS-247-A    | History of Jazz                |
+|        316 |       910 | MUS-247-A     | History of Jazz                |
+|        317 |       922 | POLS-490-A    | Senior Project                 |
+|        318 |       773 | HIST-101-A    | Intro to Hist U.S. for El Edu  |
+|        319 |       741 | HIST-112-A    | Survey of US Hist Since 1877   |
+|        320 |       844 | HIST-126-A    | Human Geography                |
+|        321 |       675 | HIST-150-A    | Europe, 1648 to the Present    |
+|        322 |       639 | HIST-162-A    | South Asian History            |
+|        323 |       651 | HIST-225-A    | Golden Age Atlantic Piracy     |
+|        324 |       708 | HIST-485-A    | Jr/Sr Sem:Slavery in Africa    |
+|        325 |       558 | ENG-110-A     | Intro to College Writing       |
+|        326 |       578 | ENG-210-A     | Effective Writing              |
+|        327 |       587 | ENG-231-A     | Film                           |
+|        328 |       581 | ENG-212-A     | Creat Writ:Poetry & Fiction I  |
+|        329 |       597 | ENG-230-A     | The Writer's Voice             |
+|        330 |       597 | ENG-230-B     | The Writer's Voice             |
+|        331 |       857 | POLS-485-A    | Sem: Media & Political Proces  |
+|        332 |       628 | CLAS-300-A    | Classics and Culture           |
+|        333 |       670 | CLAS-490-A    | Senior Project                 |
+|        334 |       724 | GRK-102-A     | Elementary Greek II            |
+|        335 |       884 | LAT-102-A     | Elementary Latin II            |
+|        336 |       884 | LAT-102-B     | Elementary Latin II            |
+|        337 |       885 | LAT-202-A     | Readings in Latin              |
+|        338 |       599 | LAT-302-A     | Advanced Latin Poetry          |
+|        339 |       886 | LAT-490-A     | Senior Project                 |
+|        340 |       728 | GRK-202-A     | Readings in Greek              |
+|        341 |       753 | CLAS-310-A    | Ancient Science                |
+|        342 |       629 | CLAS-240-A    | Classical Mythology            |
+|        343 |       656 | CLAS-360-A    | The World of St. Patrick       |
+|        344 |       547 | CS-150-A      | Intro to Computer Sci I        |
+|        345 |       598 | ENG-260-A     | Shakespeare                    |
+|        346 |       547 | CS-150-B      | Intro to Computer Sci I        |
+|        347 |       600 | ENG-312-A     | Creat Writ:Poet & Fiction II   |
+|        348 |       601 | ENG-334-A     | Young Adult Literature         |
+|        349 |       603 | ENG-354-A     | American Novel                 |
+|        350 |       607 | ENG-361-A     | Chaucer & Medieval Literature  |
+|        351 |       692 | WGST-361-A    | Chaucer & Medieval Literature  |
+|        352 |       548 | CS-160-A      | Algorithms and Data Structures |
+|        353 |       626 | ENG-368-A     | The British Novel              |
+|        354 |       580 | ENG-211-A     | Writing for Media              |
+|        355 |       667 | ENG-490-A     | Senior Project                 |
+|        356 |       826 | CS-260-A      | Computational Models           |
+|        357 |       614 | CS-330-A      | Internet Programming           |
+|        358 |       830 | CS-370-A      | Programming Languages          |
+|        359 |       643 | CS-491-A      | Senior Project                 |
+|        360 |       829 | CS-353-A      | Embedded iOS Programming       |
+|        361 |       687 | WGST-490-A    | Senior Project                 |
+|        362 |       668 | WGST-130-A    | Intro to Wom & Gender Studies  |
+|        363 |       863 | PHYS-152-A    | General Physics II             |
+|        364 |       834 | HIST-239-A    | American Slave Revolts         |
+|        365 |       864 | PHYS-152L-A01 | General Physics II Lab         |
+|        366 |       864 | PHYS-152L-A02 | General Physics II Lab         |
+|        367 |       865 | PHYS-182-A    | Classical Physics II           |
+|        368 |       866 | PHYS-182L-A01 | Classical Physics II Lab       |
+|        369 |       661 | PHYS-282-A    | Modern Physics II              |
+|        370 |       858 | ENG-130-A     | Lit Vent:Uses of Memory        |
+|        371 |       664 | PHYS-282L-A   | Modern Physic II Lab           |
+|        372 |       867 | PHYS-312-A    | Advanced Laboratory II         |
+|        373 |       870 | PHYS-361-A    | Classical Mechanics            |
+|        374 |       871 | PHYS-490-A    | Senior Project                 |
+|        375 |       612 | PHYS-491-A    | Senior Project                 |
+|        376 |       840 | PHYS-114-A    | Phys of Sound & Musical Acous  |
+|        377 |       861 | PHYS-114L-A   | Phys Sound & Mus Acous Lab     |
+|        378 |       926 | PSYC-130-A    | General Psychology             |
+|        379 |       926 | PSYC-130-B    | General Psychology             |
+|        380 |       926 | PSYC-130-C    | General Psychology             |
+|        381 |       926 | PSYC-130-D    | General Psychology             |
+|        382 |       926 | PSYC-130-E    | General Psychology             |
+|        383 |       928 | PSYC-240-A    | Developmental Psychology       |
+|        384 |       928 | PSYC-240-B    | Developmental Psychology       |
+|        385 |       929 | PSYC-243-A    | Personality & Indiv Difference |
+|        386 |       672 | PSYC-242-A    | Evolutionary Psychology        |
+|        387 |       929 | PSYC-243-B    | Personality & Indiv Difference |
+|        388 |       605 | PSYC-249-A    | Brain and Behavior             |
+|        389 |       935 | PSYC-350-A    | Behavioral Statistics          |
+|        390 |       932 | PSYC-353-A    | Social Psychology              |
+|        391 |       710 | PSYC-353L-A01 | Social Psychology Lab          |
+|        392 |       710 | PSYC-353L-A02 | Social Psychology Lab          |
+|        393 |       939 | PSYC-356-A    | Stress, Coping, and Well-Being |
+|        394 |       611 | PSYC-356L-A01 | Stress, Cop & Well-Being Lab   |
+|        395 |       611 | PSYC-356L-A02 | Stress, Cop & Well-Being Lab   |
+|        396 |       480 | PSYC-468-A    | Intro to Counseling            |
+|        397 |       480 | PSYC-468-B    | Intro to Counseling            |
+|        398 |       483 | PSYC-490-A    | Senior Project                 |
+|        399 |       544 | BIO-152-A     | Principles: Molecules/Cells    |
+|        400 |       545 | BIO-152L-A01  | Principles: Molec/Cells Lab    |
+|        401 |       545 | BIO-152L-A02  | Principles: Molec/Cells Lab    |
+|        402 |       545 | BIO-152L-A03  | Principles: Molec/Cells Lab    |
+|        403 |       545 | BIO-152L-A04  | Principles: Molec/Cells Lab    |
+|        404 |       545 | BIO-152L-A05  | Principles: Molec/Cells Lab    |
+|        405 |       545 | BIO-152L-A06  | Principles: Molec/Cells Lab    |
+|        406 |       545 | BIO-152L-A07  | Principles: Molec/Cells Lab    |
+|        407 |       545 | BIO-152L-A08  | Principles: Molec/Cells Lab    |
+|        408 |       545 | BIO-152L-A09  | Principles: Molec/Cells Lab    |
+|        409 |       545 | BIO-152L-A10  | Principles: Molec/Cells Lab    |
+|        410 |       545 | BIO-152L-A11  | Principles: Molec/Cells Lab    |
+|        411 |       732 | BIO-232-A     | Microscopy Laboratory          |
+|        412 |       549 | BIO-248-A     | Genetics                       |
+|        413 |       550 | BIO-248L-A01  | Genetics Lab                   |
+|        414 |       550 | BIO-248L-A02  | Genetics Lab                   |
+|        415 |       550 | BIO-248L-A03  | Genetics Lab                   |
+|        416 |       550 | BIO-248L-A04  | Genetics Lab                   |
+|        417 |       729 | BIO-250-A     | Restor & Conserv Biology       |
+|        418 |       735 | BIO-250L-A01  | Restor & Conserv Ecol Lab      |
+|        419 |       551 | BIO-252-A     | Botany                         |
+|        420 |       552 | BIO-252L-A01  | Botany Lab                     |
+|        421 |       554 | BIO-354-A     | Evolutionary Biology           |
+|        422 |       543 | RUS-243-A     | Time of Stalin                 |
+|        423 |       683 | BIO-354L-A01  | Evolutionary Biology Lab       |
+|        424 |       801 | BIO-358-A     | Toxicology                     |
+|        425 |       802 | BIO-358L-A01  | Toxicology Lab                 |
+|        426 |       615 | BIO-362-A     | Neuroscience                   |
+|        427 |       907 | AFRS-235-A    | The Civil Rights Movement      |
+|        428 |       862 | HIST-235-A    | The Civil Rights Movement      |
+|        429 |       562 | BIO-490-A     | Senior Project                 |
+|        430 |       568 | BIO-112-A     | Insects, Humans & Environment  |
+|        431 |       716 | HIST-321-A    | Top in US Hist: Indian Countr  |
+|        432 |       588 | EDUC-232-A    | Music Educ Curr & Strategies   |
+|        433 |       592 | EDUC-255-A    | Percussion Methods             |
+|        434 |       570 | EDUC-260-A    | Brass Methods                  |
+|        435 |       590 | EDUC-265-A    | Double Reeds Methods           |
+|        436 |       716 | HIST-321-A    | Top in US Hist:Hawai'ian Isl   |
+|        437 |       591 | EDUC-270-A    | String Methods                 |
+|        438 |       593 | EDUC-275-A    | Flute, Clarinet and Saxophone  |
+|        439 |       821 | EDUC-371-A    | Elem Gen Music Meth & Lab      |
+|        440 |       790 | NURS-236-A    | Pathways to Practice II        |
+|        441 |       842 | EDUC-371L-A   | El Gen Music Methods Lab       |
+|        442 |       791 | NURS-237-A    | Pathways to Practice Clin II   |
+|        443 |       788 | NURS-376-A    | Behavioral Health Care Clin    |
+|        444 |       588 | EDUC-232-B    | Music Educ Curr & Strategies   |
+|        445 |       792 | NURS-372-A    | Health and Healing II          |
+|        446 |       793 | NURS-373-A    | Health and Healing II Clinical |
+|        447 |       795 | NURS-378-A    | Family/Child Nursing Clinical  |
+|        448 |       797 | NURS-384-A    | Evidence Based Practice        |
+|        449 |       930 | NURS-471-A    | Maternity Nurs:Family-Cntrd    |
+|        450 |       931 | NURS-471L-A01 | Maternity Nurs:Family-Cnt Cln  |
+|        451 |       933 | NURS-473-A    | Community-Centered Care        |
+|        452 |       586 | MUS-115-A     | Class Instruction: Piano       |
+|        453 |       586 | MUS-115-A     | Class Instruction: Guitar      |
+|        454 |       896 | MUS-116-A     | Class Instruction: Piano       |
+|        455 |       896 | MUS-116-B     | Class Instruction: Piano       |
+|        456 |       898 | MUS-117-A     | Class Instruction: Piano       |
+|        457 |       898 | MUS-117-B     | Class Instruction: Piano       |
+|        458 |       898 | MUS-117-C     | Class Instruction: Piano       |
+|        459 |       898 | MUS-117-D     | Class Instruction: Piano       |
+|        460 |       899 | MUS-122-A     | Theory II                      |
+|        461 |       899 | MUS-122-B     | Theory II                      |
+|        462 |       899 | MUS-122-C     | Theory II                      |
+|        463 |       899 | MUS-122-D     | Theory II                      |
+|        464 |       900 | MUS-122L-A    | Ear Training II                |
+|        465 |       900 | MUS-122L-B    | Ear Training II                |
+|        466 |       900 | MUS-122L-C    | Ear Training II                |
+|        467 |       900 | MUS-122L-D    | Ear Training II                |
+|        468 |       900 | MUS-122L-E    | Ear Training II                |
+|        469 |       553 | MUS-130-A     | Private Instruction-Organ      |
+|        470 |       553 | MUS-130-A     | Private Instructn-Harpsichord  |
+|        471 |       553 | MUS-130-A     | Private Instruction-Piano      |
+|        472 |       553 | MUS-130-A     | Private Instruction-Trumpet    |
+|        473 |       553 | MUS-130-A     | Private Instruction-Trombone   |
+|        474 |       553 | MUS-130-A     | Private Instruction-Tuba       |
+|        475 |       553 | MUS-130-A     | Private Instructn-French Horn  |
+|        476 |       553 | MUS-130-A     | Private Instruction-Euphonium  |
+|        477 |       553 | MUS-130-A     | Private Instructn-Percussion   |
+|        478 |       553 | MUS-130-A     | Private Instruction-Violin     |
+|        479 |       553 | MUS-130-A     | Private Instruction-Cello      |
+|        480 |       553 | MUS-130-A     | Private Instruction-Bass       |
+|        481 |       553 | MUS-130-A     | Private Instruction-Clarinet   |
+|        482 |       553 | MUS-130-A     | Private Instruction-Saxophone  |
+|        483 |       553 | MUS-130-A     | Private Instruction-Oboe       |
+|        484 |       553 | MUS-130-A     | Private Instruction-Bassoon    |
+|        485 |       553 | MUS-130-A     | Private Instruction-Flute      |
+|        486 |       553 | MUS-130-A     | Private Instruction-Guitar     |
+|        487 |       553 | MUS-130-A     | Private Instruction-Harp       |
+|        488 |       553 | MUS-130-A     | Private Instruction-Lute       |
+|        489 |       553 | MUS-130-A     | Priv Instruction: Jazz Improv  |
+|        490 |       553 | MUS-130-A     | Private Instruction-Viola      |
+|        491 |       553 | MUS-130-B     | Private Instruction-Voice      |
+|        492 |       553 | MUS-130-C     | Private Instruction-Voice      |
+|        493 |       553 | MUS-130-D     | Private Instruction-Voice      |
+|        494 |       553 | MUS-130-F     | Private Instruction-Voice      |
+|        495 |       934 | NURS-473L-A01 | Community-Cntrd Care Clin      |
+|        496 |       936 | NURS-477-A    | Synthesis of Nursing Practice  |
+|        497 |       805 | INTS-130-A    | Scholars Colloquium            |
+|        498 |       937 | NURS-477L-A01 | Syn of Nursing Practice Clini  |
+|        499 |       937 | NURS-477L-A02 | Syn of Nursing Practice Clini  |
+|        500 |       938 | NURS-490-A    | Senior Project                 |
+|        501 |       790 | NURS-236-B    | Pathways to Practice II        |
+|        502 |       805 | INTS-130-B    | Scholars Colloquium            |
+|        503 |       796 | NURS-382-A    | Gerontological Nursing         |
+|        504 |       798 | NURS-386-A    | Prof Nurs Prac-Immersion Exper |
+|        505 |       799 | NURS-388-A    | Health Informatics             |
+|        506 |       553 | MUS-130-G     | Private Instruction-Voice      |
+|        507 |       553 | MUS-130-I     | Private Instruction-Voice      |
+|        508 |       553 | MUS-130-J     | Private Instruction-Voice      |
+|        509 |       553 | MUS-130-K     | Private Instruction-Voice      |
+|        510 |       553 | MUS-130-L     | Private Instruction-Voice      |
+|        511 |       813 | NURS-375-A    | Directed Readings              |
+|        512 |       789 | SCI-250-A     | Clinical Pharmacology          |
+|        513 |       553 | MUS-130-N     | Private Instruction-Voice      |
+|        514 |       789 | SCI-250-B     | Clinical Pharmacology          |
+|        515 |       833 | SCI-250L-A01  | Clin Pharmacology Lab          |
+|        516 |       553 | MUS-130-O     | Private Instruction-Voice      |
+|        517 |       553 | MUS-130-P     | Private Instruction-Voice      |
+|        518 |       706 | MUS-132-A     | Theory II - Honors             |
+|        519 |       707 | MUS-132L-A    | Ear Training II - Honors       |
+|        520 |       632 | ATHTR-268-A   | Clin II:Head,Neck,Thor,Abd Up  |
+|        521 |       633 | ATHTR-368-A   | Clin IV:Therap Mod & Exercise  |
+|        522 |       633 | ATHTR-368-A   | Clin IV:Therap Mod & Exercise  |
+|        523 |       736 | HLTH-233-A    | Mental/Emot Health:Stress Mgt  |
+|        524 |       742 | HLTH-358-A    | Substance Abuse Education      |
+|        525 |       749 | HLTH-490-A    | Senior Project                 |
+|        526 |       895 | PE-490-A      | Senior Project                 |
+|        527 |       637 | ATHTR-490-A   | Senior Project                 |
+|        528 |       880 | PE-260-A      | Adaptive Physical Educ         |
+|        529 |       877 | PE-342-A      | Growth, Develpm & Motor Learn  |
+|        530 |       882 | PE-366-A      | Physiology of Exercise         |
+|        531 |       883 | PE-366L-A01   | Physiology of Exercise Lab     |
+|        532 |       883 | PE-366L-A02   | Physiology of Exercise Lab     |
+|        533 |       805 | INTS-130-C    | Scholars Colloquium            |
+|        534 |       805 | INTS-130-D    | Scholars Colloquium            |
+|        535 |       805 | INTS-130-E    | Scholars Colloquium            |
+|        536 |       805 | INTS-130-F    | Scholars Colloquium            |
+|        537 |       805 | INTS-130-G    | Scholars Colloquium            |
+|        538 |       596 | PAID-112D-01  | Paideia I                      |
+|        539 |       596 | PAID-112D-02  | Paideia I                      |
+|        540 |       596 | PAID-112D-03  | Paideia I                      |
+|        541 |       604 | MUS-135-A     | Principles of Improvisation    |
+|        542 |       596 | PAID-112D-04  | Paideia I                      |
+|        543 |       596 | PAID-112D-05  | Paideia I                      |
+|        544 |       714 | MUS-145-A     | Orchestral Reper for Harp      |
+|        545 |       596 | PAID-112D-06  | Paideia I                      |
+|        546 |       596 | PAID-112D-07  | Paideia I                      |
+|        547 |       744 | MUS-227-A     | Music/Perf Arts Elem Classrm   |
+|        548 |       579 | MUS-230-A     | Private Instruction-Organ      |
+|        549 |       579 | MUS-230-A     | Private Instructn-Harpsichord  |
+|        550 |       579 | MUS-230-A     | Private Instruction-Piano      |
+|        551 |       579 | MUS-230-A     | Private Instruction-Trumpet    |
+|        552 |       579 | MUS-230-A     | Private Instruction-Tuba       |
+|        553 |       596 | PAID-112D-08  | Paideia I                      |
+|        554 |       596 | PAID-112D-09  | Paideia I                      |
+|        555 |       579 | MUS-230-A     | Private Instruction-Trombone   |
+|        556 |       596 | PAID-112D-10  | Paideia I                      |
+|        557 |       596 | PAID-112D-11  | Paideia I                      |
+|        558 |       596 | PAID-112D-12  | Paideia I                      |
+|        559 |       579 | MUS-230-A     | Private Instruction-Euphonium  |
+|        560 |       579 | MUS-230-A     | Private Instructn-Percussion   |
+|        561 |       596 | PAID-112D-13  | Paideia I                      |
+|        562 |       579 | MUS-230-A     | Private Instruction-Viola      |
+|        563 |       596 | PAID-112D-14  | Paideia I                      |
+|        564 |       579 | MUS-230-A     | Private Instruction-Cello      |
+|        565 |       596 | PAID-112D-15  | Paideia I                      |
+|        566 |       596 | PAID-112D-16  | Paideia I                      |
+|        567 |       596 | PAID-112D-17  | Paideia I                      |
+|        568 |       596 | PAID-112D-18  | Paideia I                      |
+|        569 |       596 | PAID-112D-19  | Paideia I                      |
+|        570 |       596 | PAID-112D-20  | Paideia I                      |
+|        571 |       596 | PAID-112D-21  | Paideia I                      |
+|        572 |       579 | MUS-230-A     | Private Instruction-Bass       |
+|        573 |       579 | MUS-230-A     | Private Instruction-Clarinet   |
+|        574 |       596 | PAID-112D-22  | Paideia I                      |
+|        575 |       579 | MUS-230-A     | Private Instruction-Saxophone  |
+|        576 |       596 | PAID-112D-23  | Paideia I                      |
+|        577 |       579 | MUS-230-A     | Private Instruction-Oboe       |
+|        578 |       579 | MUS-230-A     | Private Instruction-Bassoon    |
+|        579 |       579 | MUS-230-A     | Private Instruction-Flute      |
+|        580 |       579 | MUS-230-A     | Private Instruction-Guitar     |
+|        581 |       579 | MUS-230-A     | Private Instruction-Harp       |
+|        582 |       596 | PAID-112D-24  | Paideia I                      |
+|        583 |       579 | MUS-230-A     | Private Instruction-Lute       |
+|        584 |       579 | MUS-230-A     | Private Instructn-French Horn  |
+|        585 |       596 | PAID-112D-25  | Paideia I                      |
+|        586 |       579 | MUS-230-A     | Priv Instruction: Jazz Improv. |
+|        587 |       596 | PAID-112D-26  | Paideia I                      |
+|        588 |       579 | MUS-230-B     | Private Instruction-Voice      |
+|        589 |       596 | PAID-112D-27  | Paideia I                      |
+|        590 |       579 | MUS-230-C     | Private Instruction-Voice      |
+|        591 |       596 | PAID-112D-28  | Paideia I                      |
+|        592 |       596 | PAID-112D-29  | Paideia I                      |
+|        593 |       579 | MUS-230-D     | Private Instruction-Voice      |
+|        594 |       596 | PAID-112D-30  | Paideia I                      |
+|        595 |       596 | PAID-112D-31  | Paideia I                      |
+|        596 |       596 | PAID-112D-32  | Paideia I                      |
+|        597 |       596 | PAID-112D-33  | Paideia I                      |
+|        598 |       579 | MUS-230-F     | Private Instruction-Voice      |
+|        599 |       775 | PAID-450-A    | U.S. Schools                   |
+|        600 |       775 | PAID-450-A    | U.S. Schools                   |
+|        601 |       775 | PAID-450-A    | U.S. Schools                   |
+|        602 |       579 | MUS-230-G     | Private Instruction-Voice      |
+|        603 |       775 | PAID-450-A    | Considering Animals            |
+|        604 |       775 | PAID-450-A    | Considering Animals            |
+|        605 |       775 | PAID-450-A    | The Color of Change            |
+|        606 |       579 | MUS-230-I     | Private Instruction-Voice      |
+|        607 |       579 | MUS-230-J     | Private Instruction-Voice      |
+|        608 |       579 | MUS-230-K     | Private Instruction-Voice      |
+|        609 |       579 | MUS-230-N     | Private Instruction-Voice      |
+|        610 |       579 | MUS-230-O     | Private Instruction-Voice      |
+|        611 |       579 | MUS-230-P     | Private Instruction-Voice      |
+|        612 |       921 | MUS-273-C     | Chamber Music                  |
+|        613 |       921 | MUS-273-D     | Chamber Music                  |
+|        614 |       921 | MUS-273-E     | Chamber Music                  |
+|        615 |       921 | MUS-273-F     | Chamber Music                  |
+|        616 |       921 | MUS-273-G     | Chamber Music                  |
+|        617 |       921 | MUS-273-H     | Chamber Music                  |
+|        618 |       921 | MUS-273-I     | Chamber Music                  |
+|        619 |       921 | MUS-273-J     | Chamber Music                  |
+|        620 |       921 | MUS-273-K     | Chamber Music                  |
+|        621 |       921 | MUS-273-L     | Chamber Music                  |
+|        622 |       921 | MUS-273-M     | Chamber Music                  |
+|        623 |       921 | MUS-273-N     | Chamber Music                  |
+|        624 |       583 | MUS-300-A     | Music Ensemble: Concert Band   |
+|        625 |       583 | MUS-300-A     | Music Ensemble: Concert Band   |
+|        626 |       583 | MUS-300-A     | Music Ensemble: Varsity Band   |
+|        627 |       583 | MUS-300-A     | Music Ensemble: Chamber Orches |
+|        628 |       583 | MUS-300-A     | Music Ensemble: Symphony Orche |
+|        629 |       583 | MUS-300-A     | Music Ensemble: Symphony Orche |
+|        630 |       583 | MUS-300-A     | Music Ensemble: Jazz Orchestra |
+|        631 |       583 | MUS-300-A     | Music Ensemble: Jazz Orchestra |
+|        632 |       583 | MUS-300-A     | Music Ensemble: Jazz Band      |
+|        633 |       583 | MUS-300-A     | Music Ensemble: Nordic Choir   |
+|        634 |       583 | MUS-300-A     | Music Ensemble: Nordic Choir   |
+|        635 |       583 | MUS-300-A     | Music Ensemble: Collegiate Cho |
+|        636 |       583 | MUS-300-A     | Music Ensemble: Cathedral Choi |
+|        637 |       583 | MUS-300-A     | Music Ensemble: Norsemen       |
+|        638 |       583 | MUS-300-A     | Music Ensemble: Aurora         |
+|        639 |       583 | MUS-300-A     | Music Ensemble: Wind/Perc      |
+|        640 |       583 | MUS-300-A     | Music Ensemble: Brass Choir    |
+|        641 |       583 | MUS-300-A     | Music Ensemble: Cantorei       |
+|        642 |       583 | MUS-300-A     | Music Ensemble: Cantorei       |
+|        643 |       583 | MUS-300-A     | Music Ensemble: Philharmonia   |
+|        644 |       583 | MUS-300-A     | Music Ensemble: Philharmonia   |
+|        645 |       583 | MUS-300-A     | Music Ensemble: Collegium Musi |
+|        646 |       583 | MUS-300-A     | Music Ensemble: Collegium Musi |
+|        647 |       555 | MUS-330-A     | Private Instruction-Organ      |
+|        648 |       555 | MUS-330-A     | Private Instruction-Piano      |
+|        649 |       555 | MUS-330-A     | Private Instruction-Trumpet    |
+|        650 |       555 | MUS-330-A     | Private Instruction-Trombone   |
+|        651 |       555 | MUS-330-A     | Private Instruction-Tuba       |
+|        652 |       555 | MUS-330-A     | Private Instructn-French Horn  |
+|        653 |       555 | MUS-330-A     | Private Instruction-Euphonium  |
+|        654 |       555 | MUS-330-A     | Private Instructn-Percussion   |
+|        655 |       555 | MUS-330-A     | Private Instruction-Viola      |
+|        656 |       555 | MUS-330-A     | Private Instruction-Cello      |
+|        657 |       555 | MUS-330-A     | Private Instruction-Bass       |
+|        658 |       555 | MUS-330-A     | Private Instruction-Clarinet   |
+|        659 |       555 | MUS-330-A     | Private Instruction-Saxophone  |
+|        660 |       555 | MUS-330-A     | Private Instruction-Oboe       |
+|        661 |       555 | MUS-330-A     | Private Instruction-Bassoon    |
+|        662 |       555 | MUS-330-A     | Private Instruction-Guitar     |
+|        663 |       555 | MUS-330-A     | Private Instructn-Harpsichord  |
+|        664 |       555 | MUS-330-A     | Private Instruction-Harp       |
+|        665 |       555 | MUS-330-B     | Private Instruction-Voice      |
+|        666 |       555 | MUS-330-C     | Private Instruction-Voice      |
+|        667 |       555 | MUS-330-D     | Private Instruction-Voice      |
+|        668 |       555 | MUS-330-F     | Private Instruction-Voice      |
+|        669 |       555 | MUS-330-G     | Private Instruction-Voice      |
+|        670 |       555 | MUS-330-I     | Private Instruction-Voice      |
+|        671 |       555 | MUS-330-J     | Private Instruction-Voice      |
+|        672 |       555 | MUS-330-K     | Private Instruction-Voice      |
+|        673 |       634 | ATHTR-370-A   | Therapeutic Mod Ath Train      |
+|        674 |       635 | ATHTR-372-A   | Therapeutic Exer Ath Train     |
+|        675 |       636 | ATHTR-468-A   | Clin VI:Advanced Health Care   |
+|        676 |       555 | MUS-330-L     | Private Instruction-Voice      |
+|        677 |       647 | HLTH-125-A    | Nutrition I                    |
+|        678 |       555 | MUS-330-N     | Private Instruction-Voice      |
+|        679 |       647 | HLTH-125-B    | Nutrition I                    |
+|        680 |       555 | MUS-330-O     | Private Instruction-Voice      |
+|        681 |       555 | MUS-330-P     | Private Instruction-Voice      |
+|        682 |       665 | HLTH-126-A    | Nutrition II                   |
+|        683 |       758 | HLTH-234-A    | Family Life Education          |
+|        684 |       901 | MUS-332-A     | Theory IV                      |
+|        685 |       901 | MUS-332-B     | Theory IV                      |
+|        686 |       901 | MUS-332-C     | Theory IV                      |
+|        687 |       759 | HLTH-344-A    | Hlth Educ Cont, Meth, Asses II |
+|        688 |       903 | MUS-332L-A    | Ear Training IV                |
+|        689 |       903 | MUS-332L-B    | Ear Training IV                |
+|        690 |       903 | MUS-332L-C    | Ear Training IV                |
+|        691 |       903 | MUS-332L-D    | Ear Training IV                |
+|        692 |       621 | MUS-338-A     | Composition: Private Lesson    |
+|        693 |       906 | MUS-341-A     | Hist of Music:Antiquity-1750   |
+|        694 |       906 | MUS-341-B     | Hist of Music:Antiquity-1750   |
+|        695 |       908 | MUS-343-A     | History of Music:Romantic Era  |
+|        696 |       908 | MUS-343-B     | History of Music:Romantic Era  |
+|        697 |       909 | MUS-344-A     | Hist of Music:Contemporary     |
+|        698 |       739 | HLTH-352-A    | Consumer Health/Safety Ed      |
+|        699 |       911 | MUS-351-A     | Adv Conducting:Choral          |
+|        700 |       911 | MUS-351-B     | Adv Conducting:Choral          |
+|        701 |       809 | PE-130-A      | Experiential Leadership        |
+|        702 |       912 | MUS-353-A     | Conducting: Instrumental       |
+|        703 |       874 | PE-190-A      | First Aid                      |
+|        704 |       874 | PE-190-B      | First Aid                      |
+|        705 |       723 | PE-226-A      | Ropes/Challenge Course Prog    |
+|        706 |       925 | MUS-360-A     | Vocal Coaching                 |
+|        707 |       640 | MUS-363-A     | Opera Workshop: Production     |
+|        708 |       640 | MUS-363-A     | Opera Workshop: Production     |
+|        709 |       640 | MUS-363-A     | Opera Workshop: Production     |
+|        710 |       755 | PE-229-A      | El PE, Hlth & Well;Meth&Mat    |
+|        711 |       875 | PE-231-A      | Psychological Skills Training  |
+|        712 |       924 | MUS-376-A     | Vocal & Instru Accompanying    |
+|        713 |       878 | PE-244-A      | Psychology of Coaching         |
+|        714 |       582 | MUS-430-A     | Private Instruction-Organ      |
+|        715 |       559 | PE-250-A      | Coaching of Sports:Football    |
+|        716 |       582 | MUS-430-A     | Private Instruction-Piano      |
+|        717 |       582 | MUS-430-A     | Private Instruction-Trumpet    |
+|        718 |       756 | PE-344-A      | El Sch Pe Cont Meth Assess II  |
+|        719 |       757 | PE-346-A      | Mid/Sec Sch Pe Cont Mth/As II  |
+|        720 |       879 | PE-456-A      | Administration/Curr in PE      |
+|        721 |       582 | MUS-430-A     | Private Instruction-Trombone   |
+|        722 |       582 | MUS-430-A     | Private Instruction-Tuba       |
+|        723 |       582 | MUS-430-A     | Private Instructn-French Horn  |
+|        724 |       582 | MUS-430-A     | Private Instruction-Euphonium  |
+|        725 |       582 | MUS-430-A     | Private Instructn-Percussion   |
+|        726 |       582 | MUS-430-A     | Private Instruction-Violin     |
+|        727 |       582 | MUS-430-A     | Private Instruction-Viola      |
+|        728 |       582 | MUS-430-A     | Private Instruction-Cello      |
+|        729 |       582 | MUS-430-A     | Private Instruction-Bass       |
+|        730 |       582 | MUS-430-A     | Private Instruction-Clarinet   |
+|        731 |       585 | PE-100-B01    | Personal Fitness and Wellness  |
+|        732 |       585 | PE-100-B01    | Personal Fitness and Wellness  |
+|        733 |       582 | MUS-430-A     | Private Instruction-Saxophone  |
+|        734 |       582 | MUS-430-A     | Private Instruction-Oboe       |
+|        735 |       582 | MUS-430-A     | Private Instruction-Bassoon    |
+|        736 |       582 | MUS-430-A     | Private Instruction-Flute      |
+|        737 |       582 | MUS-430-A     | Private Instruction-Guitar     |
+|        738 |       582 | MUS-430-A     | Private Instruction-Harp       |
+|        739 |       582 | MUS-430-B     | Private Instruction-Voice      |
+|        740 |       582 | MUS-430-C     | Private Instruction-Voice      |
+|        741 |       582 | MUS-430-D     | Private Instruction-Voice      |
+|        742 |       582 | MUS-430-F     | Private Instruction-Voice      |
+|        743 |       582 | MUS-430-G     | Private Instruction-Voice      |
+|        744 |       582 | MUS-430-I     | Private Instruction-Voice      |
+|        745 |       582 | MUS-430-J     | Private Instruction-Voice      |
+|        746 |       582 | MUS-430-K     | Private Instruction-Voice      |
+|        747 |       585 | PE-100-B02    | Personal Fitness and Wellness  |
+|        748 |       585 | PE-100-B02    | Personal Fitness and Wellness  |
+|        749 |       582 | MUS-430-L     | Private Instruction-Voice      |
+|        750 |       582 | MUS-430-N     | Private Instruction-Voice      |
+|        751 |       585 | PE-100-B03    | Personal Fitness and Wellness  |
+|        752 |       585 | PE-100-B03    | Personal Fitness and Wellness  |
+|        753 |       582 | MUS-430-O     | Private Instruction-Voice      |
+|        754 |       582 | MUS-430-P     | Private Instruction-Voice      |
+|        755 |       585 | PE-100-B04    | Personal Fitness and Wellness  |
+|        756 |       585 | PE-100-B04    | Personal Fitness and Wellness  |
+|        757 |       585 | PE-100-B05    | Personal Fitness and Wellness  |
+|        758 |       585 | PE-100-B05    | Personal Fitness and Wellness  |
+|        759 |       584 | PE-110-B01    | Skill:Badminton                |
+|        760 |       927 | MUS-490-A     | Senior Project                 |
+|        761 |       584 | PE-110-B01    | Skl:Insanity                   |
+|        762 |       899 | MUS-122-E     | Theory II                      |
+|        763 |       900 | MUS-122L-F    | Ear Training II                |
+|        764 |       584 | PE-110-B01    | Skill:Yoga I                   |
+|        765 |       917 | MUS-266-A     | Diction Singers II:French/Eng  |
+|        766 |       918 | MUS-268-A     | Vocal Lit II:French/Brit/Amer  |
+|        767 |       586 | MUS-115-A     | Class Instruction: Voice       |
+|        768 |       803 | MUS-439-A     | 18th Century Counterpoint      |
+|        769 |       822 | EDUC-388-A    | Beg & Mid School Orch Mth      |
+|        770 |       823 | EDUC-391-A    | High School Orchestra Methods  |
+|        771 |       584 | PE-110-B01    | Skill:Rock Climbing            |
+|        772 |       584 | PE-110-B01    | Skill: Soccer                  |
+|        773 |       584 | PE-110-B01    | Racquet Sports                 |
+|        774 |       584 | PE-110-B01    | Racquet Sports                 |
+|        775 |       584 | PE-110-B01    | Racquet Sports                 |
+|        776 |       584 | PE-110-B01    | Skl:Strength Training          |
+|        777 |       584 | PE-110-B01    | Skl:Strength Training          |
+|        778 |       850 | CHEM-371-A    | Polymer Chemistry              |
+|        779 |       584 | PE-110-B01    | Skl:Low Impact Aerobics        |
+|        780 |       690 | CHEM-474-A    | Physical Inorganic Chemistry   |
+|        781 |       585 | PE-100-C01    | Personal Fitness and Wellness  |
+|        782 |       585 | PE-100-C01    | Personal Fitness and Wellness  |
+|        783 |       585 | PE-100-C02    | Personal Fitness and Wellness  |
+|        784 |       585 | PE-100-C02    | Personal Fitness and Wellness  |
+|        785 |       585 | PE-100-C03    | Personal Fitness and Wellness  |
+|        786 |       585 | PE-100-C03    | Personal Fitness and Wellness  |
+|        787 |       671 | PSYC-349-A    | Research Methods in Psychology |
+|        788 |       814 | CS-130-A      | Fund of Web Programming        |
+|        789 |       585 | PE-100-C04    | Personal Fitness and Wellness  |
+|        790 |       585 | PE-100-C04    | Personal Fitness and Wellness  |
+|        791 |       585 | PE-100-C05    | Personal Fitness and Wellness  |
+|        792 |       585 | PE-100-C05    | Personal Fitness and Wellness  |
+|        793 |       814 | CS-130-B      | Fund of Web Programming        |
+|        794 |       827 | CS-165-A      | Software Development Tools     |
+|        795 |       828 | CS-253-A      | Object-Oriented Prog With C++  |
+|        796 |       584 | PE-110-C01    | Skill:Scuba                    |
+|        797 |       689 | EDUC-331-A    | Early Childhood Educ II        |
+|        798 |       584 | PE-110-C01    | Skill:Fly Fishing              |
+|        799 |       584 | PE-110-C01    | Skill:Disc Golf                |
+|        800 |       715 | SW-110-A      | Mental Health First Aid        |
+|        801 |       584 | PE-110-C01    | Skill: Racquetball             |
+|        802 |       584 | PE-110-C01    | Skill: Bowling                 |
+|        803 |       584 | PE-110-C01    | Skl:Trail Run & Strength Trai  |
+|        804 |       584 | PE-110-C01    | Individual Sports              |
+|        805 |       584 | PE-110-C01    | Skill:Ropes Course             |
+|        806 |       584 | PE-110-C01    | Skl:Strength Training          |
+|        807 |       584 | PE-110-C01    | Skill:Badminton                |
+|        808 |       584 | PE-110-C01    | Skill:Pilates                  |
+|        809 |       584 | PE-110-C01    | Skill:Rock Climbing            |
+|        810 |       584 | PE-110-C01    | Skill: Golf                    |
+|        811 |       584 | PE-110-C01    | Skl:Circuit Training           |
+|        812 |       495 | SCI-110-A     | Medical Terminology            |
+|        813 |       780 | CLAS-275-A    | Archaeology of Ancient Rome    |
+|        814 |       810 | WGST-485-A    | Seminar: Queer Theory          |
+|        815 |       677 | MUS-111-A     | The Materials of Music         |
+|        816 |       905 | MUS-237-A     | Worship&Mus in Life of Church  |
+|        817 |       579 | MUS-230-A     | Private Instruction-Violin     |
+|        818 |       921 | MUS-273-A     | Chamber Music                  |
+|        819 |       921 | MUS-273-B     | Chamber Music                  |
+|        820 |       859 | ENG-485-A     | Sem:The Short Form             |
+|        821 |       555 | MUS-330-A     | Private Instruction-Flute      |
+|        822 |       492 | REL-316-A     | Jesus and the Gospels          |
+|        823 |       569 | BIO-112L-A    | Insects, Humans & Environ Lab  |
+|        824 |       524 | CHEM-242-B    | Organic Chemistry II           |
+|        825 |       864 | PHYS-152L-A03 | General Physics II Lab         |
+|        826 |       556 | EDUC-352-A    | Adv Mid/HS Art Methods (5-12)  |
+|        827 |       717 | GER-490-A     | Senior Project                 |
+|        828 |       733 | GRK-490-A     | Senior Project                 |
+|        829 |       579 | MUS-230-L     | Private Instruction-Voice      |
+|        830 |       743 | LING-133-A    | Introduction to Syntax         |
+|        831 |       602 | ACCTG-110-B   | Intro to Accounting            |
+|        832 |       542 | ART-493-A     | Studio Art: Senior Hon Proj    |
+|        833 |       542 | ART-493-B     |  Art History: Sen Hon Proj     |
+|        834 |       841 | EDUC-226-A    | Introduction to Reading        |
+|        835 |       894 | MGT-490-C     | Senior Project                 |
+|        836 |       775 | PAID-450-A    | Environ Polit & Policy         |
+|        837 |       777 | DAN-491-A     | Senior Project                 |
+|        838 |       776 | THE-491-A     | Senior Project                 |
+|        839 |       784 | EDUC-380-A    | Internship in Music Education  |
+|        840 |       787 | AS-389-A      | Directed Research              |
+|        841 |       669 | REL-364-A     | Topics in Asian Religions      |
+|        842 |       782 | ANTH-303-A    | Consumer Sustain:anth Pers     |
+|        843 |       574 | MATH-493-A    | Senior Honors Project          |
+|        844 |       594 | NURS-493-A    | Senior Honors Project          |
+|        845 |       676 | ENG-493-A     | Senior Honors Project          |
+|        846 |       923 | POLS-493-A    | Senior Honors Project          |
+|        847 |       847 | IS-493-A      | Senior Honors Project          |
+|        848 |       576 | REL-493-A     | Senior Honors Project          |
+|        849 |       484 | PSYC-493-A    | Senior Honors Project          |
+|        850 |       846 | LING-493-A    | Senior Honors Project          |
+|        851 |       575 | PHYS-493-A    | Senior Honors Project          |
+|        852 |       536 | CHEM-493-A    | Senior Honors Project          |
+|        853 |       563 | BIO-493-A     | Senior Honors Project          |
+|        854 |       836 | PHIL-493-A    | Senior Honors Project          |
+|        855 |       624 | ENVS-493-A    | Senior Honors Project          |
+|        856 |       868 | HIST-493-A    | Senior Honors Project          |
+|        857 |       688 | MUST-380-A    | Internship                     |
+|        858 |       831 | JOUR-100-A    | News Practicum                 |
+|        859 |       860 | THE-100-A     | Prod Pract:Invitation Game     |
+|        860 |       860 | THE-100-B     | Prod Pract:The Illusion        |
+|        861 |       761 | DAN-100-A     | Perf Pract:Invitation Game     |
+|        862 |       761 | DAN-100-B     | Perf Pract:The Illusion        |
+|        863 |       869 | HIST-395-A    | Independent Study              |
+|        864 |       913 | MUS-356-A     | Electro-Acoustic Music         |
+|        865 |       778 | BIO-295-A     | Directed Study                 |
+|        866 |       748 | ART-295-A     | Directed Study                 |
+|        867 |       623 | COMS-380-A    | Internship                     |
+|        868 |       919 | POLS-375-A    | Directed Readings              |
+|        869 |       920 | POLS-380-A    | Internship                     |
+|        870 |       531 | ANTH-380-A    | Internship                     |
++------------+-----------+---------------+--------------------------------+

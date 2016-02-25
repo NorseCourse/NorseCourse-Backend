@@ -3,9 +3,9 @@
 from API import NorseCourse, API, cnx_pool
 from flask import request
 from flask.ext.restplus import Resource
-from  NorseCourseObjects import ScheduleCreationObject2
+from  API.NorseCourseObjects import ScheduleCreationObject2
 
-import config
+import API.config
 import string
 import time
 import itertools

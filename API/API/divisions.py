@@ -1,6 +1,6 @@
 from API import API, cnx_pool
 from flask.ext.restplus import Resource
-from  NorseCourseObjects import DivisionObject
+from  API.NorseCourseObjects import DivisionObject
 
 @API.route("/divisions")
 class Divisions(Resource):

@@ -2,7 +2,7 @@
 import mysql.connector
 import mysql.connector.pooling
 
-import config
+import API.config
 import string
 
 from flask import Flask, request

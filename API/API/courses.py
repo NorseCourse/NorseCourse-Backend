@@ -1,8 +1,8 @@
 from API import NorseCourse, API, cnx_pool
 from flask import request
 from flask.ext.restplus import Resource
-from  NorseCourseObjects import CourseObject, RequirementObject
-from relevance import relevance
+from  API.NorseCourseObjects import CourseObject, RequirementObject
+from API.relevance import relevance
 
 
 def getRequirements(course_id):

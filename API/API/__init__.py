@@ -5,7 +5,7 @@ from flask.ext.restplus import Api
 import mysql.connector
 import mysql.connector.pooling
 
-import config
+from API import config
 
 # Grab database properties from the config file
 db_properties = config.db_pool_config

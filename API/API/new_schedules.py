@@ -3,7 +3,7 @@
 from API import NorseCourse, API, cnx_pool
 from flask import request
 from flask.ext.restplus import Resource
-from  NorseCourseObjects import ScheduleCreationObject
+from  NorseCourseObjects import ScheduleCreationObject2
 
 import config
 import string
@@ -14,8 +14,8 @@ import datetime
 import random
 
 
-@API.route("/schedules")
-class ScheduleCreation(Resource):
+@API.route("/schedules2")
+class ScheduleCreation2(Resource):
 
 	# Function that takes a class time and a check time
 	# it checks if the check time is in between start and end time of class
@@ -127,20 +127,23 @@ class ScheduleCreation(Resource):
 								return True
 
 
-		sect_times = []
-		for sect in sections:
-			sect_times.append(sect[0])
+		if time_range != []:
+			sect_times = []
+			for sect in sections:
+				sect_times.append(sect[0])
 
-		valid_starts = []
-		valid_ends = []
-		for x in ['2','3','4','5','6']:
-			valid_starts.append(time.strptime(time_range[0]+' '+x, '%H:%M %w'))
-			valid_ends.append(time.strptime(time_range[1]+' '+x, '%H:%M %w'))
+			valid_starts = []
+			valid_ends = []
+			for x in ['2','3','4','5','6']:
+				valid_starts.append(time.strptime(time_range[0]+' '+x, '%H:%M %w'))
+				valid_ends.append(time.strptime(time_range[1]+' '+x, '%H:%M %w'))
 
 
-		# returns False if there was no time conflict was found in schedule, return False meaning its a valid schedule time wise
-		# returns True if the schedule does not fit inbetween req time block, meaning its a bad schedule
-		return validTimes(valid_starts,valid_ends,sect_times)
+			# returns False if there was no time conflict was found in schedule, return False meaning its a valid schedule time wise
+			# returns True if the schedule does not fit inbetween req time block, meaning its a bad schedule
+			return self.validTimes(valid_starts,valid_ends,sect_times)
+
+		return False
 
 
 	# function takes a schedule (list of section ids)
@@ -304,7 +307,7 @@ class ScheduleCreation(Resource):
 
 
 	# Function that takes a schedule and returns the amount of credits
-	def getNumCredits(self, best):
+	def getNumCredits(self, schedule):
 		# default to no credits
 		credits = 0
 
@@ -359,7 +362,7 @@ class ScheduleCreation(Resource):
 			return False
 
 		# check if there are too many or too little credits
-		if self.checkBadCredits(schedule,maxCredits,minNumCredits):
+		if self.checkBadCredits(schedule,maxCredits,minCredits):
 			# there was a bad amount of credits
 			return False
 
@@ -679,6 +682,8 @@ class ScheduleCreation(Resource):
 			best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 			if best != False:
 
+				numCredits = self.getNumCredits(best)
+
 				# if the best schedule has a valid amount of credits wanted, add schedule
 				if minNumCredits <= numCredits <= maxNumCredits:
 					all_combos += [best]
@@ -827,6 +832,8 @@ class ScheduleCreation(Resource):
 				best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 
 				if len(best) >= len(required):
+
+					numCredits = self.getNumCredits(best)
 
 					# if the best schedule has a valid amount of credits wanted, add schedule
 					if minNumCredits <= numCredits <= maxNumCredits:
@@ -983,11 +990,11 @@ class ScheduleCreation(Resource):
 					current = all_combos[pos]
 
 				if pos < len(all_combos)-1:
-					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos)
+					schedule = ScheduleCreationObject2(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos)
 					schedules.append(schedule.__dict__)
 
 		if schedules == []:
-			s = ScheduleCreationObject([],pos)
+			s = ScheduleCreationObject2([],pos)
 			schedules.append(s.__dict__)
 
 		return (schedules)

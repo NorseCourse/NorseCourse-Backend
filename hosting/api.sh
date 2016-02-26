@@ -24,22 +24,6 @@ echo "${BOLD}git pull${NORMAL}"
 git pull
 echo 
 
-# # Copy the requirements over so any packages the server may need can be installed
-# cp /root/NorseCourse/NorseCourse-Backend/hosting/requirements.txt /var/www/norsecourse.com.api/
-
-# # Install the packages in the apps virtual environment
-# echo "${BOLD}Installing packages for the virtual environment${NORMAL}"
-# cd /var/www/norsecourse.com.api/
-# source API/venv/bin/activate
-# pip install -r requirements.txt
-# deactivate
-# echo
-
-# # Install the packages on the entire server, not sure why, but I found that it was necessary
-# echo "${BOLD}Installing packages system wide${NORMAL}"
-# pip install -r requirements.txt 
-# echo
-
 # Copy the init file over and add the last two lines needed to run in production
 cp /root/NorseCourse/NorseCourse-Backend/API/API/*.py /var/www/norsecourse.com.api/API/
 echo -e "\n" >> /var/www/norsecourse.com.api/API/__init__.py

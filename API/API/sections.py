@@ -133,7 +133,7 @@ class Section(Resource):
 
 		if course != None:
 			id_list = course.split(",")
-			id_list = map(str, id_list)
+			id_list = list(map(str, id_list))
 
 			sectionQuery += " WHERE course_id = %s"
 			for i in range(len(id_list) - 1):
@@ -361,7 +361,7 @@ class Section(Resource):
 
 		if section_id != None:
 			id_list = section_id.split(",")
-			id_list = map(str, id_list)
+			id_list = list(map(str, id_list))
 
 			sectionQuery += " WHERE section_id = %s"
 			for i in range(len(id_list) - 1):

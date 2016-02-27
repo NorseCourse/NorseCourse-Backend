@@ -18,7 +18,7 @@ class GenEds(Resource):
 
 		if gen_ed_abbreviations != None:
 			abbreviation_list = gen_ed_abbreviations.split(",")
-			abbreviation_list = map(str, abbreviation_list)
+			abbreviation_list = list(map(str, abbreviation_list))
 
 			genEdQuery += " WHERE also_fulfills = %s"
 			for i in range(len(abbreviation_list) - 1):

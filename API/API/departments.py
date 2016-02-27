@@ -18,7 +18,7 @@ class Departments(Resource):
 
 		if division_ids != None:
 			id_list = division_ids.split(",")
-			id_list = map(str, id_list)
+			id_list = list(map(str, id_list))
 
 			departmentQuery += " WHERE division_id = %s"
 			for i in range(len(id_list) - 1):

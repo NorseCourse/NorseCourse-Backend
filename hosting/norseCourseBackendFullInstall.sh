@@ -24,7 +24,10 @@ apt-get install -y apache2
 echo "${BOLD}Finished installing Apache2.${NORMAL}"
 echo
 
-echo "${BOLD}Configuring data compression for Apache2...${NORMAL}"
+echo "${BOLD}Configuring global server name and data compression for Apache2...${NORMAL}"
+echo "" >> /etc/apache2/apache2.conf
+echo "# Setting Server Name Globally" >> /etc/apache2/apache2.conf
+echo "serverName localhost" >> /etc/apache2/apache2.conf
 echo "" >> /etc/apache2/apache2.conf
 echo "# mod_deflate configurations" >> /etc/apache2/apache2.conf
 echo "SetOutputFilter DEFLATE" >> /etc/apache2/apache2.conf

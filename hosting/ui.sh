@@ -18,7 +18,7 @@ STARTTIME=$(date +"%Y-%m-%d %H:%M:%S")
 echo "${BOLD}Start Time:${NORMAL}" $STARTTIME
 echo
 
-cd ~/NorseCourse/NorseCourse-UI/
+cd /root/NorseCourse/NorseCourse-UI/
 
 echo "${BOLD}git pull${NORMAL}"
 git pull
@@ -28,13 +28,13 @@ echo
 echo "${BOLD}gulp build${NORMAL}"
 gulp build
 
-cd ~/NorseCourse/NorseCourse-UI/dist/
+# cd /root/NorseCourse/NorseCourse-UI/dist/
 
-cp js/* /usr/share/javascript/norsecoursejs/
-cp -r css /var/www/norsecourse.com/public_html/
-cp -r views /var/www/norsecourse.com/public_html/
-sed -i 's/<script src="\/js\/main.js"><\/script>/<script src="javascript\/norsecoursejs\/main.js"><\/script>/' index.html
-cp index.html /var/www/norsecourse.com/public_html/
+cp /root/NorseCourse/NorseCourse-UI/dist/js/* /usr/share/javascript/norsecoursejs/
+cp -r /root/NorseCourse/NorseCourse-UI/dist/css /var/www/norsecourse.com/public_html/
+cp -r /root/NorseCourse/NorseCourse-UI/dist/views /var/www/norsecourse.com/public_html/
+sed -i 's/<script src="\/js\/main.js"><\/script>/<script src="javascript\/norsecoursejs\/main.js"><\/script>/' /root/NorseCourse/NorseCourse-UI/dist/index.html
+cp /root/NorseCourse/NorseCourse-UI/dist/index.html /var/www/norsecourse.com/public_html/
 
 ENDTIME=$(date +"%Y-%m-%d %H:%M:%S")
 ENDTIMESEC=$(date -d"$ENDTIME" +%s)
@@ -52,5 +52,5 @@ if [ -t 1 ]; then
     echo "${BOLD}UI BUILD IS COMPLETE${NORMAL}"
     echo
 else
-    sendmail "norsecourse16@gmail.com" < ~/NorseCourse/Build/emailUI.txt
+    sendmail "norsecourse16@gmail.com" < /root/NorseCourse/Build/emailUI.txt
 fi

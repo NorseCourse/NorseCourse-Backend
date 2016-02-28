@@ -3,14 +3,6 @@ import config
 import mysql.connector
 import re
 
-def dropDB(cnx, cursor, db_name):
-	try:
-		cursor.execute("DROP DATABASE {}".format(db_name))
-	except mysql.connector.Error as error:
-		print("Failed to delete the database, it doesn't exist yet: {}".format())
-		exit(1)
-
-
 # Create database based on name passed in, or default the 
 # default value which is set as NorseCourse below.
 def createDB(cnx, cursor, db_name):
@@ -61,7 +53,6 @@ db_name = str(input("Enter the name of the database you created earlier (We reco
 
 
 # If requirements are met then create datase and tables.
-dropDB(cnx,cursor,db_name)
 createDB(cnx, cursor, db_name)
 createTables(cnx, cursor, db_name)
 

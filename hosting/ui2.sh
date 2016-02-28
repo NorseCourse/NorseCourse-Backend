@@ -54,5 +54,5 @@ if [ -t 1 ]; then
     echo "${BOLD}UI BUILD IS COMPLETE${NORMAL}"
     echo
 else
-    sendmail "norsecourse16@gmail.com" < ~/NorseCourse/Build/emailUI.txt
+    sendmail "norsecourse16@gmail.com" < /root/NorseCourse/NorseCourse-Backend/hosting/emailUI.txt
 fi

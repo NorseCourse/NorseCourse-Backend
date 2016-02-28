@@ -23,9 +23,9 @@ cd NorseCourse/NorseCourse-Backend/hosting/
 *Test the installation. Enter the servers ip address for the UI or the servers ip address followed colon (:) port-you-chose into a web browser. You can also use the domain name you have one configured. For example, [norsecourse.com](https://norsecourse.com) and [norsecourse.com:5000](https://norsecourse.com:5000)*
 
 
-[comment]: <## Usage>
+[comment]: <##Usage>
 
-[comment]: <TODO: Write usage instructions>
+[comment]: <TODO:WriteUsageInstructions>
 
 
 ## Contributing

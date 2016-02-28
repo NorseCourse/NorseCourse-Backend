@@ -20,7 +20,7 @@ cd NorseCourse/NorseCourse-Backend/hosting/
 ./norseCourseWrapper.sh
 ```
 
-*Test the installation. Enter the servers ip address for the UI or the servers ip address followed colon (:) port-you-chose for the backend into a web browser. You can also use the domain name you have one configured. For example, [norsecourse.com](https://norsecourse.com) and [norsecourse.com:5000](https://norsecourse.com:5000)*
+*Test the installation. Enter the servers ip address for the UI or the servers ip address followed colon (:) port-you-chose for the backend into a web browser. You can also use the domain name if you have one configured. For example, [norsecourse.com](https://norsecourse.com) and [norsecourse.com:5000](https://norsecourse.com:5000)*
 
 
 [comment]: <##Usage>

@@ -50,7 +50,7 @@ cursor = cnx.cursor()
 
 # Ask the user what the database name should be on their system, this is case sensitive.
 # By default, this script is written to give the database a name of NorseCourse if nothind is entered.
-db_name = str(input("Enter a name for the new database (case sensitive), or return for default (NorseCourse): "))
+db_name = str(input("Enter the name of the database you created earlier (We recommended NorseCourse): "))
 
 # Setting the default (NorseCourse) if a database name is not provided.
 # Adding validation to generate a error if the name provided does 

@@ -10,6 +10,7 @@ This section of the project is where to find code responsible for serving APIs u
 3. Install git if it isn't already: `sudo apt-get install -y git`
 4. Execute the following commands and follow on-screen prompts when necessary:
 
+	```
     sudo su
     cd
     mkdir NorseCourse
@@ -17,6 +18,7 @@ This section of the project is where to find code responsible for serving APIs u
     git clone https://github.com/NorseCourse/NorseCourse-Backend.git
     cd NorseCourse/NorseCourse-Backend/hosting/
     ./norseCourseWrapper.sh
+    ```
 
 *Test the installation. Enter the servers ip address for the UI or the servers ip address followed colon (:) port-you-chose into a web browser. You can also use the domain name you have one configured. For example, [norsecourse.com](https://norsecourse.com) and [norsecourse.com:5000](https://norsecourse.com:5000)*
 

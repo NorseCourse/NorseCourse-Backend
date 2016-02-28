@@ -18,8 +18,8 @@ STARTTIME=$(date +"%Y-%m-%d %H:%M:%S")
 echo "${BOLD}Start Time:${NORMAL}" $STARTTIME
 echo
 
-cd root/NorseCourse/NorseCourse-UI/
 echo "${BOLD}git pull${NORMAL}"
+cd /root/NorseCourse/NorseCourse-UI/
 git pull
 echo
 

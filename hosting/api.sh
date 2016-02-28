@@ -48,6 +48,7 @@ echo "Happy Hosting!"
 
 if [ -t 1 ]; then
     echo "${BOLD}API BUILD IS COMPLETE${NORMAL}"
+    echo
 else
     sendmail "norsecourse16@gmail.com" < /root/NorseCourse/NorseCourse-Backend/hosting/emailAPI.txt
 fi

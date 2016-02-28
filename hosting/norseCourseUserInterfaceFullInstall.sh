@@ -110,7 +110,7 @@ echo "${BOLD}Creating cronjob for nightly build at 3:30 AM, this can be altered 
 touch /root/NorseCourse/NorseCourse-Backend/hosting/emailUI.txt
 touch /root/NorseCourse/NorseCourse-Backend/hosting/tempCron
 crontab -l > /root/NorseCourse/NorseCourse-Backend/hosting/tempCron
-echo "30 3 * * * /root/NorseCourse/NorseCourse-Backend/hosting/api2.sh > /root/NorseCourse/NorseCourse-Backend/hosting/emailUI.txt" >> /root/NorseCourse/NorseCourse-Backend/hosting/tempCron
+echo "30 3 * * * /root/NorseCourse/NorseCourse-Backend/hosting/ui2.sh > /root/NorseCourse/NorseCourse-Backend/hosting/emailUI.txt" >> /root/NorseCourse/NorseCourse-Backend/hosting/tempCron
 crontab /root/NorseCourse/NorseCourse-Backend/hosting/tempCron
 rm /root/NorseCourse/NorseCourse-Backend/hosting/tempCron
 echo "${BOLD}Finished creating cronjob for nightly build at 3:30 AM.${NORMAL}"

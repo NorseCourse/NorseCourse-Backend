@@ -52,6 +52,7 @@ echo "Happy Hosting!"
 
 if [ -t 1 ]; then
     echo "${BOLD}UI BUILD IS COMPLETE${NORMAL}"
+    echo
 else
     sendmail "norsecourse16@gmail.com" < ~/NorseCourse/Build/emailUI.txt
 fi

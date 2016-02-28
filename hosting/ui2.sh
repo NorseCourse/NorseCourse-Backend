@@ -29,7 +29,7 @@ npm install --unsafe-perm
 apiRootNamespaceClean=""
 while IFS='' read -r line || [[ -n "$line" ]]; do
 	apiRootNamespaceClean=$line
-done < /root/apiWebAddress.txt
+done < /root/NorseCourse/NorseCourse-Backend/hosting/apiWebAddress.txt
 sed -i "s/angular.module('norseCourse').constant('apiUrl', 'https:\/\/norsecourse.com:5000\/api');/angular.module('norseCourse').constant('apiUrl', '$apiRootNamespaceClean');/" /root/NorseCourse/NorseCourse-UI/src/app/constants.js
 gulp build
 cp -r /root/NorseCourse/NorseCourse-UI/dist/js/ /var/www/norsecourse.com/public_html/
@@ -53,5 +53,5 @@ echo "Happy Hosting!"
 if [ -t 1 ]; then
     echo "${BOLD}UI BUILD IS COMPLETE${NORMAL}"
 else
-    sendmail "schabl01@luther.edu,norsecourse16@gmail.com" < ~/NorseCourse/Build/emailUI.txt
+    sendmail "norsecourse16@gmail.com" < ~/NorseCourse/Build/emailUI.txt
 fi

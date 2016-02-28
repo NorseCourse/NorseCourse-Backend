@@ -45,7 +45,7 @@ npm install --unsafe-perm
 echo -n "Enter root namespace web addres the API, for example, 'http://norsecourse.com:5000/api' then press [ENTER]: "
 read apiRootNamespaceDirty
 apiRootNamespaceClean=${apiRootNamespaceDirty//\//\\\/}
-echo "$apiRootNamespaceClean" > /root/apiWebAddress.txt
+echo "$apiRootNamespaceClean" > /root/NorseCourse/NorseCourse-Backend/hosting/apiWebAddress.txt
 sed -i "s/angular.module('norseCourse').constant('apiUrl', 'https:\/\/norsecourse.com:5000\/api');/angular.module('norseCourse').constant('apiUrl', '$apiRootNamespaceClean');/" /root/NorseCourse/NorseCourse-UI/src/app/constants.js
 gulp build
 mkdir /var/www/norsecourse.com

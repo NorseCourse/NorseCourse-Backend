@@ -44,7 +44,7 @@ cd NorseCourse/NorseCourse-Backend/hosting/
 
 ## Credits
 
-* Blaise Schaeffer, Luther College '16
+* [Blaise Schaeffer](http://blaise2s.com), Luther College '16
 * Grant Barnes, Luther College '16
 * John Doorenbos, Luther College '16
 * Michael Moore, Luther College '16

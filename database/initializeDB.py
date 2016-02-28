@@ -3,6 +3,13 @@ import config
 import mysql.connector
 import re
 
+def dropDB(cnx, cursor, db_name):
+	try:
+		cursor.execute("DROP DATABASE {}".format(db_name))
+	except mysql.connector.Error as error:
+		print("Failed to delete the database, it doesn't exist yet: {}".format())
+		exit(1)
+
 
 # Create database based on name passed in, or default the 
 # default value which is set as NorseCourse below.
@@ -52,16 +59,9 @@ cursor = cnx.cursor()
 # By default, this script is written to give the database a name of NorseCourse if nothind is entered.
 db_name = str(input("Enter the name of the database you created earlier (We recommended NorseCourse): "))
 
-# Setting the default (NorseCourse) if a database name is not provided.
-# Adding validation to generate a error if the name provided does 
-# not comply with the rules for how a MySQL database can be named.
-if db_name == "":
-	db_name = "NorseCourse"
-else:
-	print("Since you did not use the defalt database name, be sure to change the database proberty under db_pool_config in the config.py file in order for your installation to run correctly")
-
 
 # If requirements are met then create datase and tables.
+dropDP(cns,cursor,db_name)
 createDB(cnx, cursor, db_name)
 createTables(cnx, cursor, db_name)
 

@@ -61,7 +61,7 @@ db_name = str(input("Enter the name of the database you created earlier (We reco
 
 
 # If requirements are met then create datase and tables.
-dropDB(cns,cursor,db_name)
+dropDB(cnx,cursor,db_name)
 createDB(cnx, cursor, db_name)
 createTables(cnx, cursor, db_name)
 

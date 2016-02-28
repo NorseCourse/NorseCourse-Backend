@@ -37,9 +37,9 @@ cd NorseCourse/NorseCourse-Backend/hosting/
 5. Submit a pull request :D
 
 
-[comment]: <> (## History)
+[comment]: <##History>
 
-[comment]: <> (TODO: Write history)
+[comment]: <TODO:WriteHistory> 
 
 
 ## Credits
@@ -50,6 +50,6 @@ cd NorseCourse/NorseCourse-Backend/hosting/
 * Michael Moore, Luther College '16
 
 
-[comment]: <> (## License)
+[comment]: <##License>
 
-[comment]: <> (TODO: Write license)
+[comment]: <TODO:WriteLicense>

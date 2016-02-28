@@ -9,7 +9,7 @@ else
     NORMAL=$""
 fi
 
-echo "Subject: NorseCourse API production build complete"
+echo "Subject: NorseCourse API Production Build Complete"
 echo
 echo "BUILD LOG"
 echo "-------------------------------------------------"

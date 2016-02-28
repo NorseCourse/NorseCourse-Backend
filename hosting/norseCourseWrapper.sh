@@ -1,0 +1,2 @@
+./norseCourseBackendFullInstall.sh
+./norseCourseUserInterfaceFullInstall.sh

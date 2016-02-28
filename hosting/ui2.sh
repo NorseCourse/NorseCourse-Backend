@@ -30,9 +30,7 @@ apiRootNamespaceClean=""
 while IFS='' read -r line || [[ -n "$line" ]]; do
 	apiRootNamespaceClean=$line
 done < /root/apiWebAddress.txt
-echo $apiRootNamespaceClean
 sed -i "s/angular.module('norseCourse').constant('apiUrl', 'https:\/\/norsecourse.com:5000\/api');/angular.module('norseCourse').constant('apiUrl', '$apiRootNamespaceClean');/" /root/NorseCourse/NorseCourse-UI/src/app/constants.js
-echo "sed -i \"s/angular.module('norseCourse').constant('apiUrl', 'https:\/\/norsecourse.com:5000\/api');/angular.module('norseCourse').constant('apiUrl', '$apiRootNamespaceClean');/\" /root/NorseCourse/NorseCourse-UI/src/app/constants.js"
 gulp build
 cp -r /root/NorseCourse/NorseCourse-UI/dist/js/ /var/www/norsecourse.com/public_html/
 cp -r /root/NorseCourse/NorseCourse-UI/dist/css/ /var/www/norsecourse.com/public_html/

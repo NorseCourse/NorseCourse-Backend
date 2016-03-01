@@ -31,6 +31,20 @@ def populateDB(cursor, data):
 
 
 		########################################################################
+		# iterrate through all rows in data to look for section title duplicates
+		########################################################################
+
+		course_sects_dic = {}
+		for idx,row in data.iterrows():
+			if row["c_id"] not in course_sects_dic:
+				course_sects_dic[row["c_id"]] = [str(row['section_title'])]
+			else:
+				temp = str(row['section_title'])
+				if temp not in course_sects_dic[row["c_id"]]:
+					course_sects_dic[row["c_id"]].append(temp)
+
+
+		########################################################################
 		# iterrate through all rows in data
 		########################################################################
 		for idx,row in data.iterrows():
@@ -73,7 +87,8 @@ def populateDB(cursor, data):
 
 			########################################################################
 			# Courses table
-			########################################################################
+			#######################################################################
+
 			# if course not already added to database
 			if row['c_id'] not in courses:
 				# add course to check set
@@ -88,16 +103,29 @@ def populateDB(cursor, data):
 				for (department_id) in cursor:
 					dept_id = int(department_id[0])
 
+				if len(course_sects_dic[row["c_id"]]) > 1:
 
-				# SQL insert statement of Courses
-				insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(dept_id)s)"
-				cursor.execute(insert_course,{'cid':str(row['c_id']),
-												'desc':str(row['course_description']),
-												'same_as':str(row['same_as']),
-												'number':str(row['section_name']),
-												'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
-												'dept_id':str(dept_id)
-												})	
+					# SQL insert statement of Courses
+					insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,short_title,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(short_title)s,%(dept_id)s)"
+					cursor.execute(insert_course,{'cid':str(row['c_id']),
+													'desc':str(row['course_description']),
+													'same_as':str(row['same_as']),
+													'number':str(row['section_name']),
+													'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
+													'short_title':"Section Titles Vary",
+													'dept_id':str(dept_id)
+													})	
+				else:
+					# SQL insert statement of Courses
+					insert_course = "INSERT INTO Courses (course_id,description,same_as,number,name,short_title,department_id) VALUES (%(cid)s,%(desc)s,%(same_as)s,%(number)s,%(name)s,%(short_title)s,%(dept_id)s)"
+					cursor.execute(insert_course,{'cid':str(row['c_id']),
+													'desc':str(row['course_description']),
+													'same_as':str(row['same_as']),
+													'number':str(row['section_name']),
+													'name':(str(row['department_abbreviation']) + " " + str(row['course_num'])),
+													'short_title':str(row['section_title']),
+													'dept_id':str(dept_id)
+													})	
 
 
 

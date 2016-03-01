@@ -53,6 +53,7 @@ def buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevant
 	for result in cursor:
 		# Temp object for storing the course info as the fields can be passed in in any order.
 		tempObj = {
+			"short_title": None,
 			"course_id": None,
 			"description": None,
 			"same_as": None,
@@ -82,9 +83,9 @@ def buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevant
 			recommendations = getRecommendations(tempObj["course_id"])
 
 		if showCourseId:
-			course = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+			course = CourseObject(tempObj["short_title"], tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
 		else:
-			course = CourseObject(None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+			course = CourseObject(tempObj["short_title"], None, tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
 
 		courses.append(course.__dict__)
 
@@ -95,6 +96,7 @@ def buildCoursesJSON(cursor, coursesTerms, showRelevance, relevantNums, relevant
 
 
 coursesDict = {
+	"title": "short_title",
 	"courseId": "course_id",
 	"description": "description",
 	"sameAs": "same_as",
@@ -218,7 +220,7 @@ class Courses(Resource):
 		fields = request.args.get("fields")
 		if fields == None:
 			showCourseId = True
-			fields = ["courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
+			fields = ["title", "courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
 		else:
 			fields = fields.split(",")
 			if "courseId" not in fields and ("relevance" in fields or "recommendations" in fields or "requirements" in fields):

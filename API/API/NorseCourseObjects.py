@@ -22,7 +22,8 @@ class GenEdObject(object):
 
 # What a course object should contain
 class CourseObject(object):
-	def __init__(self, course_id = None, description = None, same_as = None, name = None, department_id = None, relevance = None, requirements = None, recommendations = None):
+	def __init__(self, title = None, course_id = None, description = None, same_as = None, name = None, department_id = None, relevance = None, requirements = None, recommendations = None):
+		self.title = title
 		self.courseId = course_id
 		self.description = description
 		self.sameAs = same_as

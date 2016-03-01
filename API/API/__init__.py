@@ -14,7 +14,7 @@ cnx_pool = mysql.connector.pooling.MySQLConnectionPool(**db_properties)
 
 # Instantiate the Flask applicaation and specify properties for Swagger.io.
 app = Flask(__name__)
-version = "0.0"
+version = "1.0"
 title = "NorseCourse"
 description = "The NorseCourse API"
 terms_url = "We need to figuure these out!"

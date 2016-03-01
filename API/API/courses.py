@@ -301,7 +301,7 @@ class Courses(Resource):
 		# Get the URL params
 		fields = request.args.get("fields")
 		if fields == None:
-			fields = ["courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
+			fields = ["title","courseId", "description", "sameAs", "name", "departmentId", "requirements", "recommendations", "relevance"]
 		else:
 			fields = fields.split(",")
 
@@ -313,6 +313,7 @@ class Courses(Resource):
 
 		# Te,p object for storing the course info as the fields can be passed in in any order.
 		tempObj = {
+			"short_title": None,
 			"course_id": None,
 			"description": None,
 			"same_as": None,
@@ -366,5 +367,5 @@ class Courses(Resource):
 		cnx.close()
 
 		# Build the object to be returned
-		returnCourse = CourseObject(tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
+		returnCourse = CourseObject(tempObj["short_title"], tempObj["course_id"], tempObj["description"], tempObj["same_as"], tempObj["name"], tempObj["department_id"], relevance, requirements, recommendations)
 		return returnCourse.__dict__

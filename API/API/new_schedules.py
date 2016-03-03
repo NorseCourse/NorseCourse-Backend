@@ -337,6 +337,7 @@ class ScheduleCreation2(Resource):
 	# returns True schedule if it is valid, and False if not
 	def verify(self,schedule, maxCredits, minCredits,time_range):
 
+		print(schedule, maxCredits, minCredits,time_range)
 		# checks if there is a lab in schedule
 		if self.checkLab(schedule):
 			# trys to add lab to schedule
@@ -827,8 +828,15 @@ class ScheduleCreation2(Resource):
 				best = required+preferred
 
 				# remove courses from best until no conflict.
-				while self.verify(best, maxNumCredits,minNumCredits,req_time_block) == False:
+				while self.verify(best, maxNumCredits,minNumCredits,req_time_block) == False and len(best) >=1:
 					best = best[:-1]
+					if len(best) == len(required):
+						error = "There was a conflict with required courses/sections"
+						break
+				if len(best) == 0:
+					error = "There was a conflict with required courses/sections"
+					best = []
+					break
 
 				best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 

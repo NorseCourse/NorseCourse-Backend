@@ -394,6 +394,7 @@ class ScheduleCreation2(Resource):
 	# function that takes parameters and returns JSON schedule
 	def get(self):
 
+		# initalize error message
 		error = "No errors"
 
 		#######################################################
@@ -596,7 +597,6 @@ class ScheduleCreation2(Resource):
 		# list of (lists of sections for a given course)
 		lst = []
 
-
 		# Add all required setions
 		for sect in required_sections:
 			lst.append([sect])
@@ -626,9 +626,8 @@ class ScheduleCreation2(Resource):
 			cnx.close()
 
 
-
-		# Add all required setions
-		for sect in required_sections:
+		# Add all preferred setions
+		for sect in preferred_sections:
 			lst.append([sect])
 
 
@@ -974,6 +973,9 @@ class ScheduleCreation2(Resource):
 
 							all_combos += list(itertools.product(*combo))
 
+				else:
+					error = "There was a conflict with required courses/sections"
+
 
 		# shuffle list of all potential schedules
 		# set seed so it is the same everytime
@@ -996,7 +998,7 @@ class ScheduleCreation2(Resource):
 					schedules.append(schedule.__dict__)
 
 		if schedules == []:
-			s = ScheduleCreationObject2([],pos,error)
+			s = ScheduleCreationObject2([],pos,"No valid schedules were found")
 			schedules.append(s.__dict__)
 
 		return (schedules)

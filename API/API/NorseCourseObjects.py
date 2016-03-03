@@ -95,6 +95,7 @@ class ScheduleCreationObject(object):
 
 # Get potential schedules
 class ScheduleCreationObject2(object):
-	def __init__(self, schedule = None, index=None):
+	def __init__(self, schedule = None, index=None,error=None):
 		self.schedule = schedule
 		self.index = index
+		self.error = error

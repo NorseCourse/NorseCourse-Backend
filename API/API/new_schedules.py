@@ -394,6 +394,8 @@ class ScheduleCreation2(Resource):
 	# function that takes parameters and returns JSON schedule
 	def get(self):
 
+		error = "No errors"
+
 		#######################################################
 		# checks if limit is empty
 		lim = request.args.get("limit")
@@ -990,11 +992,11 @@ class ScheduleCreation2(Resource):
 					current = all_combos[pos]
 
 				if pos < len(all_combos)-1:
-					schedule = ScheduleCreationObject2(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos)
+					schedule = ScheduleCreationObject2(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos,error)
 					schedules.append(schedule.__dict__)
 
 		if schedules == []:
-			s = ScheduleCreationObject2([],pos)
+			s = ScheduleCreationObject2([],pos,error)
 			schedules.append(s.__dict__)
 
 		return (schedules)

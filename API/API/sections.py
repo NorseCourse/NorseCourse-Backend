@@ -154,7 +154,7 @@ class Section(Resource):
 
 			sectIDS = []
 			for (section_id) in cursor:
-				sectIDS.append(section_id)
+				sectIDS.append(section_id[0])
 
 
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
@@ -182,6 +182,9 @@ class Section(Resource):
 				for i in range(len(sectIDS) - 1):
 					sectionQuery += " OR section_id = %s"
 
+				print('sect',sectIDS)
+				print('id',id_list)
+				print()
 				id_list = sectIDS
 
 
@@ -431,7 +434,7 @@ class Section(Resource):
 
 			sectIDS = []
 			for (section_id) in cursor:
-				sectIDS.append(section_id)
+				sectIDS.append(section_id[0])
 
 
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"

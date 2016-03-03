@@ -1,4 +1,5 @@
-from API import API, cnx_pool
+from API import NorseCourse, API, cnx_pool
+from flask import request
 from flask.ext.restplus import Resource
 from  API.NorseCourseObjects import FacultyObjectID
 

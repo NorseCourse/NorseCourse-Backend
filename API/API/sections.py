@@ -172,17 +172,17 @@ class Section(Resource):
 
 			if check:
 				sectionQuery += " and WHERE section_id = %s"
-				for i in range(len(id_list2) - 1):
+				for i in range(len(sectIDS) - 1):
 					sectionQuery += " OR section_id = %s"
 
-				id_list += id_list2
+				id_list += sectIDS
 		else:
 			if check:
 				sectionQuery += " WHERE section_id = %s"
-				for i in range(len(id_list2) - 1):
+				for i in range(len(sectIDS) - 1):
 					sectionQuery += " OR section_id = %s"
 
-				id_list = id_list2
+				id_list = sectIDS
 
 
 		cnx = cnx_pool.get_connection()
@@ -449,17 +449,17 @@ class Section(Resource):
 
 			if check:
 				sectionQuery += " and WHERE section_id = %s"
-				for i in range(len(id_list2) - 1):
+				for i in range(len(sectIDS) - 1):
 					sectionQuery += " OR section_id = %s"
 
-				id_list += id_list2
+				id_list += sectIDS
 		else:
 			if check:
 				sectionQuery += " WHERE section_id = %s"
 				for i in range(len(id_list2) - 1):
 					sectionQuery += " OR section_id = %s"
 
-				id_list = id_list2
+				id_list = sectIDS
 
 
 		cnx = cnx_pool.get_connection()

@@ -38,4 +38,4 @@ def after_request(response):
     return response
 
 # Import files responsible for each API.
-from API import courses, departments, divisions, genEds, schedules, sections, terms
+from API import courses, departments, divisions, genEds, schedules, sections, terms, faculty

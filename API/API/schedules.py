@@ -3,7 +3,7 @@
 from API import NorseCourse, API, cnx_pool
 from flask import request
 from flask.ext.restplus import Resource
-from  API.NorseCourseObjects import ScheduleCreationObject2
+from  API.NorseCourseObjects import ScheduleCreationObject
 
 from API import config
 import string
@@ -14,8 +14,8 @@ import datetime
 import random
 
 
-@API.route("/schedules2")
-class ScheduleCreation2(Resource):
+@API.route("/schedules")
+class ScheduleCreation(Resource):
 
 	# Function that takes a class time and a check time
 	# it checks if the check time is in between start and end time of class
@@ -1001,13 +1001,13 @@ class ScheduleCreation2(Resource):
 					current = all_combos[pos]
 
 				if pos <= len(all_combos)-1:
-					schedule = ScheduleCreationObject2(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos,error)
+					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos,error)
 					schedules.append(schedule.__dict__)
 
 		if schedules == []:
 			if error == "No errors":
 				error = "No valid schedules can be made from the given criteria"
-			s = ScheduleCreationObject2([],pos,error)
+			s = ScheduleCreationObject([],pos,error)
 			schedules.append(s.__dict__)
 
 		return (schedules)

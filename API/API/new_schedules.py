@@ -366,7 +366,6 @@ class ScheduleCreation2(Resource):
 			# there was a bad amount of credits
 			return False
 
-
 		# it was a valid schedule, so return the schedule
 		return schedule
 
@@ -674,6 +673,7 @@ class ScheduleCreation2(Resource):
 
 		# for each possible schedule with req/preferred
 		for option in possible_sections:
+
 
 			best = option
 			required = best[:(len(required_courses) + len(required_sections))]
@@ -993,12 +993,14 @@ class ScheduleCreation2(Resource):
 					pos += 1
 					current = all_combos[pos]
 
-				if pos < len(all_combos)-1:
+				if pos <= len(all_combos)-1:
 					schedule = ScheduleCreationObject2(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos,error)
 					schedules.append(schedule.__dict__)
 
 		if schedules == []:
-			s = ScheduleCreationObject2([],pos,"No valid schedules were found")
+			if error == "No errors":
+				error = "No valid schedules can be made from the given criteria"
+			s = ScheduleCreationObject2([],pos,error)
 			schedules.append(s.__dict__)
 
 		return (schedules)

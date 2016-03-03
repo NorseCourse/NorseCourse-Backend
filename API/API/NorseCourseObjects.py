@@ -57,9 +57,10 @@ class SectionObject(object):
 
 # What a faculty object should contain
 class FacultyObject(object):
-	def __init__(self, first_initial = None, last_name = None):
+	def __init__(self, first_initial = None, last_name = None, faculty_id = None):
 		self.firstInitial = first_initial
 		self.lastName = last_name
+		self.faculty_id = faculty_id
 
 # What a sectionMeeting object should contain
 class SectionMeetingObject(object):
@@ -93,10 +94,3 @@ class ScheduleCreationObject(object):
 		self.schedule = schedule
 		self.index = index
 		self.error = error
-
-# What a faculty object should contain
-class FacultyObjectID(object):
-	def __init__(self, first_initial = None, last_name = None,faculty_id=None):
-		self.firstInitial = first_initial
-		self.lastName = last_name
-		self.faculty_id = faculty_id

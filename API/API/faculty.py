@@ -1,7 +1,7 @@
 from API import NorseCourse, API, cnx_pool
 from flask import request
 from flask.ext.restplus import Resource
-from  API.NorseCourseObjects import FacultyObjectID
+from  API.NorseCourseObjects import FacultyObject
 
 @API.route("/faculty")
 class Faculty(Resource):
@@ -36,7 +36,7 @@ class Faculty(Resource):
 
 		faculty = []
 		for (faculty_id, first_initial,last_name) in cursor:
-			f = FacultyObjectID(str(first_initial), str(last_name),faculty_id)
+			f = FacultyObject(str(first_initial), str(last_name),faculty_id)
 			faculty.append(f.__dict__)
 
 		cursor.close()

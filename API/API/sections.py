@@ -10,7 +10,7 @@ class Section(Resource):
 
 	# Returns JSON dictionary of faculty for a given section
 	def getFaculty(self, section_id):
-		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
+		facultyQuery = "SELECT first_initial, last_name, Faculty.faculty_id FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
@@ -18,11 +18,12 @@ class Section(Resource):
 		cursor.execute(facultyQuery % str(section_id))
 
 		profs = []
-		for (first_initial, last_name) in cursor:
+		for (first_initial, last_name, faculty_id) in cursor:
 			fi = first_initial.split(',')
 			ln = last_name.split(',')
+			fid = faculty_id
 			for p in range(len(ln)):
-				faculty = FacultyObject(fi[p], ln[p])
+				faculty = FacultyObject(fi[p], ln[p],fid)
 				profs.append(faculty.__dict__)
 
 		cursor.close()
@@ -238,7 +239,7 @@ class Section(Resource):
 
 	# Returns JSON dictionary of faculty for a given section
 	def getFaculty(self, section_id):
-		facultyQuery = "SELECT first_initial, last_name FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
+		facultyQuery = "SELECT first_initial, last_name, Faculty.faculty_id FROM Faculty, FacultyAssignments WHERE Faculty.faculty_id = FacultyAssignments.faculty_id AND section_id = %s"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
@@ -246,11 +247,12 @@ class Section(Resource):
 		cursor.execute(facultyQuery % str(section_id))
 
 		profs = []
-		for (first_initial, last_name) in cursor:
+		for (first_initial, last_name, faculty_id) in cursor:
 			fi = first_initial.split(',')
 			ln = last_name.split(',')
+			fid = faculty_id
 			for p in range(len(ln)):
-				faculty = FacultyObject(fi[p], ln[p])
+				faculty = FacultyObject(fi[p], ln[p],fid)
 				profs.append(faculty.__dict__)
 
 		cursor.close()

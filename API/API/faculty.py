@@ -28,7 +28,10 @@ class Faculty(Resource):
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
 
-		cursor.execute(facultyQuery)
+		if len(id_list) > 0:
+			cursor.execute(facultyQuery, tuple(id_list))
+		else:
+			cursor.execute(facultyQuery)
 
 		faculty = []
 		for (faculty_id, first_initial,last_name) in cursor:

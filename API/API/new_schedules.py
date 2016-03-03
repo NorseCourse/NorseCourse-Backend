@@ -337,7 +337,6 @@ class ScheduleCreation2(Resource):
 	# returns True schedule if it is valid, and False if not
 	def verify(self,schedule, maxCredits, minCredits,time_range):
 
-		print(schedule, maxCredits, minCredits,time_range)
 		# checks if there is a lab in schedule
 		if self.checkLab(schedule):
 			# trys to add lab to schedule

@@ -60,7 +60,7 @@ class FacultyObject(object):
 	def __init__(self, first_initial = None, last_name = None, faculty_id = None):
 		self.firstInitial = first_initial
 		self.lastName = last_name
-		self.faculty_id = faculty_id
+		self.facultyId = faculty_id
 
 # What a sectionMeeting object should contain
 class SectionMeetingObject(object):

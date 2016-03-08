@@ -383,7 +383,7 @@ class ScheduleCreation(Resource):
 			"maxCredits": "Provide an integer for maximum number of credits wanted, defaults to 18",
 			"index": "Provide an integer of last location in schedule list, if known, defaults to -1",
 			"limit":"Provide a max amount of schdedules wanted to be returned, defaults to 20",
-			"requiredTimeBlock":"Provide comma seperated times, start time and end time Example: (9:00-2:00), defaults to any time allowed",
+			"requiredTimeBlock":"Provide comma seperated times, start time and end time Example: (9:00,2:00), defaults to any time allowed",
 			"requiredSections": "Provide a comma separated list of section IDs that are required in schedule, defaults to nothing",
 			"preferredSections": "Provide a comma separated list of section IDs that are preferred in schedule, defaults to nothing.  Allow one per course."
 		}

@@ -406,69 +406,21 @@ class Section(Resource):
 			for i in f:
 				fields.append(str(i).replace(" ",""))
 
-
-		
-		facultyQuery = "SELECT section_id from FacultyAssignments"
-
-		faculty_ids = request.args.get("facultyId")
-		id_list2 = []
-
-		check = False
-		if faculty_ids != None:
-			check = True
-			id_list2 = faculty_ids.split(",")
-			id_list2 = list(map(str, id_list2))
-
-			facultyQuery += " WHERE faculty_id = %s"
-			for i in range(len(id_list2) - 1):
-				facultyQuery += " OR faculty_id = %s"
-
-			cnx = cnx_pool.get_connection()
-			cursor = cnx.cursor()
-
-
-			if len(id_list2) > 0:
-				cursor.execute(facultyQuery, tuple(id_list2))
-			else:
-				cursor.execute(facultyQuery)
-
-			sectIDS = []
-			for (section_id) in cursor:
-				sectIDS.append(section_id[0])
-
-
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		
-		course = request.args.get("courses")
+		section_id = sectionId
 		id_list = []
 
-		if course != None:
-			id_list = course.split(",")
+		if section_id != None:
+			id_list = section_id.split(",")
 			id_list = list(map(str, id_list))
 
-			sectionQuery += " WHERE course_id = %s"
+			sectionQuery += " WHERE section_id = %s"
 			for i in range(len(id_list) - 1):
-				sectionQuery += " OR course_id = %s"
-
-			if check:
-				sectionQuery += " and WHERE section_id = %s"
-				for i in range(len(sectIDS) - 1):
-					sectionQuery += " OR section_id = %s"
-
-				id_list += sectIDS
-		else:
-			if check:
-				sectionQuery += " WHERE section_id = %s"
-				for i in range(len(id_list2) - 1):
-					sectionQuery += " OR section_id = %s"
-
-				id_list = sectIDS
-
+				sectionQuery += " OR section_id = %s"
 
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
-
-
 
 		if len(id_list) > 0:
 			cursor.execute(sectionQuery, tuple(id_list))

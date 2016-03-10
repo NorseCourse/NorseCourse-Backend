@@ -10,8 +10,8 @@ courses = {'EDUC-352-A': [826, 556], 'HLTH-126-A': [682, 665], 'HLTH-490-A': [52
 
 
 url_dict = {
-	'minNumCredits': 12,
-	'maxNumCredits': 18,
+	'minNumCredits': None,
+	'maxNumCredits': None,
 	'requiredCourses': None,
 	'preferredCourses': None,
 	'requiredSections': None,
@@ -34,16 +34,68 @@ url_extenstion = {
 	'times':"requiredTimeBlock="
 }
 
-requiredCourses = "MATH-328-A,CS-353-A,PHIL-110-B"
 
 
-temp = requiredCourses.split(",")
-lst = []
-for c in temp:
-	lst.append(courses[c][1])
 
-url_dict['requiredCourses'] = lst
+# put in values
 
+reqC = "MATH-328-A,CS-353-A"
+prefC = ""
+reqS = ""
+prefS = ""
+reqG = ['HB','HE']
+prefG = ""
+minC = 12
+maxC =18
+
+
+
+
+
+
+requiredCourses = reqC.split(",")
+requiredCourses2 = ""
+if requiredCourses != ['']:
+	for c in requiredCourses:
+		requiredCourses2 += str(courses[c][1]) + "%2C"
+	url_dict['requiredCourses'] = requiredCourses2[:-3]
+
+preferredCourses = prefC.split(",")
+preferredCourses2 = ""
+if preferredCourses != ['']:
+	for c in preferredCourses:
+		preferredCourses2 += str(courses[c][1]) + "%2C"
+	url_dict['preferredCourses'] = preferredCourses2[:-3]
+
+requiredSections = reqS.split(",")
+requiredSections2 = ""
+if requiredSections != ['']:
+	for c in requiredSections:
+		requiredSections2 += str(courses[c][0]) + "%2C"
+	url_dict['requiredSections'] = requiredSections2[:-3]
+
+preferredSections = prefS.split(",")
+preferredSections2 = ""
+if preferredSections != ['']:
+	for c in preferredSections:
+		preferredSections2 += str(courses[c][0]) + "%2C"
+	url_dict['preferredSections'] = preferredSections2[:-3]
+
+if prefG != "":
+	url_dict['preferredGenEds'] = prefG
+if reqG != "":
+
+	url_dict['requiredGenEds'] = reqG
+url_dict['minNumCredits'] = minC
+url_dict['maxNumCredits'] = maxC
+
+
+
+######################################################################
+######################################################################
+############################# Build URL ##############################
+######################################################################
+######################################################################
 
 url = "https://norsecourse.com:5000/api/schedules?" 
 
@@ -59,9 +111,7 @@ for thing in url_dict:
 		elif thing == "times":
 			url += str(url_dict[thing][0]) + "%3A00%2C" + str(url_dict[thing][1]) + "%3A00"
 		else:
-			url += str(url_dict[thing][0])
-			for x in range(len(url_dict[thing])-1):
-				url += "%2C" + str(url_dict[thing][x+1])
+			url += str(url_dict[thing])
 
 
 

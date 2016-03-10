@@ -39,12 +39,12 @@ url_extenstion = {
 
 # put in values
 
-reqC = "MATH-328-A,CS-353-A"
-prefC = ""
-reqS = ""
-prefS = ""
+reqC = ["MATH-328-A","CS-353-A"]
+prefC = []
+reqS = []
+prefS = []
 reqG = ['HB','HE']
-prefG = ""
+prefG = []
 minC = 12
 maxC =18
 
@@ -53,39 +53,41 @@ maxC =18
 
 
 
-requiredCourses = reqC.split(",")
-requiredCourses2 = ""
-if requiredCourses != ['']:
-	for c in requiredCourses:
-		requiredCourses2 += str(courses[c][1]) + "%2C"
-	url_dict['requiredCourses'] = requiredCourses2[:-3]
 
-preferredCourses = prefC.split(",")
-preferredCourses2 = ""
-if preferredCourses != ['']:
-	for c in preferredCourses:
-		preferredCourses2 += str(courses[c][1]) + "%2C"
-	url_dict['preferredCourses'] = preferredCourses2[:-3]
+requiredCourses = ""
+if reqC != []:
+	for c in reqC:
+		requiredCourses += str(courses[c][1]) + "%2C"
+	url_dict['requiredCourses'] = requiredCourses[:-3]
 
-requiredSections = reqS.split(",")
-requiredSections2 = ""
-if requiredSections != ['']:
-	for c in requiredSections:
-		requiredSections2 += str(courses[c][0]) + "%2C"
-	url_dict['requiredSections'] = requiredSections2[:-3]
+preferredCourses = ""
+if prefC != []:
+	for c in prefC:
+		preferredCourses += str(courses[c][1]) + "%2C"
+	url_dict['preferredCourses'] = preferredCourses[:-3]
 
-preferredSections = prefS.split(",")
-preferredSections2 = ""
-if preferredSections != ['']:
-	for c in preferredSections:
-		preferredSections2 += str(courses[c][0]) + "%2C"
-	url_dict['preferredSections'] = preferredSections2[:-3]
+requiredSections = ""
+if reqS != []:
+	for c in reqS:
+		requiredSections += str(courses[c][0]) + "%2C"
+	url_dict['requiredSections'] = requiredSections[:-3]
 
-if prefG != "":
-	url_dict['preferredGenEds'] = prefG
-if reqG != "":
+preferredSections = ""
+if prefS != []:
+	for c in prefS:
+		preferredSections += str(courses[c][0]) + "%2C"
+	url_dict['preferredSections'] = preferredSections[:-3]
 
-	url_dict['requiredGenEds'] = reqG
+if prefG != []:
+	pg = ""
+	for x in prefG:
+		pg += x + "%2C"
+	url_dict['preferredGenEds'] = pg[:-3]
+if reqG != []:
+	rg = ""
+	for x in reqG:
+		rg += x + "%2C"
+	url_dict['requiredGenEds'] = rg[:-3]
 url_dict['minNumCredits'] = minC
 url_dict['maxNumCredits'] = maxC
 
@@ -106,16 +108,17 @@ for thing in url_dict:
 			url += "&"
 		added = True
 		url += url_extenstion[thing]
-		if thing == "minNumCredits" or thing == "maxNumCredits":
-			url += str(url_dict[thing])
-		elif thing == "times":
+		if thing == "times":
 			url += str(url_dict[thing][0]) + "%3A00%2C" + str(url_dict[thing][1]) + "%3A00"
 		else:
 			url += str(url_dict[thing])
 
 
 
+print()
 print(url)
+print("https://norsecourse.com:5000/api/schedules?minCredits=12&requiredSections=800%2C200%2C400&maxCredits=18&requiredGenEds=HE%2CHB")
+print()
 request = Request(url)
 
 response = urlopen(request)

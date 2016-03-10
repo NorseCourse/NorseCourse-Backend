@@ -23,7 +23,7 @@ class Section(Resource):
 			ln = last_name.split(',')
 			fid = faculty_id
 			for p in range(len(ln)):
-				faculty = FacultyObject(fi[p], ln[p],fid)
+				faculty = FacultyObject(fi[p], ln[p],fid,fi[p]+". "+ln[p])
 				profs.append(faculty.__dict__)
 
 		cursor.close()

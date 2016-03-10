@@ -8,8 +8,8 @@ class Faculty(Resource):
 
 	@NorseCourse.doc(
 		params = {
-			"facultyId": "Provide comma seperated faculty IDs"
-			"facutlyName": "Provide the name of faculty (Last_name, first_initial)"
+			"facultyId": "Provide comma seperated faculty IDs",
+			"facutlyName": "Provide the name of faculty Last_name,first_initial (Ex: Miller,B)"
 		}
 	)
 
@@ -20,7 +20,10 @@ class Faculty(Resource):
 
 		if faculty_name != None:
 			n = faculty_name.split(",")
-			facultyQuery += " WHERE first_initial = " + n[1] + " and last_name = " + n[0]
+			facultyQuery += " WHERE first_initial = \'" + n[1] + "\' and last_name = \'" + n[0] + "\'"
+			print("\n\n\n\n")
+			print(facultyQuery)
+			print("\n\n\n\n")
 		
 		faculty_ids = request.args.get("facultyId")
 		id_list = []

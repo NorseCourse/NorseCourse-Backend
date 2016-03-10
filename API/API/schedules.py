@@ -41,7 +41,7 @@ class ScheduleCreation(Resource):
 			for day in sect:
 				for x in range(5):
 					if starts[x].tm_wday == day[0].tm_wday:
-						if starts[x] > day[0] or day[0] > ends[x]:
+						if starts[x] > day[0] or day[1] > ends[x]:
 							return True
 		return False 
 
@@ -126,7 +126,6 @@ class ScheduleCreation(Resource):
 							if self.checkTimeConflict(sections[section1][0][time1],sections[section2][0][time2]):
 								return True
 
-
 		if time_range != []:
 			sect_times = []
 			for sect in sections:
@@ -137,7 +136,6 @@ class ScheduleCreation(Resource):
 			for x in ['2','3','4','5','6']:
 				valid_starts.append(time.strptime(time_range[0]+' '+x, '%H:%M %w'))
 				valid_ends.append(time.strptime(time_range[1]+' '+x, '%H:%M %w'))
-
 
 			# returns False if there was no time conflict was found in schedule, return False meaning its a valid schedule time wise
 			# returns True if the schedule does not fit inbetween req time block, meaning its a bad schedule
@@ -383,7 +381,7 @@ class ScheduleCreation(Resource):
 			"maxCredits": "Provide an integer for maximum number of credits wanted, defaults to 18",
 			"index": "Provide an integer of last location in schedule list, if known, defaults to -1",
 			"limit":"Provide a max amount of schdedules wanted to be returned, defaults to 20",
-			"requiredTimeBlock":"Provide comma seperated times, start time and end time Example: (9:00,2:00), defaults to any time allowed",
+			"requiredTimeBlock":"Provide comma seperated times, start time and end time Example: 9:00,14:00, defaults to any time allowed",
 			"requiredSections": "Provide a comma separated list of section IDs that are required in schedule, defaults to nothing",
 			"preferredSections": "Provide a comma separated list of section IDs that are preferred in schedule, defaults to nothing.  Allow one per course."
 		}
@@ -681,6 +679,7 @@ class ScheduleCreation(Resource):
 
 			# if the best schedule is valid
 			best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
+
 			if best != False:
 
 				numCredits = self.getNumCredits(best)
@@ -824,6 +823,7 @@ class ScheduleCreation(Resource):
 
 			# is best schedule is not valid for some reason
 			else:
+
 				best = required+preferred
 
 				# remove courses from best until no conflict.

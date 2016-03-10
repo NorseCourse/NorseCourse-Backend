@@ -39,11 +39,11 @@ url_extenstion = {
 
 # put in values
 
-reqC = ["MATH-328-A","CS-353-A"]
+reqC = ["MATH-328-A","CS-353-A","PHIL-110-B"]
 prefC = []
 reqS = []
 prefS = []
-reqG = ['HB','HE']
+reqG = ['HB']
 prefG = []
 minC = 12
 maxC =18
@@ -115,10 +115,7 @@ for thing in url_dict:
 
 
 
-print()
 print(url)
-print("https://norsecourse.com:5000/api/schedules?minCredits=12&requiredSections=800%2C200%2C400&maxCredits=18&requiredGenEds=HE%2CHB")
-print()
 request = Request(url)
 
 response = urlopen(request)

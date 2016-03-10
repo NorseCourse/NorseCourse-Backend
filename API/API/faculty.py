@@ -45,8 +45,8 @@ class Faculty(Resource):
 			cursor.execute(facultyQuery)
 
 		faculty = []
-		for (faculty_id, first_initial,last_name) in cursor:
-			f = FacultyObject(str(first_initial), str(last_name),faculty_id)
+		for (faculty_id, first_initial,last_name,name) in cursor:
+			f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
 			faculty.append(f.__dict__)
 
 		cursor.close()

@@ -374,6 +374,39 @@ class ScheduleCreation(Resource):
 
 
 
+	# Function checks if a schedule is a valid schedule or not
+	# returns True schedule if it is valid, and False if not
+	def verifyBest(self,schedule,time_range):
+
+		# checks if there is a lab in schedule
+		if self.checkLab(schedule):
+			# trys to add lab to schedule
+			s = self.addLab(schedule,time_range)
+			# if lab fit into schedule
+			if s != False:
+				# update schdule with lab
+				schedule = s
+
+			# lab did not fit into schedule
+			else:
+				# schedule does not work
+				return False
+
+		# check if there is a time conflict in schedule
+		if self.checkScheduleConflict(schedule,time_range):
+			# if there is a time conflict, invalid schedule
+			return False
+
+		# check if there are duplicate courses in schdule
+		if self.checkSameCourse(schedule):
+			# there were duplicates
+			return False
+
+		# it was a valid schedule, so return the schedule
+		return schedule
+
+
+
 	# define parameters for api
 
 	@NorseCourse.doc(
@@ -683,7 +716,7 @@ class ScheduleCreation(Resource):
 			preferred = best[(len(required_courses)+len(required_sections)):]
 
 			# if the best schedule is valid
-			best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
+			best = self.verifyBest(best,req_time_block)
 
 			if best != False:
 
@@ -832,7 +865,7 @@ class ScheduleCreation(Resource):
 				best = required+preferred
 
 				# remove courses from best until no conflict.
-				while self.verify(best, maxNumCredits,minNumCredits,req_time_block) == False and len(best) >=1:
+				while self.verifyBest(best,req_time_block) == False and len(best) >=1:
 					best = best[:-1]
 					if len(best) == len(required):
 						error = "There was a conflict with required courses/sections"
@@ -843,7 +876,7 @@ class ScheduleCreation(Resource):
 					bad = True
 
 				if not bad:
-					best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
+					best = self.verifyBest(best,req_time_block)
 
 					if len(best) >= len(required):
 

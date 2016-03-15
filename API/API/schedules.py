@@ -38,6 +38,10 @@ class ScheduleCreation(Resource):
 	def validTimes(self, starts, ends, sect_times):
 
 		for sect in sect_times:
+			if sect == None:
+				print("\n\n")
+				print(sect_times)
+				print("\n\n")
 			for day in sect:
 				for x in range(5):
 					if starts[x].tm_wday == day[0].tm_wday:
@@ -129,7 +133,8 @@ class ScheduleCreation(Resource):
 		if time_range != []:
 			sect_times = []
 			for sect in sections:
-				sect_times.append(sect[0])
+				if sect[0] != None:
+					sect_times.append(sect[0])
 
 			valid_starts = []
 			valid_ends = []

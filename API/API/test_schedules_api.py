@@ -47,6 +47,7 @@ reqG = ['HB']
 prefG = []
 minC = 12
 maxC =18
+times = [8,13]
 
 
 
@@ -86,6 +87,7 @@ if reqG != []:
 	url_dict['requiredGenEds'] = rg[:-3]
 url_dict['minNumCredits'] = minC
 url_dict['maxNumCredits'] = maxC
+url_dict['times'] = times
 
 
 

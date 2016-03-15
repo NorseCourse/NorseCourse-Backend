@@ -828,7 +828,7 @@ class ScheduleCreation(Resource):
 
 			# is best schedule is not valid for some reason
 			else:
-
+				bad = False
 				best = required+preferred
 
 				# remove courses from best until no conflict.
@@ -836,157 +836,158 @@ class ScheduleCreation(Resource):
 					best = best[:-1]
 					if len(best) == len(required):
 						error = "There was a conflict with required courses/sections"
-						break
+						bad = True
 				if len(best) == 0:
 					error = "There was a conflict with required courses/sections"
 					best = []
-					break
+					bad = True
 
-				best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
+				if not bad:
+					best = self.verify(best, maxNumCredits,minNumCredits,req_time_block)
 
-				if len(best) >= len(required):
+					if len(best) >= len(required):
 
-					numCredits = self.getNumCredits(best)
+						numCredits = self.getNumCredits(best)
 
-					# if the best schedule has a valid amount of credits wanted, add schedule
-					if minNumCredits <= numCredits <= maxNumCredits:
-						all_combos += [best]
+						# if the best schedule has a valid amount of credits wanted, add schedule
+						if minNumCredits <= numCredits <= maxNumCredits:
+							all_combos += [best]
 
-					# if more courses can be added
-					if (numCredits < maxNumCredits):
-						num_needed = maxNumCredits - numCredits
+						# if more courses can be added
+						if (numCredits < maxNumCredits):
+							num_needed = maxNumCredits - numCredits
 
-						# if gen eds are wanted, add gen eds
-						if len(req_geneds) + len(preferred_geneds) > 0:
+							# if gen eds are wanted, add gen eds
+							if len(req_geneds) + len(preferred_geneds) > 0:
 
-							for gened in range(len(req_geneds)):
-								for section in best:
-									classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
+								for gened in range(len(req_geneds)):
+									for section in best:
+										classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
+
+										cnx = cnx_pool.get_connection()
+										cursor = cnx.cursor()
+
+										cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+str(section)+"'")))
+
+										abbs = []
+										for (abbreviation) in cursor:
+											abbs.append(str(abbreviation[0]))
+
+
+										for ge in abbs:
+											if ge in req_geneds:
+												req_geneds.remove(ge)
+											if ge in preferred_geneds:
+												preferred_geneds.remove(ge)
+
+
+										cursor.close()
+										cnx.close()
+
+
+
+								possible_gened_classes = {}
+								for gened in range(len(req_geneds)):
+
+									classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
 
 									cnx = cnx_pool.get_connection()
 									cursor = cnx.cursor()
 
-									cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'"),str("'"+str(section)+"'")))
+									cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'")))
 
-									abbs = []
-									for (abbreviation) in cursor:
-										abbs.append(str(abbreviation[0]))
+									classes = []
+									for (section_id) in cursor:
+										classes.append(section_id[0])
 
+									possible_gened_classes[req_geneds[gened]] = classes
 
-									for ge in abbs:
-										if ge in req_geneds:
-											req_geneds.remove(ge)
-										if ge in preferred_geneds:
-											preferred_geneds.remove(ge)
+									cursor.close()
+									cnx.close()
 
+								for gened in range(len(preferred_geneds)):
+
+									classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
+
+									cnx = cnx_pool.get_connection()
+									cursor = cnx.cursor()
+
+									cursor.execute(classQuery % (str("'"+preferred_geneds[gened]+"'"),str("'"+preferred_geneds[gened]+"'")))
+
+									classes = []
+									for (section_id) in cursor:
+										classes.append(section_id[0])
+
+									possible_gened_classes[preferred_geneds[gened]] = classes
 
 									cursor.close()
 									cnx.close()
 
 
+								# find common geneds
 
-							possible_gened_classes = {}
-							for gened in range(len(req_geneds)):
+								doubles = {}
 
-								classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
+								for ge in possible_gened_classes:
+									for ge2 in possible_gened_classes:
+										if ge != ge2:
+											for class1 in possible_gened_classes[ge]:
+												for class2 in possible_gened_classes[ge2]:
+													if class1 == class2:
+														key = ge+" "+ge2
+														if key in doubles:
+															doubles[key].append(class1)
+														else:
+															doubles[key] = [class1] 
 
-								cnx = cnx_pool.get_connection()
-								cursor = cnx.cursor()
+								keys = []
+								for key in doubles:
+									one,two = key.split()
+									new = set((one,two))
+									if new not in keys:
+										keys.append(new)
 
-								cursor.execute(classQuery % (str("'"+req_geneds[gened]+"'"),str("'"+req_geneds[gened]+"'")))
-
-								classes = []
-								for (section_id) in cursor:
-									classes.append(section_id[0])
-
-								possible_gened_classes[req_geneds[gened]] = classes
-
-								cursor.close()
-								cnx.close()
-
-							for gened in range(len(preferred_geneds)):
-
-								classQuery = "SELECT section_id from GenEdFulfillments, GenEds where (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)"
-
-								cnx = cnx_pool.get_connection()
-								cursor = cnx.cursor()
-
-								cursor.execute(classQuery % (str("'"+preferred_geneds[gened]+"'"),str("'"+preferred_geneds[gened]+"'")))
-
-								classes = []
-								for (section_id) in cursor:
-									classes.append(section_id[0])
-
-								possible_gened_classes[preferred_geneds[gened]] = classes
-
-								cursor.close()
-								cnx.close()
+								for k in keys:
+									delKey = list(k)[0] + " " + list(k)[1]
+									del doubles[delKey]
 
 
-							# find common geneds
+								combo = []
 
-							doubles = {}
+								for b in best:
+									combo.append([b])
 
-							for ge in possible_gened_classes:
-								for ge2 in possible_gened_classes:
-									if ge != ge2:
-										for class1 in possible_gened_classes[ge]:
-											for class2 in possible_gened_classes[ge2]:
-												if class1 == class2:
-													key = ge+" "+ge2
-													if key in doubles:
-														doubles[key].append(class1)
-													else:
-														doubles[key] = [class1] 
+								for ge in doubles:
+									one,two = ge.split()
+									if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
+										combo.append(doubles[ge])
+										num_needed -= 1
+										if one in req_geneds:
+											req_geneds.remove(one)
+										if one in preferred_geneds:
+											preferred_geneds.remove(one)
 
-							keys = []
-							for key in doubles:
-								one,two = key.split()
-								new = set((one,two))
-								if new not in keys:
-									keys.append(new)
-
-							for k in keys:
-								delKey = list(k)[0] + " " + list(k)[1]
-								del doubles[delKey]
+										if two in req_geneds:
+											req_geneds.remove(two)
+										if one in preferred_geneds:
+											preferred_geneds.remove(two)
 
 
-							combo = []
+								for x in possible_gened_classes:
+									if num_needed > 0 and x in req_geneds:
+										combo.append(possible_gened_classes[x])
+										num_needed -= 1
 
-							for b in best:
-								combo.append([b])
-
-							for ge in doubles:
-								one,two = ge.split()
-								if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
-									combo.append(doubles[ge])
-									num_needed -= 1
-									if one in req_geneds:
-										req_geneds.remove(one)
-									if one in preferred_geneds:
-										preferred_geneds.remove(one)
-
-									if two in req_geneds:
-										req_geneds.remove(two)
-									if one in preferred_geneds:
-										preferred_geneds.remove(two)
+								for x in possible_gened_classes:
+									if num_needed > 0 and x in preferred_geneds:
+										combo.append(possible_gened_classes[x])
+										num_needed -= 1
 
 
-							for x in possible_gened_classes:
-								if num_needed > 0 and x in req_geneds:
-									combo.append(possible_gened_classes[x])
-									num_needed -= 1
+								all_combos += list(itertools.product(*combo))
 
-							for x in possible_gened_classes:
-								if num_needed > 0 and x in preferred_geneds:
-									combo.append(possible_gened_classes[x])
-									num_needed -= 1
-
-
-							all_combos += list(itertools.product(*combo))
-
-				else:
-					error = "There was a conflict with required courses/sections"
+					else:
+						error = "There was a conflict with required courses/sections"
 
 
 		# shuffle list of all potential schedules

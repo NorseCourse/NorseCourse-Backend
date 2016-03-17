@@ -984,7 +984,6 @@ class ScheduleCreation(Resource):
 									delKey = list(k)[0] + " " + list(k)[1]
 									del doubles[delKey]
 
-
 								combo = []
 
 								for b in best:
@@ -1005,7 +1004,6 @@ class ScheduleCreation(Resource):
 										if one in preferred_geneds:
 											preferred_geneds.remove(two)
 
-
 								for x in possible_gened_classes:
 									if num_needed > 0 and x in req_geneds:
 										combo.append(possible_gened_classes[x])
@@ -1015,7 +1013,6 @@ class ScheduleCreation(Resource):
 									if num_needed > 0 and x in preferred_geneds:
 										combo.append(possible_gened_classes[x])
 										num_needed -= 1
-
 
 								all_combos += list(itertools.product(*combo))
 
@@ -1050,5 +1047,3 @@ class ScheduleCreation(Resource):
 			schedules.append(s.__dict__)
 
 		return (schedules)
-
-

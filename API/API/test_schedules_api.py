@@ -37,132 +37,131 @@ url_extenstion = {
 
 
 
-# put in values
-for x in range(10):
 
-	numReqC = int(input("How many required courses?"))
-	numPrefC = int(input("How many preferred courses?"))
-	numReqS = int(input("How many required sections?"))
-	numPrefS = int(input("How many preferred sections?"))
-	numReqGE = int(input("How many required ge?"))
-	numPrefGE = int(input("How many preferred ge?"))
+numReqC = int(input("How many required courses?"))
+numPrefC = int(input("How many preferred courses?"))
+numReqS = int(input("How many required sections?"))
+numPrefS = int(input("How many preferred sections?"))
+numReqGE = int(input("How many required ge?"))
+numPrefGE = int(input("How many preferred ge?"))
+minC = int(input("min credits?"))
+maxC = int(input("max credits?"))
 
-	reqC = []
-	for x in range(numReqC):
-		reqC.append(random.choice(courses.keys()))
-	prefC = []
-	for x in range(numPrefC):
-		prefC.append(random.choice(courses.keys()))
-	reqS = []
-	for x in range(numReqS):
-		reqC.append(sections[random.choice(sections.keys())])
-	prefS = []
-	for x in range(numPrefS):
-		reqC.append(sections[random.choice(sections.keys())])
-	reqG = []
-	for x in range(numReqGE):
-		prefC.append(random.choice(courses.keys()))
-	prefG = []
-	for x in range(numReqGE):
-		prefC.append(random.choice(courses.keys()))
-	minC = 12
-	maxC =18
-	times = [8,16]
+reqC = []
+for x in range(numReqC):
+	reqC.append(random.choice(courses.keys()))
+prefC = []
+for x in range(numPrefC):
+	prefC.append(random.choice(courses.keys()))
+reqS = []
+for x in range(numReqS):
+	reqC.append(sections[random.choice(sections.keys())])
+prefS = []
+for x in range(numPrefS):
+	reqC.append(sections[random.choice(sections.keys())])
+reqG = []
+for x in range(numReqGE):
+	prefC.append(random.choice(courses.keys()))
+prefG = []
+for x in range(numReqGE):
+	prefC.append(random.choice(courses.keys()))
 
-
-
-	requiredCourses = ""
-	if reqC != []:
-		for c in reqC:
-			requiredCourses += str(courses[c][1]) + "%2C"
-		url_dict['requiredCourses'] = requiredCourses[:-3]
-
-	preferredCourses = ""
-	if prefC != []:
-		for c in prefC:
-			preferredCourses += str(courses[c][1]) + "%2C"
-		url_dict['preferredCourses'] = preferredCourses[:-3]
-
-	requiredSections = ""
-	if reqS != []:
-		for c in reqS:
-			requiredSections += str(courses[c][0]) + "%2C"
-		url_dict['requiredSections'] = requiredSections[:-3]
-
-	preferredSections = ""
-	if prefS != []:
-		for c in prefS:
-			preferredSections += str(courses[c][0]) + "%2C"
-		url_dict['preferredSections'] = preferredSections[:-3]
-
-	if prefG != []:
-		pg = ""
-		for x in prefG:
-			pg += x + "%2C"
-		url_dict['preferredGenEds'] = pg[:-3]
-	if reqG != []:
-		rg = ""
-		for x in reqG:
-			rg += x + "%2C"
-		url_dict['requiredGenEds'] = rg[:-3]
-	url_dict['minNumCredits'] = minC
-	url_dict['maxNumCredits'] = maxC
-	url_dict['times'] = times
+times = [8,16]
 
 
 
-	######################################################################
-	######################################################################
-	############################# Build URL ##############################
-	######################################################################
-	######################################################################
+requiredCourses = ""
+if reqC != []:
+	for c in reqC:
+		requiredCourses += str(courses[c][1]) + "%2C"
+	url_dict['requiredCourses'] = requiredCourses[:-3]
 
-	url = "https://norsecourse.com:5000/api/schedules?" 
+preferredCourses = ""
+if prefC != []:
+	for c in prefC:
+		preferredCourses += str(courses[c][1]) + "%2C"
+	url_dict['preferredCourses'] = preferredCourses[:-3]
 
-	added = False
-	for thing in url_dict:
-		if url_dict[thing] != None:
-			if added:
-				url += "&"
-			added = True
-			url += url_extenstion[thing]
-			if thing == "times":
-				url += str(url_dict[thing][0]) + "%3A00%2C" + str(url_dict[thing][1]) + "%3A00"
-			else:
-				url += str(url_dict[thing])
+requiredSections = ""
+if reqS != []:
+	for c in reqS:
+		requiredSections += str(courses[c][0]) + "%2C"
+	url_dict['requiredSections'] = requiredSections[:-3]
+
+preferredSections = ""
+if prefS != []:
+	for c in prefS:
+		preferredSections += str(courses[c][0]) + "%2C"
+	url_dict['preferredSections'] = preferredSections[:-3]
+
+if prefG != []:
+	pg = ""
+	for x in prefG:
+		pg += x + "%2C"
+	url_dict['preferredGenEds'] = pg[:-3]
+if reqG != []:
+	rg = ""
+	for x in reqG:
+		rg += x + "%2C"
+	url_dict['requiredGenEds'] = rg[:-3]
+url_dict['minNumCredits'] = minC
+url_dict['maxNumCredits'] = maxC
+url_dict['times'] = times
 
 
 
-	print(url)
-	request = Request(url)
+######################################################################
+######################################################################
+############################# Build URL ##############################
+######################################################################
+######################################################################
 
-	response = urlopen(request)
-	result = response.read()
-	api = json.loads(result)
+url = "https://norsecourse.com:5000/api/schedules?" 
 
-	for schedule in api:
-		# if schedule['error'] == "No errors":
-		# 	print("SCHEDULE OPTION")
-		# 	sect_ids = schedule['schedule']
-		# 	for s in sect_ids:
-		# 		if s in sections:
-		# 			print(sections[s])
-		# 		else:
-		# 			print("section id:",s)
-		# 	print("\n\n")
-		# else:
-		print("*******************************THERE WAS AN ERROR")
-		print(schedule['error'])
-		print("req Courses: ",reqC)
-		print("pref Courses: ",prefC)
-		print("req Sections: ",reqS)
-		print("pref Sections: ",prefS)
-		print("req GE",reqG)
-		print("pref GE",prefG)
-		print("min Credits",minC)
-		print("max Credits",maxC)
-		print("time block: ",times)
-		print("\n\n")
+added = False
+for thing in url_dict:
+	if url_dict[thing] != None:
+		if added:
+			url += "&"
+		added = True
+		url += url_extenstion[thing]
+		if thing == "times":
+			url += str(url_dict[thing][0]) + "%3A00%2C" + str(url_dict[thing][1]) + "%3A00"
+		else:
+			url += str(url_dict[thing])
+
+
+
+print(url)
+request = Request(url)
+
+response = urlopen(request)
+result = response.read()
+api = json.loads(result)
+
+for schedule in api:
+	# if schedule['error'] == "No errors":
+	# 	print("SCHEDULE OPTION")
+	# 	sect_ids = schedule['schedule']
+	# 	for s in sect_ids:
+	# 		if s in sections:
+	# 			print(sections[s])
+	# 		else:
+	# 			print("section id:",s)
+	# 	print("\n\n")
+	# else:
+	print("*******************************THERE WAS AN ERROR")
+	print(schedule['error'])
+	print("req Courses: ",reqC)
+	print("pref Courses: ",prefC)
+	print("req Sections: ",reqS)
+	print("pref Sections: ",prefS)
+	print("req GE",reqG)
+	print("pref GE",prefG)
+	print("min Credits",minC)
+	print("max Credits",maxC)
+	print("time block: ",times)
+	print("\n\n")
 
 
 

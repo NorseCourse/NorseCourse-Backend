@@ -16,7 +16,7 @@ cd
 mkdir NorseCourse
 cd NorseCourse
 git clone https://github.com/NorseCourse/NorseCourse-Backend.git
-cd NorseCourse/NorseCourse-Backend/hosting/
+cd NorseCourse-Backend/hosting/
 ./norseCourseWrapper.sh
 ```
 

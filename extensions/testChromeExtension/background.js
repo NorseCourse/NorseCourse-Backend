@@ -11,8 +11,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 // the first URL on the page, then background will open new tab
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if( request.message === "open_new_tab" ) {
-      chrome.tabs.create({"url": request.url});
-    }
+    // if( request.message === "open_new_tab" ) {
+    //   chrome.tabs.create({"url": request.url});
+    // }
   }
 );

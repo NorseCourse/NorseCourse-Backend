@@ -1,10 +1,4 @@
-// alert("Hello from my Chrome extension!");
-
-// var firstHref = $("a[href^='http']").eq(0).attr("href");
-// console.log(firstHref);
-
-// console.log("Hello, world!");
-// angular.module("norseCourse").service("schedulesService").getSavedSchedules();
+// content.js
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
@@ -13,9 +7,33 @@ chrome.runtime.onMessage.addListener(
       // console.log(firstHref);
       // chrome.runtime.sendMessage({"message": "open_new_tab", "url": firstHref});
 
-      var testing = $(".md-toolbar-tools").text();
-      console.log(testing);
+      var sections = $(".data__schedule__section__name").text();
+      sections = prepareForMyLutherForm(sections);
+
+      var departments = $(".data__schedule__section__department").text();
+      departments = prepareForMyLutherForm(departments);
+
+      var courseNumbers = $(".data__schedule__section__course-number").text();
+      courseNumbers = prepareForMyLutherForm(courseNumbers);
+
+      var sectionNumbers = $(".data__schedule__section__section-number").text();
+      sectionNumbers = prepareForMyLutherForm(sectionNumbers);
+
+
+      console.log(sections);
+      console.log(departments);
+      console.log(courseNumbers);
+      console.log(sectionNumbers);
 
     }
   }
 );
+
+// Takes a string and returns an array
+function prepareForMyLutherForm(str) {
+	str = str.replace(new RegExp(" ", "g"), "");
+	str = str.replace(new RegExp("\n\n", "g"), ",");
+	str = str.replace(new RegExp("\n", "g"), "");
+	str = str.split(",");
+	return str
+} 

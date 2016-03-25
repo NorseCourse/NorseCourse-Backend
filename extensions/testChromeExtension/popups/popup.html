@@ -1,0 +1,30 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <title>NorseCourse Popup</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
+    <link rel="stylesheet" href="../styles/style.css">
+
+    <script src="../dependencies/jquery-2.2.2.min.js"></script>
+    <script src="popup.js"></script>
+  </head>
+
+  <body>
+    <div id="heading-container">
+      <h3>NorseCourse Scheduler</h3>
+    </div>
+
+    <div id="content-container">
+      <button id="getSavedSchedule">Get Saves Schedules</button>
+    </div>
+
+    <div id="footer-container">
+    </div>
+  </body>
+</html>

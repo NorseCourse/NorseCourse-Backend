@@ -1,0 +1,27 @@
+{
+	"manifest_version": 2,
+
+	"name": "NorseCourse Scheduler",
+	"version": "1.0",
+	"description": "Gives a NorseCourse user the ability to take a saved schedule and register that schedule in my.luther with ease!",
+
+	"browser_action": {
+		"default_icon": "favicon-32x32.png",
+		"default_popup": "popup.html",
+		"default_title": "NorseCourse Scheduler"
+	},
+
+	"permissions": [
+		"activeTab",
+		"storage"
+	],
+
+	"content_scripts": [
+		{
+			"matches": ["https://norsecourse.com/*", "https://my.luther.edu/*"],
+			"js": ["jquery-2.2.2.min.js", "norsecourse-content.js", "myluther-content.js"]
+		}
+	],
+
+	"content_security_policy": "script-src 'self' https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js; object-src 'self'"
+}

@@ -1,20 +1,30 @@
 {
 	"manifest_version": 2,
-	"name": "My Cool Test Extension",
-	"version": "0.1",
+
+	"name": "NorseCourse Scheduler",
+	"version": "1.0",
+	"description": "Gives a NorseCourse user the ability to take a saved schedule and register that schedule in my.luther with ease!",
 
 	"browser_action": {
-		"default_icon": "favicon-32x32.png"
+		"default_icon": "images/favicon-32x32.png",
+		"default_popup": "popups/popup.html",
+		"default_title": "NorseCourse Scheduler"
 	},
 
-	"background": {
-		"scripts": ["background.js"]
-	},
-
-	"content_scripts": [
-		{
-			"matches": ["<all_urls>"],
-			"js": ["jquery-2.2.1.min.js", "content.js"]
-		}
+	"permissions": [
+		"activeTab"
 	]
+
+	// "background": {
+	// 	"scripts": ["background/background.js"],
+	// 	// persistent converts background page into event page, loaded only when needed and then unloaded when not in use
+	// 	"persistent": false
+	// },
+
+	// "content_scripts": [
+	// 	{
+	// 		"matches": ["https://norsecourse.com/*", "https://my.luther.edu/*"],
+	// 		"js": ["dependencies/jquery-2.2.2.min.js", "content-scripts/content.js"]
+	// 	}
+	// ]
 }

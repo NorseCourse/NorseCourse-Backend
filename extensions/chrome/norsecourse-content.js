@@ -26,6 +26,8 @@ function getSavedSchedule() {
 // Listen for message to return schedule
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.message === "save_schedule") {
+		console.log("Received save_schedule message...");
 		chrome.runtime.sendMessage({"message": "returning_schedule", "schedule": getSavedSchedule()});
+		console.log("Sent return schedule...");
 	}
 });

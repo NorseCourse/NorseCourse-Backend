@@ -1,12 +1,8 @@
-html {
-	background-color: default;
-}
-
-#heading-container {
-	width: 25em;
-}
-
-h3 {
-	color: #3F51B5;
+h1 {
+	color: #3949AB;
 	text-align: center;
 }
+
+/* PINK = #FF4081 */
+/* HUE 1 PINK = #FF80AB */
+/* BLUE = #3949AB */

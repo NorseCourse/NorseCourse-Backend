@@ -1,6 +1,7 @@
 // Listen for message to register schedule
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 	if (request.message === "register_schedule") {
+		console.log("Received register_schedule message...");
 		chrome.storage.local.get(["departments", "courseNumbers", "sectionNumbers"], function(scheduleData) {
 			var departments = scheduleData.departments;
 			var courseNumbers = scheduleData.courseNumbers;

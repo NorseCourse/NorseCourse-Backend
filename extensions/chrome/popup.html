@@ -1,41 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="PopupApp">
   <head>
     <title>NorseCourse Popup</title>
 
-    <!-- Robo Font -->
+    <!-- Robo Font Style-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 
-    <!-- Angular Material style sheet -->
-    <!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css"> -->
+    <!-- Angular Material Style -->
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css">
 
-    <!-- Popup Style -->
+    <!-- Popup Specific Style -->
     <link rel="stylesheet" href="style.css">
   </head>
 
-  <body>
+  <body layout="column">
     <div id="heading-container">
-      <h3>NorseCourse Scheduler</h3>
+      <h1 class="md-primary">NorseCourse Scheduler</h1>
     </div>
 
     <div id="content-container">
-      <button id="getSavedSchedule">Retreive Saved Schedule</button>
-      <button id="registerSchedule">Register Saved Schedule</button>
+      <div></div>
+      <md-button id="getSavedSchedule" class="md-raised md-primary">Retreive Saved Schedule</md-button>
+      <md-button id="registerSchedule" class="md-raised md-primary">Register Saved Schedule</md-button>
     </div>
 
     <div id="footer-container">
     </div>
 
     <!-- Angular Material requires Angular.js Libraries -->
-    <!-- // <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
-    // <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js"></script>
-    // <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js"></script>
-    // <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js"></script>
 
     <!-- Angular Material Library -->
-    <!-- // <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.js"></script>
 
-    <!-- Popup Script -->
+    <!-- Popup Specific Script -->
     <script src="popup.js"></script>
   </body>
 </html>

@@ -7,8 +7,8 @@
 
 	"browser_action": {
 		"default_icon": {
-			"19": "favicon-32x32.png",
-			"38": "android-icon-48x48.png"
+			"19": "favicon-19x19.png",
+			"38": "favicon-38x38.png"
 		},
 		"default_popup": "popup.html",
 		"default_title": "NorseCourse Scheduler"
@@ -28,8 +28,8 @@
 
 	"icons": {
 		"16": "favicon-16x16.png",
-		"48": "android-icon-48x48.png",
-		"128": "apple-icon-144x144.png" 
+		"48": "favicon-48x48.png",
+		"128": "favicon-128x128.png" 
 	},
 
 	"content_security_policy": "script-src 'self' https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-messages.min.js; object-src 'self'"

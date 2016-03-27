@@ -11,10 +11,7 @@ var app = angular.module('PopupApp', ['ngMaterial'])
   });
 
 
-// red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey
-
-
-// Action when 'Retreive Saved Schedule' button is clicked
+// Action when 'Retreive Schedule' button is clicked
 document.addEventListener('DOMContentLoaded', function() {
   var button = document.getElementById('getSavedSchedule');
   button.addEventListener('click', function() {
@@ -44,7 +41,7 @@ function saveSchedule(departments, courseNumbers, sectionNumbers) {
 }
 
 
-// Action when 'Register Saved Schedule' button is clicked
+// Action when 'Register Schedule' button is clicked
 document.addEventListener('DOMContentLoaded', function() {
   var button = document.getElementById('registerSchedule');
   button.addEventListener('click', function() {

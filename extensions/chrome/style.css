@@ -1,8 +1,7 @@
-h1 {
-	color: #3949AB;
-	text-align: center;
+html {
+	width: 16.87em;
 }
 
-/* PINK = #FF4081 */
-/* HUE 1 PINK = #FF80AB */
-/* BLUE = #3949AB */
+#instructions {
+	height: 13em;
+}

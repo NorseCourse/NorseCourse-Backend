@@ -9,19 +9,48 @@
     <!-- Angular Material Style -->
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css">
 
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
     <!-- Popup Specific Style -->
     <link rel="stylesheet" href="style.css">
   </head>
 
-  <body layout="column">
+  <body>
     <div id="heading-container">
-      <h1 class="md-primary">NorseCourse Scheduler</h1>
+      <md-toolbar>
+        <div class="md-toolbar-tools">
+          <h1><span>NorseCourse Scheduler</span></h1>
+        </div>
+      </md-toolbar>
     </div>
 
     <div id="content-container">
-      <div></div>
-      <md-button id="getSavedSchedule" class="md-raised md-primary">Retreive Saved Schedule</md-button>
-      <md-button id="registerSchedule" class="md-raised md-primary">Register Saved Schedule</md-button>
+      <md-tabs md-dynamic-height class="md-primary">
+        <md-tab label="Instructions">
+          <md-content id="instructions" class="md-padding">
+            <ol class="md-subhead" >
+              <li class="md-padding">Find A Course and Plan A Schedule</li>
+              <li class="md-padding">Confirm Schedule Preferences</li>
+              <li class="md-padding">Search for Schedules</li>
+              <li class="md-padding">Browse through Results and save your favorite schedules</li>
+              <li class="md-padding">Select the schedule you want to register by navigating to it in Saved Schedules</li>
+              <li class="md-padding">Switch to the Register tab in this extension</li>
+              <li class="md-padding">Select 'Retreive Schedule'</li>
+              <li class="md-padding">Navigate to my.luther.edu > Register for Sections > Search and register for sections</li>
+              <li class="md-padding">Select 'Register Schedule'</li>
+              <li class="md-padding">Submit, Select Courses, and Register!</li>
+            </ol>
+          </md-content>
+        </md-tab>
+
+        <md-tab label="Register">
+          <md-content id="register" class="md-padding" layout="column" layout-align="center">
+            <md-button id="getSavedSchedule" class="md-raised md-primary">Retreive Schedule</md-button>
+            <md-button id="registerSchedule" class="md-raised md-primary">Register Schedule</md-button>
+          </md-content>
+        </md-tab>
+      </md-tabs>
     </div>
 
     <div id="footer-container">

@@ -11,9 +11,9 @@ var app = angular.module('PopupApp', ['ngMaterial'])
   });
 
 
-// Action when 'Retreive Schedule' button is clicked
+// Action when 'Retrieve Schedule' button is clicked
 document.addEventListener('DOMContentLoaded', function() {
-  var button = document.getElementById('getSavedSchedule');
+  var button = document.getElementById('retrieveSchedule');
   button.addEventListener('click', function() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {"message": "save_schedule"});
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 
-// Save the retreived schedyle to local storage
+// Save the Retrieved schedyle to local storage
 function saveSchedule(departments, courseNumbers, sectionNumbers) {
   chrome.storage.local.set({"departments": departments, "courseNumbers": courseNumbers, "sectionNumbers": sectionNumbers}, function() {
     console.log("Schedule has been saved to local memory...");

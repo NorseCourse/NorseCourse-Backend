@@ -3,7 +3,10 @@
 
 	"name": "NorseCourse Scheduler",
 	"version": "1.0",
+	"author": "Blaise Schaeffer",
 	"description": "Gives a NorseCourse user the ability to take a saved schedule and register that schedule in my.luther with ease!",
+	"default_locale": "en",
+	"homapage_url": "https://norsecourse.com",
 
 	"browser_action": {
 		"default_icon": {

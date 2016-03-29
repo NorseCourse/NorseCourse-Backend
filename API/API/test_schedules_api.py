@@ -189,9 +189,7 @@ def main():
 			print("time block: ",times)
 			print("\n")
 
-
-for x in range(10):
-	main()
+main()
 
 
 

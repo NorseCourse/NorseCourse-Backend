@@ -584,10 +584,10 @@ def main():
         # if term is Fall
         if current_term == "Fall":
             # if full semester, it is neither seven weeks
-            if (start[:2] == '09') and (end[:2] == '12'):
+            if ((start[:2] == '08') or (start[:2] == '09')) and (end[:2] == '12'):
                 seven_week.append(0)
             # starts in 9, but does not end in 12, its a first seven weeks
-            elif (start[:2] == '09'):
+            elif ((start[:2] == '08') or (start[:2] == '09')):
                 seven_week.append(1)
             # second seven weeks
             else:

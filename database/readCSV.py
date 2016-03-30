@@ -14,8 +14,21 @@ import re
 
 def main():
 
+    # define acceptable characters in the comments for sections
+    chars = set([' ','A','B','C','D','E','F','G','H',
+                    'I','J','K','L','M','N','O','P','Q',
+                    'R','S','T','U','V','W','X','Y','Z',
+                    'a','b','c','d','e','f','g','h','i',
+                    'j','k','l','m','n','o','p','q','r',
+                    's','t','u','v','w','x','y','z','0',
+                    '1','2','3','4','5','6','7','8','9',
+                    '!','@','#','$','%','^','&','*','(',
+                        ')','_','-','+','=','[',']','{',
+                    '}','\\','/',';',':',',','.','<','>'])
+
+
     # read in first csv we are given
-    courses = pd.DataFrame.from_csv('spring_course.csv', sep=None,index_col=None)
+    courses = pd.DataFrame.from_csv('fall16courses.csv', sep=None, index_col=None)
 
     # change all column names to more appropriate ones
     courses['course_id'] = courses['Course Sections Id']
@@ -40,13 +53,29 @@ def main():
     del courses['Sec Printed Comments']
     courses['meeting_info'] = courses['Sec Meeting Info']
     del courses['Sec Meeting Info']
-    courses['course_description'] = courses['Crs Desc']
+
+    new_desc = []
+    for d in courses['Crs Desc']:
+        if type(d) == str:
+            newc = ""
+            for c in d:
+                if c in chars:
+                    newc += c
+            new_desc.append(newc)
+        else:
+            new_desc.append("")
+
+    courses['course_description'] = new_desc
     del courses['Crs Desc']
     courses['gen_eds'] = courses['Course Types CSV']
     del courses['Course Types CSV']
+    courses['co_reqs'] = courses['Corequisite']
+    del courses['Corequisite']
+    courses['pre_reqs'] = courses['Prerequisite']
+    del courses['Prerequisite']
 
     #read in second csv file we are given
-    meetings = pd.DataFrame.from_csv('spring_meeting.csv', sep=None,index_col=None)
+    meetings = pd.DataFrame.from_csv('fall16sections.csv', sep=None,index_col=None)
 
     # change all column names to more appropriate ones
     meetings['course_id'] = meetings['Course Sections Id']
@@ -183,17 +212,6 @@ def main():
                         'OCKH':"Ockham House", 'PREU':"Preus Library", 
                         'OLIN':"Olin", 'MAIN':"Main Building"}
 
-    # define acceptable characters in the comments for sections
-    chars = set([' ','A','B','C','D','E','F','G','H',
-                    'I','J','K','L','M','N','O','P','Q',
-                    'R','S','T','U','V','W','X','Y','Z',
-                    'a','b','c','d','e','f','g','h','i',
-                    'j','k','l','m','n','o','p','q','r',
-                    's','t','u','v','w','x','y','z','0',
-                    '1','2','3','4','5','6','7','8','9',
-                    '!','@','#','$','%','^','&','*','(',
-                        ')','_','-','+','=','[',']','{',
-                    '}','\\','/',';',':',',','.','<','>'])
 
     # initialize list to be new columns
     # these are the columns that are missing
@@ -251,25 +269,31 @@ def main():
         # set up facutly first initial and last name
         ########################################################################
         # if there is more than one professor listed
-        if len(row['faculty_name'].split(','))>1:
-            # create list of all professors teaching course
-            profs = row['faculty_name'].split(',')
-            lasts = []
-            firsts = []
-            # create list of first initials and last names of all professors
-            for prof in profs:
-                firsts.append(prof.split('.')[0]+", ")
-                lasts.append(prof.split('.')[1]+", ")
+        if pd.notnull(row['faculty_name']):
+            if len(row['faculty_name'].split(','))>1:
+                # create list of all professors teaching course
+                profs = row['faculty_name'].split(',')
+                lasts = []
+                firsts = []
+                # create list of first initials and last names of all professors
+                for prof in profs:
+                    firsts.append(prof.split('.')[0]+", ")
+                    lasts.append(prof.split('.')[1]+", ")
 
-            # add list of all first and last to specified columns
-            faculty_first.append("".join(firsts)[:-2])
-            faculty_last.append("".join(lasts)[:-2])
+                # add list of all first and last to specified columns
+                faculty_first.append("".join(firsts)[:-2])
+                faculty_last.append("".join(lasts)[:-2])
 
-        # there is only one professor
+            # there is only one professor
+            else:
+                # add first and last name to column
+                faculty_first.append(row['faculty_name'].split('.')[0])
+                faculty_last.append(row['faculty_name'].split('.')[1])
+
+        # no faculty listed
         else:
-            # add first and last name to column
-            faculty_first.append(row['faculty_name'].split('.')[0])
-            faculty_last.append(row['faculty_name'].split('.')[1])
+            faculty_first.append("")
+            faculty_last.append("")
 
 
 
@@ -277,64 +301,76 @@ def main():
         ########################################################################
         # add pre req column
         ########################################################################
-        # check if there is a course description
-        if pd.notnull(row['course_description']):
 
-            # use regular expression to find pre req in course_description
-            req = re.split(r'[P/p]re-?[R/r]equisites?:?',row['course_description'])
-
-            # if no pre req was found, look for different match
-            if len(req) == 1:
-                # looks for pre req instead of pre requisite
-                req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['course_description'])
-
-                # check if a pre req was found, if not it enters if statment and looks in comment sections
-                if len(req) == 1:
-                    #checks that there is a section comment
-                    if pd.notnull(row['section_comments']):
-                        req = re.split(r'[P/p]o-?[R/r]equisites?:?',row['section_comments'])
-
-                        # once again checks if pre req was found, enters if when none is found
-                        if len(req) == 1:
-                            req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['section_comments'])
-
-            # checks if there was a pre req, enters if when there is a pre req
-            if len(req)>1:
-                # adds pre req to column
-                req = req[1].split('.')
-                req = req[0].replace('uisite:',"").replace(':',"")
-                pre_reqs.append(req)
-
-            # no pre req found
-            else:
-                # adds empty string in pre req column
-                pre_reqs.append("")
-
-        # there was no course description
+        if pd.notnull(row['pre_reqs']):
+            new = ""
+            old = list(row['pre_reqs'])
+            for char in old:
+                if char in chars:
+                    new += char
+            pre_reqs.append(new)
         else:
-            #checks that there is a section comment
-            if pd.notnull(row['section_comments']):
-                req = re.split(r'[P/p]o-?[R/r]equisites?:?',row['section_comments'])
+            pre_reqs.append("")
 
-                # once again checks if pre req was found, enters if when none is found
-                if len(req) == 1:
-                    req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['section_comments'])
 
-                # checks if there was a pre req, enters if when there is a pre req
-                if len(req)>1:
-                    # adds pre req to column
-                    req = req[1].split('.')
-                    req = req[0].replace('uisite:',"").replace(':',"")
-                    pre_reqs.append(req)
-                # if no pre req found
-                else:
-                    # adds empty string to pre req
-                    pre_reqs.append("")
+        # # check if there is a course description
+        # if pd.notnull(row['course_description']):
 
-            # there was no comment section or course description
-            else:
-                # adds empty string to pre req
-                pre_reqs.append("")
+        #     # use regular expression to find pre req in course_description
+        #     req = re.split(r'[P/p]re-?[R/r]equisites?:?',row['course_description'])
+
+        #     # if no pre req was found, look for different match
+        #     if len(req) == 1:
+        #         # looks for pre req instead of pre requisite
+        #         req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['course_description'])
+
+        #         # check if a pre req was found, if not it enters if statment and looks in comment sections
+        #         if len(req) == 1:
+        #             #checks that there is a section comment
+        #             if pd.notnull(row['section_comments']):
+        #                 req = re.split(r'[P/p]o-?[R/r]equisites?:?',row['section_comments'])
+
+        #                 # once again checks if pre req was found, enters if when none is found
+        #                 if len(req) == 1:
+        #                     req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['section_comments'])
+
+        #     # checks if there was a pre req, enters if when there is a pre req
+        #     if len(req)>1:
+        #         # adds pre req to column
+        #         req = req[1].split('.')
+        #         req = req[0].replace('uisite:',"").replace(':',"")
+        #         pre_reqs.append(req)
+
+        #     # no pre req found
+        #     else:
+        #         # adds empty string in pre req column
+        #         pre_reqs.append("")
+
+        # # there was no course description
+        # else:
+        #     #checks that there is a section comment
+        #     if pd.notnull(row['section_comments']):
+        #         req = re.split(r'[P/p]o-?[R/r]equisites?:?',row['section_comments'])
+
+        #         # once again checks if pre req was found, enters if when none is found
+        #         if len(req) == 1:
+        #             req = re.split(r'[P/p]re-?[R/r]eqs?:?',row['section_comments'])
+
+        #         # checks if there was a pre req, enters if when there is a pre req
+        #         if len(req)>1:
+        #             # adds pre req to column
+        #             req = req[1].split('.')
+        #             req = req[0].replace('uisite:',"").replace(':',"")
+        #             pre_reqs.append(req)
+        #         # if no pre req found
+        #         else:
+        #             # adds empty string to pre req
+        #             pre_reqs.append("")
+
+        #     # there was no comment section or course description
+        #     else:
+        #         # adds empty string to pre req
+        #         pre_reqs.append("")
 
 
 
@@ -343,74 +379,85 @@ def main():
         ########################################################################
         # add co req column
         ########################################################################
-        # checks if there is a section comment
-        if pd.notnull(row['section_comments']):
 
-            # use regular expression to find co req in section comments
-            req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['section_comments'])
-
-            # if no co req was found, look for different match
-            if len(req) == 1:
-
-                # looks for co req instead of co requisite in sectin comments
-                req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['section_comments'])
-
-                # if no co req found, looks in course description
-                if len(req) == 1:
-
-                    #checks if there is a course description
-                    if pd.notnull(row['course_description']):
-
-                        # uses regular expression to look
-                        req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['course_description'])
-
-                        # if no co req found
-                        if len(req) == 1:
-
-                            # look for co req instead of co requisite
-                            req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['course_description'])
-
-            # if co req found
-            if len(req)>1:
-
-                # add co req to column
-                req = req[1].split('.')
-                req = req[0].replace('uisite:',"").replace(':',"")
-                co_reqs.append(req)
-
-            # no co req found
-            else:
-                # add empty string to colunm
-                co_reqs.append("")
-
-        # if no section comment
+        if pd.notnull(row['co_reqs']):
+            new = ""
+            old = list(row['co_reqs'])
+            for char in old:
+                if char in chars:
+                    new += char
+            co_reqs.append(new)
         else:
-            #checks if there is a course description
-            if pd.notnull(row['course_description']):
+            co_reqs.append("")
 
-                # uses regular expression to look
-                req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['course_description'])
+        # # checks if there is a section comment
+        # if pd.notnull(row['section_comments']):
 
-                # if no co req found
-                if len(req) == 1:
+        #     # use regular expression to find co req in section comments
+        #     req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['section_comments'])
 
-                    # look for co req instead of co requisite
-                    req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['course_description'])
+        #     # if no co req was found, look for different match
+        #     if len(req) == 1:
 
-                # if co req found
-                if len(req)>1:
-                    # add co req to column
-                    req = req[1].split('.')
-                    req = req[0].replace('uisite:',"").replace(':',"")
-                    co_reqs.append(req)
-                # no co req found
-                else:
-                    # append empty string to column
-                    co_reqs.append("")
-            # if no course description
-            else:
-                # append empty string to column
-                co_reqs.append("")
+        #         # looks for co req instead of co requisite in sectin comments
+        #         req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['section_comments'])
+
+        #         # if no co req found, looks in course description
+        #         if len(req) == 1:
+
+        #             #checks if there is a course description
+        #             if pd.notnull(row['course_description']):
+
+        #                 # uses regular expression to look
+        #                 req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['course_description'])
+
+        #                 # if no co req found
+        #                 if len(req) == 1:
+
+        #                     # look for co req instead of co requisite
+        #                     req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['course_description'])
+
+        #     # if co req found
+        #     if len(req)>1:
+
+        #         # add co req to column
+        #         req = req[1].split('.')
+        #         req = req[0].replace('uisite:',"").replace(':',"")
+        #         co_reqs.append(req)
+
+        #     # no co req found
+        #     else:
+        #         # add empty string to colunm
+        #         co_reqs.append("")
+
+        # # if no section comment
+        # else:
+        #     #checks if there is a course description
+        #     if pd.notnull(row['course_description']):
+
+        #         # uses regular expression to look
+        #         req = re.split(r'[C/c]o-?[R/r]equisites?:?',row['course_description'])
+
+        #         # if no co req found
+        #         if len(req) == 1:
+
+        #             # look for co req instead of co requisite
+        #             req = re.split(r'[C/c]o-?[R/r]eqs?:?',row['course_description'])
+
+        #         # if co req found
+        #         if len(req)>1:
+        #             # add co req to column
+        #             req = req[1].split('.')
+        #             req = req[0].replace('uisite:',"").replace(':',"")
+        #             co_reqs.append(req)
+        #         # no co req found
+        #         else:
+        #             # append empty string to column
+        #             co_reqs.append("")
+        #     # if no course description
+        #     else:
+        #         # append empty string to column
+        #         co_reqs.append("")
 
 
 
@@ -514,7 +561,7 @@ def main():
         # using the start/end times, define the term
         current_term = 0
         # if starts in september or ends in december, its fall
-        if (start[:2] == '09') or (end[:2] == '12'):
+        if (start[:2] == '08') or (start[:2] == '09') or (end[:2] == '12'):
             current_term = "Fall"
             # make the term Fall (year)
             term.append("Fall "+start[6:10]) 
@@ -667,7 +714,7 @@ def main():
     ########################################################################
     # writing all this data into one csv called data.csv
     ########################################################################
-    data.to_csv("spring_data.csv")
+    data.to_csv("fall16_data.csv")
 
 
 if __name__ == '__main__':

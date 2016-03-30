@@ -407,7 +407,7 @@ def populateDB(cursor, data):
 ##############################################################################
 
 # open data.csv file to get data to populate database with
-data = pd.DataFrame.from_csv('spring_data.csv', sep=None,index_col=None)
+data = pd.DataFrame.from_csv('fall16_data.csv', sep=None,index_col=None)
 
 # set up database connection
 populate_db_properties = config.db_pool_config

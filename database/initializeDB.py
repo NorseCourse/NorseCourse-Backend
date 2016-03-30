@@ -49,7 +49,7 @@ cursor = cnx.cursor()
 
 # Ask the user what the database name should be on their system, this is case sensitive.
 # By default, this script is written to give the database a name of NorseCourse if nothind is entered.
-db_name = str(input("Enter the name of the database you created earlier (We recommended NorseCourse): "))
+db_name = "NorseCourse" #str(input("Enter the name of the database you created earlier (We recommended NorseCourse): "))
 
 
 # If requirements are met then create datase and tables.

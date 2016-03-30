@@ -78,7 +78,7 @@ class RoomObject(object):
 		self.id = id
 		self.number = number
 		self.buildingName = building_name
-		self.buildingAbbrevation = building_abb
+		self.buildingAbbreviation = building_abb
 
 # What a gened fulfillment object should contain
 class GenEdFulfillmentObject(object):

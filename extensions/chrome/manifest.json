@@ -2,7 +2,7 @@
 	"manifest_version": 2,
 
 	"name": "NorseCourse Scheduler",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"author": "Blaise Schaeffer",
 	"description": "Gives a NorseCourse user the ability to take a saved schedule and register that schedule in my.luther with ease!",
 	"homepage_url": "https://norsecourse.com",

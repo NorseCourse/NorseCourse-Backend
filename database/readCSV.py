@@ -173,7 +173,7 @@ def main():
                         'POLS':'Political Science','PSYC':'Psychology',
                         'SOC':'Sociology','ANTH':'Anthropology',
                         'SW':'Social Work','GS':'Gender Studies',
-                        'ATHTR':'Atheltic Training',
+                        'ATHTR':'Athletic Training',
                         'WGST':"Women's Gender Studies",
                         'MGT':'Management','PHIL':'Philosophy',
                         'INTS':'Intersections','MUST':'Museam Studies',

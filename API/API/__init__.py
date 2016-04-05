@@ -34,7 +34,7 @@ API = NorseCourse.namespace("api", "Root namespace for NorseCourse APIs")
 # Adds "Access-Control-Allow-Origin": "*" to the response header.
 @app.after_request
 def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', 'https://norsecourse.com/')
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 # Import files responsible for each API.

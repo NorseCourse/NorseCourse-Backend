@@ -32,8 +32,26 @@ class Faculty(Resource):
 		def getMultiple(fi,ln):
 			more_ids = []
 			for prof in allfaculty:
-				if (fi in allfaculty[prof]) and (ln in allfaculty[prof]) and multipleNames(allfaculty[prof]):
-					more_ids.append(prof)
+				if multipleNames(allfaculty[prof]):
+					names = allfaculty[prof].split(" ")
+					first = names[:len(names)//2]
+					last = names[len(names)//2:]
+
+					final_pos = 0
+					pos = 0
+					for l in first:
+						l = l.replace(",","")
+						if l == fi:
+							final_pos = pos
+						pos += 1
+					pos = 0
+					for n in last:
+						n = n.replace(",","")
+						if n == ln:
+							if pos == final_pos:
+								more_ids.append(prof)
+						pos += 1
+
 			return more_ids
 
 
@@ -57,9 +75,6 @@ class Faculty(Resource):
 		if faculty_name != None:
 			n = faculty_name.split(",")
 			facultyQuery += " WHERE first_initial = \'" + n[1] + "\' and last_name = \'" + n[0] + "\'"
-			print("\n\n\n\n")
-			print(facultyQuery)
-			print("\n\n\n\n")
 		
 		faculty_ids = request.args.get("facultyId")
 		id_list = []
@@ -80,31 +95,32 @@ class Faculty(Resource):
 		else:
 			cursor.execute(facultyQuery)
 
+
 		faculty = []
-		# (fi,ln):[more_ids]
-		more_ids = {}
+		more_ids = []
 		for (faculty_id, first_initial,last_name) in cursor:
-			more_ids[(str(first_initial),str(last_name))] = getMultiple(str(first_initial),str(last_name))
+			more_ids = (getMultiple(str(first_initial),str(last_name)))
 			f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
 			faculty.append(f.__dict__)
 
 		cursor.close()
 		cnx.close()
 
-		# {ids: [fi,ln]}
-		to_add = {}
-		for x in more_ids:
-			for more_i in more_ids[x]:
-				to_add[more_i] = []
 
-		for ids in to_add:
-			facultyQuery = "SELECT faculty_id, first_initial,last_name FROM Faculty WHERE faculty_id = " + str(ids)
-			cnx = cnx_pool.get_connection()
-			cursor = cnx.cursor()
-			cursor.execute(facultyQuery)
-			for (faculty_id, first_initial,last_name) in cursor:
-				f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
-				faculty.append(f.__dict__)
+		if len(more_ids) > 0:
+
+			for ids in more_ids:
+				facultyQuery = "SELECT faculty_id, first_initial,last_name FROM Faculty WHERE faculty_id = " + str(ids)
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+				cursor.execute(facultyQuery)
+				for (faculty_id, first_initial,last_name) in cursor:
+					f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
+					faculty.append(f.__dict__)
+
+			cursor.close()
+			cnx.close()
+
 
 
 		return faculty

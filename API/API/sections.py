@@ -194,6 +194,7 @@ class Section(Resource):
 		id_list = []
 
 		if faculty_ids != None:
+
 			faculty_check = True
 			id_list = faculty_ids.split(",")
 			id_list = list(map(str, id_list))
@@ -202,10 +203,11 @@ class Section(Resource):
 			for i in range(len(id_list) - 1):
 				faculty_Query += " OR faculty_id = %s"
 
-		cnx = cnx_pool.get_connection()
-		cursor = cnx.cursor()
+
 
 		if faculty_check:
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
 			if len(id_list) > 0:
 				cursor.execute(faculty_Query, tuple(id_list))
 			else:
@@ -217,11 +219,13 @@ class Section(Resource):
 				new_faculty_ids.append(faculty_id)
 				more_ids = (getMultiple(str(first_initial),str(last_name)))
 
-			cursor.close()
+			cursor.close() ########
 			cnx.close()
 
-
 			if len(more_ids) > 0:
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+
 				for ids in more_ids:
 					faculty_Query = "SELECT faculty_id, first_initial,last_name FROM Faculty WHERE faculty_id = " + str(ids)
 					cnx = cnx_pool.get_connection()
@@ -230,8 +234,9 @@ class Section(Resource):
 					for (faculty_id, first_initial,last_name) in cursor:
 						new_faculty_ids.append(faculty_id)
 
-		cursor.close()
-		cnx.close()
+				cursor.close() ######
+				cnx.close()
+
 
 
 		faculty_ids = new_faculty_ids
@@ -262,6 +267,9 @@ class Section(Resource):
 			sectIDS = []
 			for (section_id) in cursor:
 				sectIDS.append(section_id[0])
+
+			cursor.close() ######
+			cnx.close()
 
 
 

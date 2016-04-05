@@ -1045,5 +1045,7 @@ class ScheduleCreation(Resource):
 				error = "No valid schedules can be made from the given criteria"
 			s = ScheduleCreationObject([],pos,error)
 			schedules.append(s.__dict__)
+		else:
+			error = "No errors"
 
 		return (schedules)

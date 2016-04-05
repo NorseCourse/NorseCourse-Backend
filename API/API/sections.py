@@ -204,7 +204,6 @@ class Section(Resource):
 				faculty_Query += " OR faculty_id = %s"
 
 
-
 		if faculty_check:
 			cnx = cnx_pool.get_connection()
 			cursor = cnx.cursor()
@@ -219,7 +218,7 @@ class Section(Resource):
 				new_faculty_ids.append(faculty_id)
 				more_ids = (getMultiple(str(first_initial),str(last_name)))
 
-			cursor.close() ########
+			cursor.close()
 			cnx.close()
 
 			if len(more_ids) > 0:
@@ -234,27 +233,23 @@ class Section(Resource):
 					for (faculty_id, first_initial,last_name) in cursor:
 						new_faculty_ids.append(faculty_id)
 
-				cursor.close() ######
+				cursor.close()
 				cnx.close()
-
 
 
 		faculty_ids = new_faculty_ids
 		id_list2 = []
-
 
 		facultyQuery = "SELECT section_id from FacultyAssignments"
 		check = False
 
 		if faculty_ids != None and faculty_ids != []:
 			check = True
-			#id_list2 = faculty_ids.split(",")
 			id_list2 = list(map(str, faculty_ids))
 
 			facultyQuery += " WHERE faculty_id = %s"
 			for i in range(len(id_list2) - 1):
 				facultyQuery += " OR faculty_id = %s"
-
 
 			cnx = cnx_pool.get_connection()
 			cursor = cnx.cursor()
@@ -268,7 +263,7 @@ class Section(Resource):
 			for (section_id) in cursor:
 				sectIDS.append(section_id[0])
 
-			cursor.close() ######
+			cursor.close()
 			cnx.close()
 
 
@@ -300,9 +295,6 @@ class Section(Resource):
 		# 	sectIDS = []
 		# 	for (section_id) in cursor:
 		# 		sectIDS.append(section_id[0])
-
-
-
 
 
 

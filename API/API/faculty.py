@@ -81,19 +81,30 @@ class Faculty(Resource):
 			cursor.execute(facultyQuery)
 
 		faculty = []
-		# [fi,ln]:[more_ids]
+		# (fi,ln):[more_ids]
 		more_ids = {}
 		for (faculty_id, first_initial,last_name) in cursor:
 			more_ids[(str(first_initial),str(last_name))] = getMultiple(str(first_initial),str(last_name))
 			f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
 			faculty.append(f.__dict__)
 
-		for x in more_ids:
-			for more_i in more_ids[x]:
-				f = FacultyObject(x[0], x[1],more_i,x[0] + ". " + x[1])
-				faculty.append(f.__dict__)
-
 		cursor.close()
 		cnx.close()
+
+		# {ids: [fi,ln]}
+		to_add = {}
+		for x in more_ids:
+			for more_i in more_ids[x]:
+				to_add[more_i] = []
+
+		for ids in to_add:
+			facultyQuery = "SELECT faculty_id, first_initial,last_name FROM Faculty WHERE faculty_id = " + str(ids)
+			cnx = cnx_pool.get_connection()
+			cursor = cnx.cursor()
+			cursor.execute(facultyQuery)
+			for (faculty_id, first_initial,last_name) in cursor:
+				f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
+				faculty.append(f.__dict__)
+
 
 		return faculty

@@ -1037,6 +1037,7 @@ class ScheduleCreation(Resource):
 					current = all_combos[pos]
 
 				if pos <= len(all_combos)-1:
+					error = "No errors"
 					schedule = ScheduleCreationObject(self.verify(current, maxNumCredits,minNumCredits,req_time_block),pos,error)
 					schedules.append(schedule.__dict__)
 
@@ -1045,7 +1046,5 @@ class ScheduleCreation(Resource):
 				error = "No valid schedules can be made from the given criteria"
 			s = ScheduleCreationObject([],pos,error)
 			schedules.append(s.__dict__)
-		else:
-			error = "No errors"
 
 		return (schedules)

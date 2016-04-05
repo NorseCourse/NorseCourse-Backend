@@ -111,7 +111,8 @@ class Section(Resource):
 		params = {
 			"courses": "Provide a comma separated list of course IDs",
 			"fields": "Provide a comma separated list of fields you would like back",
-			"facultyId": "Provide a comma separated list of faculty IDs"
+			"facultyId": "Provide a comma separated list of faculty IDs",
+			"facutlyName": "Provide the name of faculty Last_name,first_initial (Ex: Miller,B)"
 		}
 	)
 
@@ -128,20 +129,143 @@ class Section(Resource):
 				fields.append(str(i).replace(" ",""))
 
 
-		facultyQuery = "SELECT section_id from FacultyAssignments"
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		new_faculty_ids = []
+
+		def multipleNames(prof):
+			count = 0
+			for letter in prof:
+				if letter == " ":
+					count += 1
+			if count == 1:
+				return False
+			return True
+
+		def getMultiple(fi,ln):
+			more_ids = []
+			for prof in allfaculty:
+				if multipleNames(allfaculty[prof]):
+					names = allfaculty[prof].split(" ")
+					first = names[:len(names)//2]
+					last = names[len(names)//2:]
+
+					final_pos = 0
+					pos = 0
+					for l in first:
+						l = l.replace(",","")
+						if l == fi:
+							final_pos = pos
+						pos += 1
+					pos = 0
+					for n in last:
+						n = n.replace(",","")
+						if n == ln:
+							if pos == final_pos:
+								more_ids.append(prof)
+						pos += 1
+
+			return more_ids
+
+
+		allFaculty = "SELECT faculty_id, first_initial, last_name FROM Faculty"
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+		cursor.execute(allFaculty)
+
+		allfaculty = {}
+		for (faculty_id, first_initial,last_name) in cursor:
+			allfaculty[faculty_id] = str(first_initial)+" "+str(last_name)
+
+		cursor.close()
+		cnx.close()
+
+
+		faculty_Query = "SELECT faculty_id, first_initial,last_name FROM Faculty"
+
+		faculty_name = request.args.get("facutlyName")
+
+		if faculty_name != None:
+			n = faculty_name.split(",")
+			faculty_Query += " WHERE first_initial = \'" + n[1] + "\' and last_name = \'" + n[0] + "\'"
+		
 		faculty_ids = request.args.get("facultyId")
+		id_list = []
+
+		if faculty_ids != None:
+			id_list = faculty_ids.split(",")
+			id_list = list(map(str, id_list))
+
+			faculty_Query += " WHERE faculty_id = %s"
+			for i in range(len(id_list) - 1):
+				faculty_Query += " OR faculty_id = %s"
+
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+
+		if len(id_list) > 0:
+			cursor.execute(faculty_Query, tuple(id_list))
+		else:
+			cursor.execute(faculty_Query)
+
+
+		faculty = []
+		more_ids = []
+		for (faculty_id, first_initial,last_name) in cursor:
+			new_faculty_ids.append(faculty_id)
+			more_ids = (getMultiple(str(first_initial),str(last_name)))
+
+		cursor.close()
+		cnx.close()
+
+
+		if len(more_ids) > 0:
+			for ids in more_ids:
+				faculty_Query = "SELECT faculty_id, first_initial,last_name FROM Faculty WHERE faculty_id = " + str(ids)
+				cnx = cnx_pool.get_connection()
+				cursor = cnx.cursor()
+				cursor.execute(faculty_Query)
+				for (faculty_id, first_initial,last_name) in cursor:
+					new_faculty_ids.append(faculty_id)
+
+			cursor.close()
+			cnx.close()
+
+
+		faculty_ids = new_faculty_ids
 		id_list2 = []
 
+
+		facultyQuery = "SELECT section_id from FacultyAssignments"
 		check = False
 		if faculty_ids != None:
-			check = True
-			id_list2 = faculty_ids.split(",")
-			id_list2 = list(map(str, id_list2))
+			# check = True
+			# id_list2 = faculty_ids.split(",")
+			id_list2 = list(map(str, new_faculty_ids))
 
 			facultyQuery += " WHERE faculty_id = %s"
 			for i in range(len(id_list2) - 1):
 				facultyQuery += " OR faculty_id = %s"
+
 
 			cnx = cnx_pool.get_connection()
 			cursor = cnx.cursor()
@@ -156,6 +280,50 @@ class Section(Resource):
 			for (section_id) in cursor:
 				sectIDS.append(section_id[0])
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+############################
+############################
+############################
+############################
+############################
+############################
+############################
+
+
+########################################################
+########################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				############
 
 		sectionQuery = "SELECT term, name, short_title, min_credits, max_credits, comments, seven_weeks, course_id, section_id FROM Sections"
 		

@@ -241,9 +241,9 @@ class Section(Resource):
 		facultyQuery = "SELECT section_id from FacultyAssignments"
 		check = False
 		if faculty_ids != None:
-			# check = True
-			# id_list2 = faculty_ids.split(",")
-			id_list2 = list(map(str, new_faculty_ids))
+			check = True
+			id_list2 = faculty_ids.split(",")
+			id_list2 = list(map(str, id_list2))
 
 			facultyQuery += " WHERE faculty_id = %s"
 			for i in range(len(id_list2) - 1):

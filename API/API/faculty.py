@@ -3,6 +3,11 @@ from flask import request
 from flask.ext.restplus import Resource
 from  API.NorseCourseObjects import FacultyObject
 
+
+
+
+
+
 @API.route("/faculty")
 class Faculty(Resource):
 
@@ -14,6 +19,37 @@ class Faculty(Resource):
 	)
 
 	def get(self):
+
+		def multipleNames(prof):
+			count = 0
+			for letter in prof:
+				if letter == " ":
+					count += 1
+			if count == 1:
+				return False
+			return True
+
+		def getMultiple(fi,ln):
+			more_ids = []
+			for prof in allfaculty:
+				if (fi in allfaculty[prof]) and (ln in allfaculty[prof]) and multipleNames(allfaculty[prof]):
+					more_ids.append(prof)
+			return more_ids
+
+
+		allFaculty = "SELECT faculty_id, first_initial, last_name FROM Faculty"
+		cnx = cnx_pool.get_connection()
+		cursor = cnx.cursor()
+		cursor.execute(allFaculty)
+
+		allfaculty = {}
+		for (faculty_id, first_initial,last_name) in cursor:
+			allfaculty[faculty_id] = str(first_initial)+" "+str(last_name)
+
+		cursor.close()
+		cnx.close()
+
+
 		facultyQuery = "SELECT faculty_id, first_initial,last_name FROM Faculty"
 
 		faculty_name = request.args.get("facutlyName")
@@ -45,9 +81,17 @@ class Faculty(Resource):
 			cursor.execute(facultyQuery)
 
 		faculty = []
+		# [fi,ln]:[more_ids]
+		more_ids = {}
 		for (faculty_id, first_initial,last_name) in cursor:
+			more_ids[(str(first_initial),str(last_name))] = getMultiple(str(first_initial),str(last_name))
 			f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
 			faculty.append(f.__dict__)
+
+		for x in more_ids:
+			for more_i in more_ids[x]:
+				f = FacultyObject(x[0], x[1],more_i,x[0] + ". " + x[1])
+				faculty.append(f.__dict__)
 
 		cursor.close()
 		cnx.close()

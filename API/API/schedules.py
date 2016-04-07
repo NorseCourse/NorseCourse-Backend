@@ -658,6 +658,7 @@ class ScheduleCreation(Resource):
 		for sect in required_sections:
 			lst.append([sect])
 
+
 		for c in temp:
 			alreadyAdded = False
 
@@ -683,9 +684,19 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
+
+		c = copy.copy(preferred_sections)
+		for sect in c:
+			for possibles in lst:
+				for x in possibles:
+					if sect == x:
+						preferred_sections.remove(sect)
+
+
 		# Add all preferred setions
 		for sect in preferred_sections:
 			lst.append([sect])
+
 
 		# add all sections of preferred courses
 		temp = copy.copy(preferred_courses)
@@ -712,6 +723,7 @@ class ScheduleCreation(Resource):
 
 			cursor.close()
 			cnx.close()
+
 
 		# Create all possible schedules from required and preferred courses and sections.
 		ps = list(itertools.product(*lst))

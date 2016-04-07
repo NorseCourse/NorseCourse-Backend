@@ -12,6 +12,7 @@ import itertools
 import ast
 import datetime
 import random
+import copy
 
 
 @API.route("/schedules")
@@ -648,7 +649,7 @@ class ScheduleCreation(Resource):
 		########################################################################
 
 		# add all sections of required courses
-		temp = required_courses
+		temp = copy.copy(required_courses)
 
 		# list of (lists of sections for a given course)
 		lst = []
@@ -656,7 +657,6 @@ class ScheduleCreation(Resource):
 		# Add all required setions
 		for sect in required_sections:
 			lst.append([sect])
-
 
 		for c in temp:
 			alreadyAdded = False
@@ -683,14 +683,12 @@ class ScheduleCreation(Resource):
 			cursor.close()
 			cnx.close()
 
-
 		# Add all preferred setions
 		for sect in preferred_sections:
 			lst.append([sect])
 
-
 		# add all sections of preferred courses
-		temp = preferred_courses
+		temp = copy.copy(preferred_courses)
 
 		for c in temp:
 			alreadyAdded = False
@@ -758,8 +756,8 @@ class ScheduleCreation(Resource):
 						# checks if req/preferred classes cover any gen eds required.
 						for gened in range(len(req_geneds)):
 							
-							tmp_req_geneds = req_geneds
-							tmp_pref_geneds = preferred_geneds
+							tmp_req_geneds = copy.copy(req_geneds)
+							tmp_pref_geneds = copy.copy(preferred_geneds)
 							for section in best:
 								classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
 
@@ -859,8 +857,8 @@ class ScheduleCreation(Resource):
 							if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
 								combo.append(doubles[ge])
 								num_needed -= 1
-								tmp_req_geneds = req_geneds
-								tmp_pref_geneds = preferred_geneds
+								tmp_req_geneds = copy.copy(req_geneds)
+								tmp_pref_geneds = copy.copy(preferred_geneds)
 								if one in tmp_req_geneds:
 									req_geneds.remove(one)
 								if one in tmp_pref_geneds:

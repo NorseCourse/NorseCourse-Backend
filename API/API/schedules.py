@@ -38,10 +38,6 @@ class ScheduleCreation(Resource):
 	def validTimes(self, starts, ends, sect_times):
 
 		for sect in sect_times:
-			if sect == None:
-				print("\n\n")
-				print(sect_times)
-				print("\n\n")
 			for day in sect:
 				for x in range(5):
 					if starts[x].tm_wday == day[0].tm_wday:
@@ -67,6 +63,31 @@ class ScheduleCreation(Resource):
 			return True
 
 		return False
+
+
+	# def checkHasRequiredGenED(self,schedule,req_ge):
+	# 	check = True
+
+	# 	if len(req_ge) > 0:
+	# 		check = False
+	# 		for sect in schedule:
+
+	# 			sectionQuery = "SELECT abbreviation from GenEds, GenEdFulfillments where GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id AND section_id = %s"
+
+	# 			cnx = cnx_pool.get_connection()
+	# 			cursor = cnx.cursor()
+
+	# 			cursor.execute(sectionQuery % str(sect))
+
+	# 			for (abbreviation) in cursor:
+	# 				if abbreviation in req_ge:
+	# 					check = True
+
+	# 			cursor.close()
+	# 			cnx.close()
+
+	# 	return check
+
 
 
 	# Function takes a schedule (list of section ids), and checks for time conflict
@@ -653,6 +674,8 @@ class ScheduleCreation(Resource):
 					alreadyAdded = True
 				else:
 					sects.append(section_id[0])
+				if section_id[0] in required_sections:
+					required_courses.remove(c)
 
 			if not alreadyAdded:
 				lst.append(sects)
@@ -706,7 +729,6 @@ class ScheduleCreation(Resource):
 		###########################################
 		all_combos = []
 
-
 		# for each possible schedule with req/preferred
 		for option in possible_sections:
 
@@ -735,6 +757,9 @@ class ScheduleCreation(Resource):
 
 						# checks if req/preferred classes cover any gen eds required.
 						for gened in range(len(req_geneds)):
+							
+							tmp_req_geneds = req_geneds
+							tmp_pref_geneds = preferred_geneds
 							for section in best:
 								classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
 
@@ -748,9 +773,9 @@ class ScheduleCreation(Resource):
 									abbs.append(str(abbreviation[0]))
 
 								for ge in abbs:
-									if ge in req_geneds:
+									if ge in tmp_req_geneds:
 										req_geneds.remove(ge)
-									if ge in preferred_geneds:
+									if ge in tmp_pref_geneds:
 										preferred_geneds.remove(ge)
 
 								cursor.close()
@@ -834,14 +859,16 @@ class ScheduleCreation(Resource):
 							if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
 								combo.append(doubles[ge])
 								num_needed -= 1
-								if one in req_geneds:
+								tmp_req_geneds = req_geneds
+								tmp_pref_geneds = preferred_geneds
+								if one in tmp_req_geneds:
 									req_geneds.remove(one)
-								if one in preferred_geneds:
+								if one in tmp_pref_geneds:
 									preferred_geneds.remove(one)
 
-								if two in req_geneds:
+								if two in tmp_req_geneds:
 									req_geneds.remove(two)
-								if one in preferred_geneds:
+								if two in tmp_pref_geneds:
 									preferred_geneds.remove(two)
 
 
@@ -895,6 +922,9 @@ class ScheduleCreation(Resource):
 
 								for gened in range(len(req_geneds)):
 									for section in best:
+										tmp_req_geneds = req_geneds
+										tmp_pref_geneds = preferred_geneds
+
 										classQuery = "SELECT abbreviation from GenEdFulfillments, GenEds where ((GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and abbreviation = %s) or (GenEds.gen_ed_id = GenEdFulfillments.gen_ed_id and also_fulfills = %s)) and GenEdFulfillments.section_id = %s"
 
 										cnx = cnx_pool.get_connection()
@@ -908,9 +938,9 @@ class ScheduleCreation(Resource):
 
 
 										for ge in abbs:
-											if ge in req_geneds:
+											if ge in tmp_req_geneds:
 												req_geneds.remove(ge)
-											if ge in preferred_geneds:
+											if ge in tmp_pref_geneds:
 												preferred_geneds.remove(ge)
 
 
@@ -989,19 +1019,21 @@ class ScheduleCreation(Resource):
 								for b in best:
 									combo.append([b])
 
+								tmp_req_geneds = req_geneds
+								tmp_pref_geneds = preferred_geneds
 								for ge in doubles:
 									one,two = ge.split()
 									if num_needed > 0 and ((one in req_geneds) or (one in preferred_geneds)) and ((two in req_geneds) or (two in preferred_geneds)):
 										combo.append(doubles[ge])
 										num_needed -= 1
-										if one in req_geneds:
+										if one in tmp_req_geneds:
 											req_geneds.remove(one)
-										if one in preferred_geneds:
+										if one in tmp_pref_geneds:
 											preferred_geneds.remove(one)
 
-										if two in req_geneds:
+										if two in tmp_req_geneds:
 											req_geneds.remove(two)
-										if one in preferred_geneds:
+										if two in tmp_pref_geneds:
 											preferred_geneds.remove(two)
 
 								for x in possible_gened_classes:
@@ -1018,6 +1050,7 @@ class ScheduleCreation(Resource):
 
 					else:
 						error = "There was a conflict with required courses/sections"
+
 
 
 		# shuffle list of all potential schedules

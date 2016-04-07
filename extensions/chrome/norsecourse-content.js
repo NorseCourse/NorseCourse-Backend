@@ -1,3 +1,9 @@
+// Insert a div signaling that the extension has been installed
+var isInstalledNode = document.createElement('div');
+isInstalledNode.id = 'extension-is-installed';
+document.body.appendChild(isInstalledNode);
+
+
 // Formats the scrapped data, takes a string and returns an array
 function formatSchedule(str) {
   str = str.replace(new RegExp(" ", "g"), "");

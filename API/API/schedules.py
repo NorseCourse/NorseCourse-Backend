@@ -1078,7 +1078,7 @@ class ScheduleCreation(Resource):
 
 				if pos <= len(all_combos)-1:
 					if self.verify(current, maxNumCredits,minNumCredits,req_time_block) == False:
-						if getNumCredits(current) < minNumCredits:
+						if self.getNumCredits(current) < minNumCredits:
 							error = "No valid schedules can be made from the given criteria, try adding more credits"
 						else:
 							error = "No valid schedules can be made from the given criteria"

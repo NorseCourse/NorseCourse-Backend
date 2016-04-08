@@ -428,7 +428,6 @@ class ScheduleCreation(Resource):
 		return schedule
 
 
-
 	# define parameters for api
 
 	@NorseCourse.doc(
@@ -892,7 +891,6 @@ class ScheduleCreation(Resource):
 								combo.append(possible_gened_classes[x])
 								num_needed -= 1
 
-
 						all_combos += list(itertools.product(*combo))
 
 
@@ -1060,7 +1058,6 @@ class ScheduleCreation(Resource):
 
 					else:
 						error = "There was a conflict with required courses/sections"
-
 
 
 		# shuffle list of all potential schedules

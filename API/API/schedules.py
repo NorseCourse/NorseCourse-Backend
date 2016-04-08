@@ -1079,7 +1079,7 @@ class ScheduleCreation(Resource):
 				if pos <= len(all_combos)-1:
 					if self.verify(current, maxNumCredits,minNumCredits,req_time_block) == False:
 						if self.getNumCredits(current) < minNumCredits:
-							error = "No valid schedules can be made from the given criteria, try adding more credits"
+							error = "You do not meet the desired credits, either add more criteria or lower minimum credit amount"
 							s = ScheduleCreationObject(current,pos,error)
 							schedules.append(s.__dict__)
 						else:

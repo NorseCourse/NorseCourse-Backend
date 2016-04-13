@@ -22,7 +22,7 @@ license = "The MIT License (MIT)"
 license_url = "https://opensource.org/licenses/MIT"
 contact = "Blaise Schaeffer & Grant Barnes"
 contact_url = "https://github.com/NorseCourse"
-contact_email = "schabl01@luther.edu,barngr01@luther.edu"
+contact_email = "schabl01@luther.edu,barngr01@luther.edu,norsecourse16@gmail.com"
 security_definitions = "Security Definitions go here!"
 security = [{"S1": [{"description": "desc"}, {"issues": "None"}]}, {"S2": [{"description": "desc"}, {"issues": ["I1", "I2", "Everything under secirity is currently for testing!"]}]}]
 

@@ -55,20 +55,20 @@ class Faculty(Resource):
 			return more_ids
 
 
-		allFaculty = "SELECT faculty_id, first_initial, last_name FROM Faculty"
+		allFaculty = "SELECT faculty_id, first_initial, last_name, full_name FROM Faculty"
 		cnx = cnx_pool.get_connection()
 		cursor = cnx.cursor()
 		cursor.execute(allFaculty)
 
 		allfaculty = {}
-		for (faculty_id, first_initial,last_name) in cursor:
+		for (faculty_id, first_initial,last_name,full_name) in cursor:
 			allfaculty[faculty_id] = str(first_initial)+" "+str(last_name)
 
 		cursor.close()
 		cnx.close()
 
 
-		facultyQuery = "SELECT faculty_id, first_initial,last_name FROM Faculty"
+		facultyQuery = "SELECT faculty_id, first_initial,last_name,full_name FROM Faculty"
 
 		faculty_name = request.args.get("facutlyName")
 
@@ -98,9 +98,9 @@ class Faculty(Resource):
 
 		faculty = []
 		more_ids = []
-		for (faculty_id, first_initial,last_name) in cursor:
+		for (faculty_id, first_initial,last_name,full_name) in cursor:
 			more_ids = (getMultiple(str(first_initial),str(last_name)))
-			f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
+			f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(full_name))
 			faculty.append(f.__dict__)
 
 		cursor.close()
@@ -110,12 +110,12 @@ class Faculty(Resource):
 		if len(more_ids) > 0:
 
 			for ids in more_ids:
-				facultyQuery = "SELECT faculty_id, first_initial,last_name FROM Faculty WHERE faculty_id = " + str(ids)
+				facultyQuery = "SELECT faculty_id, first_initial,last_name,full_name FROM Faculty WHERE faculty_id = " + str(ids)
 				cnx = cnx_pool.get_connection()
 				cursor = cnx.cursor()
 				cursor.execute(facultyQuery)
-				for (faculty_id, first_initial,last_name) in cursor:
-					f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(first_initial) + ". " + str(last_name))
+				for (faculty_id, first_initial,last_name,full_name) in cursor:
+					f = FacultyObject(str(first_initial), str(last_name),faculty_id,str(full_name))
 					faculty.append(f.__dict__)
 
 			cursor.close()

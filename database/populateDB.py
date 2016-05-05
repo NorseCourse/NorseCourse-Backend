@@ -282,9 +282,10 @@ def populateDB(cursor, data):
 				profs.add((row['faculty_first'],row['faculty_last']))
 
 				# SQL statement to insert into Faculty the faculty of the section
-				insert_req = "INSERT INTO Faculty (first_initial,last_name) VALUES (%(first)s,%(last)s)"
+				insert_req = "INSERT INTO Faculty (first_initial,last_name,full_name) VALUES (%(first)s,%(last)s,%(full)s)"
 				cursor.execute(insert_req,{'first':str(row['faculty_first']),
-											'last':str(row["faculty_last"])
+											'last':str(row["faculty_last"]),
+											'full':str(row["faculty_name"])
 											})
 
 

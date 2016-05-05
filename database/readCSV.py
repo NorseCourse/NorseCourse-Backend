@@ -156,10 +156,11 @@ def main():
                     'FREN','GER','LAT',
                     'CHIN','GRK','HEB',
                     'THE','DAN','PAID',
-                    'ITAL']
+                    'ITAL','OC']
 
     # dictionary of department abbreviation to department name
-    department_dict = {'LIST':'Library/Information Systems', 
+    department_dict = {'LIST':'Library/Information Systems',
+                        'OC':"Off Campus",
                         "AS":'Asian Studies','FCUL':"Foreign Culture",
                         'BIO':'Biology','CHEM':'Chemistry',
                         'CS':'Computer Science','HLTH':'Health',
@@ -202,6 +203,7 @@ def main():
 
     # Define building name locations
     buildings_dict = {'GJER':"Gjerset House", 'CMPH':"Campus House", 
+                        'UNIO':"Union",
                         'CART':"Center for the Arts", 'LARS':"Larson Hall",
                         'ROCH':"Rock House",'REGE':"Regents Center", 
                         'STOR':"Storre Theatre", 'LOYA':"Loyalty Hall", 
